@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Csml {
 
-    public class Collection<T>: CallerInfo<T> where T : class {
+    public class Collection<T>: CallerInfo<T> where T : Collection<T> {
         public List<object> elements = new List<object>();
 
         public T Add(object element) {
@@ -31,7 +31,5 @@ namespace Csml {
                 return this as T;
             }
         }
-
-
     }
 }

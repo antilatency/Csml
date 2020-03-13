@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Csml {
 
@@ -93,11 +94,27 @@ namespace Csml {
             string message, ErrorCode code) {
             if (obj is ICallerInfo) {
                 ICallerInfo callerInfo = obj as ICallerInfo;
+                Print(callerInfo.CallerSourceFilePath, callerInfo.CallerSourceLineNumber, logType, message, code);
+            } else {
+                Print("Unknown", 0, logType, message, code);
+            }            
+        }
+
+        public void OnException(Exception e) {
+            Regex regex = new Regex("at (.*) in (.*):line (\\d*)");
+            var match = regex.Match(e.StackTrace);
+            if (match != null) {
+                Print(match.Groups[2].Value, int.Parse(match.Groups[3].Value), logType, e.Message, 0);                
+            } else {
+                Print("Unknown", 0, logType, e.Message, 0);
+            }
+
+            /*if (obj is ICallerInfo) {
+                ICallerInfo callerInfo = obj as ICallerInfo;
                 Print(callerInfo.callerSourceFilePath, callerInfo.callerSourceLineNumber, logType, message, code);
             } else {
                 Print("Unknown", 0, logType, message, code);
-            }
-            
+            }*/
         }
 
 

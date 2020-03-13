@@ -1,14 +1,23 @@
 using System.Reflection;
 using System.Diagnostics;
+using System;
+
 namespace Csml {
     public interface ICallerInfo {
-        public string callerSourceFilePath { get; }
-        public int callerSourceLineNumber { get; }
+        public string CallerSourceFilePath { get; }
+        public int CallerSourceLineNumber { get; }
     }
 
-    public class CallerInfo<T> : ICallerInfo {
-        public string callerSourceFilePath { get; set; }
-        public int callerSourceLineNumber { get; set; }
+    public interface IFinal {
+        public Type ImplementerType { get; }
+    }
+
+
+    public class CallerInfo<T> : ICallerInfo, IFinal {
+        public Type ImplementerType => typeof(T);
+
+        public string CallerSourceFilePath { get; set; }
+        public int CallerSourceLineNumber { get; set; }
 
         private bool IsConstructorOfT(MethodBase method) {
             if (method.Name != ".ctor") return false;
@@ -22,8 +31,8 @@ namespace Csml {
                 if (IsConstructorOfT(f.GetMethod())) {
                     var fprew = st.GetFrame(i+1);
                     if (fprew != null) {
-                        callerSourceFilePath = fprew.GetFileName();
-                        callerSourceLineNumber = fprew.GetFileLineNumber();
+                        CallerSourceFilePath = fprew.GetFileName();
+                        CallerSourceLineNumber = fprew.GetFileLineNumber();
                     }                    
                 }
             }

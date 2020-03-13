@@ -10,7 +10,7 @@ namespace Csml {
         }
     }
 
-    public class Text<T> : Collection<T> where T : class {
+    public class Text<T> : Collection<T> where T : Text<T> {
         public string Format;
     }
 }

@@ -22,7 +22,7 @@ namespace Csml {
         }
     }
 
-    public class Translatable : Translatable<Translatable> , ITranslatable {
+    public class Translatable : Translatable<Translatable> {
         
         /*public Translatable([System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
@@ -34,26 +34,21 @@ namespace Csml {
     public interface ITranslatable {
         public string PrimaryName { get; set; }
         public Language Language { get; set; }
-        //public Dictionary<Language, ITranslatable> Translations { get; }
         public ITranslatable GetTranslation(Language language);
         public void AddTranslation(ITranslatable translatable);
-        public Type ImplementerType { get; }
-
     }
 
-    public class Translatable<T> : Collection<T>, ITranslatable where T : class, ITranslatable {
+    public class Translatable<T> : Collection<T>, ITranslatable where T : Translatable<T> {
         public string PrimaryName { get; set; }
         public Language Language { get; set; }
         private Dictionary<Language, T> Translations { get; } = new Dictionary<Language, T>();
         
         public ITranslatable GetTranslation(Language language) {
-            return Translations[language];
+            return Translations[language] as ITranslatable;
         }
         public void AddTranslation(ITranslatable translatable) {
             Translations.Add(translatable.Language, translatable as T);
-        }
-
-        public Type ImplementerType => typeof(T);
+        }        
 
         public T SetLanguage(Language language) {
             Language = language;
@@ -76,6 +71,7 @@ namespace Csml {
             HashSet<string> names = new HashSet<string>();
 
             foreach (var f in fields) {
+
                 var value = f.GetValue(null);
 
                 if (value is ITranslatable) {
@@ -107,9 +103,12 @@ namespace Csml {
                 foreach (var t0 in translations) {
                     foreach (var t1 in translations) {
                         if (t0 != t1) {
-                            if (t0.ImplementerType != t1.ImplementerType) {
-                                Log.Warning.OnObject(t0, $"Wrong translation type: {t0.ImplementerType} != {t1.ImplementerType}", ErrorCode.WrongTranslationType);
-                                Log.Error.OnObject(t1, $"Wrong translation type: {t1.ImplementerType} != {t0.ImplementerType}", ErrorCode.WrongTranslationType);
+                            var t0Final = (t0 as IFinal).ImplementerType;
+                            var t1Final = (t1 as IFinal).ImplementerType;
+
+                            if (t0Final != t1Final) {
+                                Log.Warning.OnObject(t0, $"Wrong translation type: {t0Final} != {t1Final}", ErrorCode.WrongTranslationType);
+                                Log.Error.OnObject(t1, $"Wrong translation type: {t1Final} != {t0Final}", ErrorCode.WrongTranslationType);
                             }
                             t0.AddTranslation(t1);
                         }

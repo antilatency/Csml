@@ -12,7 +12,7 @@ namespace Csml {
         public string Title { get; set; }
     }
 
-    public class Term<T> :  Material<T>, ITerm, ITranslatable where T : class, ITranslatable {
+    public class Term<T> :  Material<T>, ITerm where T : Term<T> {
         public Term(object titleImage, FormattableString description) : base(null,titleImage, description) {}
 
         public static void SetTermNames<R>(){

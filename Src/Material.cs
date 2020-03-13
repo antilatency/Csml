@@ -7,14 +7,20 @@ namespace Csml {
         }
     }
 
-    public class Material<T> : Translatable<T>, ITranslatable where T : class , ITranslatable {
+    public interface IMaterial {
         public string Title { get; set; }
-        public object titleImage;
+        public object TitleImage { get; set; }
+    }
+    
+
+    public class Material<T> : Translatable<T>, IMaterial where T : Material<T> {
+        public string Title { get; set; }
+        public object TitleImage { get; set; }
         public FormattableString description;
 
         protected Material(string title, object titleImage, FormattableString description)  {
             Title = title;
-            this.titleImage = titleImage;
+            this.TitleImage = titleImage;
             this.description = description;
         }
     }
