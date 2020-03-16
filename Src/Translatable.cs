@@ -20,37 +20,41 @@ namespace Csml {
             }
             return null;
         }
+
+        public override string ToString() {
+            return name;
+        }
     }
 
-    public class Translatable : Translatable<Translatable> {
+    //public class Translatable : Translatable<Translatable> {
         
         /*public Translatable([System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0){
             SetCallerInfo(memberName, sourceFilePath, sourceLineNumber);
         }*/
-    }
+    //}
 
-    public interface ITranslatable {
+    /*public interface ITranslatable {
         public string PrimaryName { get; set; }
         public Language Language { get; set; }
         public ITranslatable GetTranslation(Language language);
         public void AddTranslation(ITranslatable translatable);
-    }
+    }*/
 
-    public class Translatable<T> : Collection<T>, ITranslatable where T : Translatable<T> {
-        public string PrimaryName { get; set; }
-        public Language Language { get; set; }
-        private Dictionary<Language, T> Translations { get; } = new Dictionary<Language, T>();
+    public class Translatable<T> : Collection<T> where T : Translatable<T> {
+        //public string PrimaryName { get; set; }
+        //public Language Language { get; set; }
+        //private Dictionary<Language, T> Translations { get; } = new Dictionary<Language, T>();
         
-        public ITranslatable GetTranslation(Language language) {
+        /*public ITranslatable GetTranslation(Language language) {
             return Translations[language] as ITranslatable;
         }
         public void AddTranslation(ITranslatable translatable) {
             Translations.Add(translatable.Language, translatable as T);
-        }        
+        } */       
 
-        public T SetLanguage(Language language) {
+        /*public T SetLanguage(Language language) {
             Language = language;
             return this as T;
         }
@@ -58,14 +62,14 @@ namespace Csml {
             get {
                 return SetLanguage(language);
             }
-        }
+        }*/
 
         /*public T SetLanguage(Language language) {
             this.Language = language;
             return this as T;
         }*/
 
-        public static void AssignLanguages<R>() {
+        /*public static void AssignLanguages<R>() {
             var fields = typeof(R).GetFields(BindingFlags.Static | BindingFlags.Public);
 
             HashSet<string> names = new HashSet<string>();
@@ -117,6 +121,6 @@ namespace Csml {
 
             }
 
-        }
+        }*/
     }
 }

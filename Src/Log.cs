@@ -92,8 +92,8 @@ namespace Csml {
         public void OnObject(
             object obj,
             string message, ErrorCode code) {
-            if (obj is ICallerInfo) {
-                ICallerInfo callerInfo = obj as ICallerInfo;
+            if (obj is IInfo) {
+                IInfo callerInfo = obj as IInfo;
                 Print(callerInfo.CallerSourceFilePath, callerInfo.CallerSourceLineNumber, logType, message, code);
             } else {
                 Print("Unknown", 0, logType, message, code);
