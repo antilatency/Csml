@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
+using HtmlAgilityPack;
+using System.Linq;
 
 namespace Csml {
 
     public class Collection<T>: Element<T> where T : Collection<T> {
-        public List<object> elements = new List<object>();
+        public List<IElement> elements = new List<IElement>();
 
-        public T Add(object element) {
+        public T Add(IElement element) {
             elements.Add(element);
             return this as T;
         }
-        public T Add(FormattableString element) {
-            elements.Add(element);
+        public T Add(FormattableString formattableString) {
+            elements.Add( new Text(formattableString));
             return this as T;
         }
 
@@ -23,7 +25,7 @@ namespace Csml {
         }
 
         public T this[FormattableString element] { get => Add(element); }
-        public T this[object element] { get => Add(element); }
+        public T this[IElement element] { get => Add(element); }
 
         public T this[Action<T> lambda] {
             get {
@@ -31,5 +33,11 @@ namespace Csml {
                 return this as T;
             }
         }
+
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            return elements.SelectMany(x => x.Generate(context));
+        }
+
+
     }
 }

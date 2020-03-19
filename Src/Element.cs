@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Diagnostics;
 using System;
+using System.IO;
+using HtmlAgilityPack;
+using System.Collections.Generic;
 
 namespace Csml {
     public interface IInfo {
@@ -15,12 +18,12 @@ namespace Csml {
     }
 
     public interface IPage {
-        public void Create();
-        public string Url { get; set; }//Auto assign by Engine
+        public void Create(Context context);
+        public Uri GetUriRelativeToRoot(Context context);
     }
 
     public interface IElement {
-        public HtmlAgilityPack.HtmlNode Generate();
+        public IEnumerable<HtmlNode> Generate(Context context);
     }
 
     public class Element<T> : IElement, IInfo, IFinal {
@@ -51,8 +54,14 @@ namespace Csml {
             }
         }
 
-        public virtual HtmlAgilityPack.HtmlNode Generate() {
+        public virtual IEnumerable<HtmlNode> Generate(Context context) {
             return null;
+        }
+
+        public Uri GetUriRelativeToRoot(Context context) {
+            var thisSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
+            Uri uri = new Uri(context.BaseUri, Path.Combine(thisSubDirectory, Name + ".html"));
+            return uri;
         }
 
 

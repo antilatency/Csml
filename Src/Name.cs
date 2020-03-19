@@ -27,9 +27,20 @@ namespace Csml {
         }
         public string Title { get; set; }
 
-        public HtmlNode Generate() {
-            return HtmlNode.CreateNode($"<a href=\"https://www.antilatency.com\">{Title}</a>");
+        public IEnumerable<HtmlNode> Generate(Context context) {
+            var translation = translations[context.Language];
+            if (translation == null) {
+                yield return HtmlNode.CreateNode($"<span>{Title}</span>");
+            } else {
+                if (translation is IPage) {
+                    var uri = (translation as IPage).GetUriRelativeToRoot(context);
+                    yield return HtmlNode.CreateNode($"<a href=\"{uri}\">{Title}</a>");
+                } else {
+                    yield return HtmlNode.CreateNode($"<span> error ref to {Title}</span>");
+                }                
+            }            
         }
+
     }
 
 

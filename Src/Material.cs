@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 
 namespace Csml {
     public sealed class Material : Material<Material> {
@@ -21,7 +23,7 @@ namespace Csml {
         public object TitleImage { get; set; }
         public Text description;
         
-        public string Url { get; set; }
+        
 
         protected Material(string title, object titleImage, Text description)  {
             Title = title;
@@ -33,11 +35,14 @@ namespace Csml {
             return Title;
         }
 
-        public void Create() {
-            Context
-                .Push()
-                .SetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath)
-                .BeginPage($"{Name}.html",page=> {
+        public void Create(Context patentContext) {
+            var context = patentContext.Copy();
+            context.Language = Language;
+            context.SubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
+
+            var outputPath = Path.Combine(context.OutputDirectory, Name + ".html");
+
+            context.BeginPage(page=> {
                     var html = page.DocumentNode.Element("html");
                     html.SetAttributeValue("lang", Language.name);
 
@@ -47,11 +52,15 @@ namespace Csml {
                     var title = body.AppendChild(page.CreateElement("h1"));
                     title.AppendChild(page.CreateTextNode(Title));
 
-                    body.AppendChild(description.Generate());
+                    description.Generate(context).ForEach(x => body.AppendChild(x));
+                    
+
+                    base.Generate(context).ForEach(x => body.AppendChild(x));
+
 
                 })
-                .EndPage();
-            Context.Pop();
+                .EndPage(outputPath);
         }
+
     }
 }

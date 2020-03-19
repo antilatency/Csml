@@ -51,13 +51,14 @@ namespace Csml {
             //typeof(T).GetFields()
         }
 
-        public static void Generate<R>() {
-            Directory.Delete(Context.Current.OutputRootDirectory, true);            
+        public static void Generate<R>(Context context) {
+            if (Directory.Exists(context.OutputRootDirectory))
+                Directory.Delete(context.OutputRootDirectory, true);            
 
             var fields = typeof(R).GetNestedTypes().SelectMany(x => x.GetFields(BindingFlags.Static | BindingFlags.Public));
             foreach (var f in fields) {
                 var value = f.GetValue(null);
-                (value as IPage)?.Create();
+                (value as IPage)?.Create(context);
             }
 
         }

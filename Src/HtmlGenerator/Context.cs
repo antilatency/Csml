@@ -9,30 +9,28 @@ using System.Linq;
 
 namespace Csml {
 
+
+
+
     public class Context {
-        [ThreadStatic]
-        private static Stack<Context> stack;
 
-        public static Context Push() {
-            Context context = new Context(stack.Peek());
-            stack.Push(context);
-            return context;
-        }
-        public static void Pop() {
-            stack.Pop();
-        }
-        public static Context Current {
-            get {
-                if (stack == null) stack = new Stack<Context>();
-                if (stack.Count == 0) {
-                    stack.Push(new Context());
-                }
-                return stack.Peek();
-            }
+        public string SourceRootDirectory { get; set; }
+        public string OutputRootDirectory { get; set; }
+
+        public Uri BaseUri { get; set; }
+
+        public string SubDirectory { get; set; }
+
+        public Language Language { get; set; }
+        public HtmlDocument Page { get; set; }
+
+
+
+        public Context() {
         }
 
-        protected Context() {
-            stack.Push(this);
+        public Context Copy() {
+            return new Context(this);
         }
 
         protected Context(Context other) {
@@ -43,11 +41,10 @@ namespace Csml {
         }
 
 
-        public string SourceRootDirectory { get; set; }
-        public string OutputRootDirectory { get; set; }
+        
 
 
-        public string SubDirectory { get; set; }
+        
         public Context IncrementSubDirectory(string value) {
             SubDirectory =
                 GetContentRelativePath(
@@ -56,27 +53,26 @@ namespace Csml {
                 );
             return this;
         }
-        public Context SetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
-            SubDirectory = GetContentRelativePath(directory, SourceRootDirectory);
-            return this;
+        public string GetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
+            return GetContentRelativePath(directory, SourceRootDirectory);
+
         }
-        public Context SetSubDirectoryFromSourceAbsoluteFilePath(string path) {
-            SubDirectory = GetContentRelativePath(Path.GetDirectoryName(path), SourceRootDirectory);
-            return this;
+        public string GetSubDirectoryFromSourceAbsoluteFilePath(string path) {
+            return GetContentRelativePath(Path.GetDirectoryName(path), SourceRootDirectory);
         }
 
-        public HtmlDocument Page { get; set; }
-        public string OutputFileName { get; set; }
 
-        public string OutputFileAbsolutePath => Path.Combine(OutputDirectory, OutputFileName);
-
-        public Context BeginPage(string outputFileName, Action<HtmlDocument> modifyPage) {
-            OutputFileName = outputFileName;
+        public Context BeginPage(Action<HtmlDocument> modifyPage) {
 
             Page = new HtmlDocument();
             Page.DocumentNode.AppendChild(HtmlNode.CreateNode("<!DOCTYPE html>"));
             var html = Page.DocumentNode.AppendChild(Page.CreateElement("html"));
             var head = html.AppendChild(Page.CreateElement("head"));
+            
+            //<BASE>
+            //head.AppendChild(HtmlNode.CreateNode($"<base href=\"{BaseUri}\">"));
+
+
             var body = html.AppendChild(Page.CreateElement("body"));
 
             if (AutoReload) {
@@ -87,22 +83,24 @@ namespace Csml {
             return this;
         }
 
-        public Context EndPage() {
-            if (string.IsNullOrEmpty(OutputFileName)) {
-                throw new ArgumentException("OutputFileName is empty");
+        public Context EndPage(string outputFilePath) {
+            if (string.IsNullOrEmpty(outputFilePath)) {
+                throw new ArgumentException("outputFilePath is empty");
             }
             CreateDirectories(OutputDirectory);
-            Page.Save(OutputFileAbsolutePath);
+
+            var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
+
+            Page.Save(outputFileAbsolutePath);
 
             Page = null;
-            OutputFileName = null;
             return this;
         }
 
 
         private static string GetContentRelativePath(string absolutePath, string basePath) {
             if (!absolutePath.StartsWith(basePath)) {
-                throw new ArgumentException($"{absolutePath} is nor subpath of {basePath}");
+                throw new ArgumentException($"{absolutePath} is not subpath of {basePath}");
             }
             return Path.GetRelativePath(basePath, absolutePath);
         }
