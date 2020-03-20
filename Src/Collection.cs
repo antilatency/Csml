@@ -5,15 +5,19 @@ using System.Linq;
 
 namespace Csml {
 
-    public class Collection<T>: Element<T> where T : Collection<T> {
-        public List<IElement> elements = new List<IElement>();
+    public class Collection<T>: LazyCollection<T> where T : Collection<T> {
+        private List<IElement> List = new List<IElement>();
+
+        public Collection(){
+            Elements = List;
+        }
 
         public T Add(IElement element) {
-            elements.Add(element);
+            List.Add(element);
             return this as T;
         }
         public T Add(FormattableString formattableString) {
-            elements.Add( new Text(formattableString));
+            List.Add( new Text(formattableString));
             return this as T;
         }
 
@@ -27,17 +31,24 @@ namespace Csml {
         public T this[FormattableString element] { get => Add(element); }
         public T this[IElement element] { get => Add(element); }
 
-        public T this[Action<T> lambda] {
-            get {
-                lambda(this as T);
-                return this as T;
-            }
-        }
+        public T this[IEnumerable<IElement> element] { get => Add(new LazyCollection(element)); }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            return elements.SelectMany(x => x.Generate(context));
-        }
-
-
+        public T this[Func<IEnumerable<IElement>> element] { get => Add(new LazyCollection(element())); }
     }
+
+
+    public sealed class LazyCollection: LazyCollection<LazyCollection> {
+        public LazyCollection(IEnumerable<IElement> elements) {
+            Elements = elements;
+        }
+    }
+
+    public class LazyCollection<T> : Element<T> where T : LazyCollection<T> {
+        public IEnumerable<IElement> Elements { get; protected set; }
+        
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            return Elements.SelectMany(x => x.Generate(context));
+        }
+    }
+
 }

@@ -7,10 +7,10 @@ using HtmlAgilityPack;
 namespace Csml {
 
     public class ReferenceContainer: IElement {
-        private Dictionary<Language, object> translations;
-        private Dictionary<Language, object> Translations {
+        private Dictionary<Language, IElement> translations;
+        private Dictionary<Language, IElement> Translations {
             get {
-                if (translations == null) translations = new Dictionary<Language, object>();
+                if (translations == null) translations = new Dictionary<Language, IElement>();
                 return translations;
             }
         }
@@ -22,7 +22,7 @@ namespace Csml {
         public object GetTranslation(Language language) {
             return Translations[language];
         }
-        public void AddTranslation(Language language, object translatable) {
+        public void AddTranslation(Language language, IElement translatable) {
             Translations.Add(language, translatable);
         }
         public string Title { get; set; }
@@ -35,9 +35,18 @@ namespace Csml {
                 if (translation is IPage) {
                     var uri = (translation as IPage).GetUriRelativeToRoot(context);
                     yield return HtmlNode.CreateNode($"<a href=\"{uri}\">{Title}</a>");
-                } else {
-                    yield return HtmlNode.CreateNode($"<span> error ref to {Title}</span>");
-                }                
+                    yield break;
+                }
+                if (translation is IElement) {
+                    foreach (var e in translation.Generate(context)) {
+                        yield return e;
+                    }
+                    yield break;
+                }
+                
+                
+                yield return HtmlNode.CreateNode($"<span> error ref to {Title}</span>");
+                               
             }            
         }
 
@@ -77,12 +86,20 @@ namespace Csml {
                 var l = GetLanguageByName(f.Name);
                 if (l != null) {
                     var value = f.GetValue(null);
-                    Reference.AddTranslation(l,value);
-                    if (value is IInfo) {
-                        var info = value as IInfo;
-                        info.Language = l;
-                        info.Name = $"{typeof(T).Name}.{f.Name}";
+                    if (value is IElement) {
+                        Reference.AddTranslation(l, value as IElement);
+                        if (value is IInfo) {
+                            var info = value as IInfo;
+                            info.Language = l;
+                            info.Name = $"{typeof(T).Name}.{f.Name}";
+                        }
+                    } else { 
+                        //TODO: error
+                    
                     }
+                    
+
+                    
                 }
             }
         }

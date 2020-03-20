@@ -17,6 +17,10 @@ namespace Csml {
         public string SourceRootDirectory { get; set; }
         public string OutputRootDirectory { get; set; }
 
+        public HashSet<string> AssetsToCopy { get; set; } = new HashSet<string>();
+
+
+
         public Uri BaseUri { get; set; }
 
         public string SubDirectory { get; set; }
@@ -87,7 +91,7 @@ namespace Csml {
             if (string.IsNullOrEmpty(outputFilePath)) {
                 throw new ArgumentException("outputFilePath is empty");
             }
-            CreateDirectories(OutputDirectory);
+            Utils.CreateDirectories(OutputDirectory);
 
             var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
 
@@ -98,7 +102,7 @@ namespace Csml {
         }
 
 
-        private static string GetContentRelativePath(string absolutePath, string basePath) {
+        public static string GetContentRelativePath(string absolutePath, string basePath) {
             if (!absolutePath.StartsWith(basePath)) {
                 throw new ArgumentException($"{absolutePath} is not subpath of {basePath}");
             }
@@ -110,13 +114,8 @@ namespace Csml {
         public string OutputDirectory => Path.Combine(OutputRootDirectory, SubDirectory);
 
 
-        public static void CreateDirectories(string directory) {
-            var first = Path.GetFileName(directory);
-            var last = Path.GetDirectoryName(directory);
-            if (!Directory.Exists(last)) CreateDirectories(last);
-            Directory.CreateDirectory(directory);
-        }
-
+        public bool ForceRebuildAssets { get; set; } = true;
+        public bool ForceRebuildImages { get; set; } = false;
 
         public bool AutoReload { get; set; }
 

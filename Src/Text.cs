@@ -7,6 +7,9 @@ namespace Csml {
     public sealed class Text: Text<Text> {
 
         private Text() { }
+        public Text(string s) {
+            Format = s;
+        }
 
         public Text(FormattableString formattableString) {
             Format = formattableString.Format;
@@ -28,15 +31,6 @@ namespace Csml {
         }
         public static implicit operator Text(FormattableString x) => new Text(x);
 
-        /*public static Text CreateFromSimplifiedFormattableString(FormattableString formattableString) {
-            var result = new Text();
-            result.Format = formattableString.Format;
-            foreach (var a in formattableString.GetArguments()) {
-                result.Add(a as IElement);
-            }
-            return result;
-        }*/
-
     }
 
     public class Text<T> : Collection<T> where T : Text<T> {
@@ -47,14 +41,14 @@ namespace Csml {
 
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            var args = elements.Select(x => x.Generate(context).ToHtml()).ToArray();
+            var args = Elements.Select(x => x.Generate(context).ToHtml()).ToArray();
 
             var formatWithBr = Format.Replace("\r", "").Replace("\n","<br>");
 
 
             var content = string.Format(formatWithBr, args);
    
-            return new HtmlNode[] { HtmlNode.CreateNode($"<span>{content}</span>") };
+            return new HtmlNode[] { HtmlNode.CreateNode($"<div>{content}</div>") };
         }
 
     }

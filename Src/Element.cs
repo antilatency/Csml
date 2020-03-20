@@ -55,7 +55,7 @@ namespace Csml {
         }
 
         public virtual IEnumerable<HtmlNode> Generate(Context context) {
-            return null;
+            yield break;
         }
 
         public Uri GetUriRelativeToRoot(Context context) {

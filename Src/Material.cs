@@ -1,5 +1,7 @@
+using static Csml.Utils.Static;
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Csml {
@@ -35,6 +37,8 @@ namespace Csml {
             return Title;
         }
 
+
+
         public void Create(Context patentContext) {
             var context = patentContext.Copy();
             context.Language = Language;
@@ -43,19 +47,27 @@ namespace Csml {
             var outputPath = Path.Combine(context.OutputDirectory, Name + ".html");
 
             context.BeginPage(page=> {
-                    var html = page.DocumentNode.Element("html");
-                    html.SetAttributeValue("lang", Language.name);
+                var html = page.DocumentNode.Element("html");
+                html.SetAttributeValue("lang", Language.name);
 
-                    var head = html.Element("head");
-                    var body = html.Element("body");
+                var head = html.Element("head");
+                head.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/Css/main.css\">");
 
-                    var title = body.AppendChild(page.CreateElement("h1"));
-                    title.AppendChild(page.CreateTextNode(Title));
 
-                    description.Generate(context).ForEach(x => body.AppendChild(x));
+                head.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
+
+                head.Add($"<title>{Title}</title>");
+
+
+                var body = html.Element("body");
+                var material = body.Add($"<div {Class("material")}> ");
+
+                var title = material.Add($"<h1 {Class("material-title")}>{Title}</h1>");
+
+                description.Generate(context).ForEach(x => material.AppendChild(x));
                     
 
-                    base.Generate(context).ForEach(x => body.AppendChild(x));
+                base.Generate(context).ForEach(x => material.AppendChild(x));
 
 
                 })

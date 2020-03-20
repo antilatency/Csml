@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using HtmlAgilityPack;
 
 namespace Csml {
@@ -27,6 +29,11 @@ namespace Csml {
             return FormattableStringFactory.Create(format, filteredArguments.ToArray());
         }
 
+        internal static string ToHashString(byte[] data) {
+            var h = SHA1.Create().ComputeHash(data);
+            return Convert.ToBase64String(h).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        }
+
 
         /*public static IElement FormattableStringToElement(FormattableString formattableString) {
             return new Text(formattableString);
@@ -48,5 +55,28 @@ namespace Csml {
             foreach (var item in source)
                 action(item);
         }
+
+        public static HtmlNode Add(this HtmlNode x, string html) {
+            return x.AppendChild(HtmlNode.CreateNode(html));            
+        }
+        
+
+
+        public static void CreateDirectories(string directory) {
+            var first = Path.GetFileName(directory);
+            var last = Path.GetDirectoryName(directory);
+            if (!Directory.Exists(last)) CreateDirectories(last);
+            Directory.CreateDirectory(directory);
+        }
+
+
+        public static class Static {
+            public static string Class(string name) {
+                return $"class = \"{name}\"";
+            }
+        }
+
     }
+
+
 }
