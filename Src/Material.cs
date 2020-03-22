@@ -6,28 +6,28 @@ using System.Linq;
 
 namespace Csml {
     public sealed class Material : Material<Material> {
-        public Material(string title, object titleImage, FormattableString description
+        public Material(string title, Image titleImage, FormattableString description
             ): base(title, titleImage, new Text(description)) {
         }
-        public Material(string title, object titleImage, Text description
+        public Material(string title, Image titleImage, Text description
             ) : base(title, titleImage, description) {
         }
     }
 
     public interface IMaterial {
         public string Title { get; set; }
-        public object TitleImage { get; set; }
+        public Image TitleImage { get; set; }
     }
     
 
     public class Material<T> : Collection<T>, IMaterial, IPage where T : Material<T> {
         public string Title { get; set; }
-        public object TitleImage { get; set; }
+        public Image TitleImage { get; set; }
         public Text description;
         
         
 
-        protected Material(string title, object titleImage, Text description)  {
+        protected Material(string title, Image titleImage, Text description)  {
             Title = title;
             this.TitleImage = titleImage;
             this.description = description;
@@ -52,7 +52,7 @@ namespace Csml {
 
                 var head = html.Element("head");
                 head.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/Css/main.css\">");
-
+                head.Add("<meta charset=\"utf-8\">");
 
                 head.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
 
@@ -63,6 +63,10 @@ namespace Csml {
                 var material = body.Add($"<div {Class("material")}> ");
 
                 var title = material.Add($"<h1 {Class("material-title")}>{Title}</h1>");
+                /*if (TitleImage != null) {
+                    var image = TitleImage.Generate(context);
+                    image.
+                }*/
 
                 description.Generate(context).ForEach(x => material.AppendChild(x));
                     

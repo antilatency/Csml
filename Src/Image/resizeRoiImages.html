@@ -1,0 +1,38 @@
+<script id="resizeRoiImages">
+	function resizeRoiImages(){
+		var images = document.getElementsByClassName("roi-image-container")
+		for (var i = 0; i < images.length; i++) {
+			var image = images.item(i);
+			resizeRoiImage(image)
+		}
+	}
+	function resizeRoiImage(container){
+		var aspect = parseFloat(container.getAttribute("data-aspect").split(" "));
+		var roi = container.getAttribute("data-roi").split(" ");
+		var x0 = parseFloat(roi[0])/100;
+		var x1 = parseFloat(roi[1])/100;
+		var y0 = parseFloat(roi[2])/100;
+		var y1 = parseFloat(roi[3])/100;
+		var w = x1-x0
+		var h = y1-y0
+		container.style.minHeight = container.offsetWidth*h*aspect+"px"
+		container.style.maxHeight = container.offsetWidth/w*aspect+"px"
+		
+		var containerAspect = container.offsetHeight/container.offsetWidth 
+		var image = container.getElementsByTagName("img")[0]
+
+		if (containerAspect<aspect){
+			image.style.width = "100%"
+			image.style.height = "auto"
+			var offset = (1-(containerAspect/aspect-h)/(1-h))*y0 *100.0					
+			image.style.transform = "translate(0, -"+offset+"%)"
+		}else{
+			image.style.width = "auto"
+			image.style.height = "100%"
+			var offset = (1-(aspect/containerAspect-w)/(1-w))*x0 *100.0
+			image.style.transform = "translate(-"+offset+"%, 0)"
+		}
+	}
+	document.addEventListener("DOMContentLoaded", resizeRoiImages)
+	window.addEventListener("resize", resizeRoiImages);
+</script>

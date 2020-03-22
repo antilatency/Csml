@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using HtmlAgilityPack;
@@ -59,7 +60,16 @@ namespace Csml {
         public static HtmlNode Add(this HtmlNode x, string html) {
             return x.AppendChild(HtmlNode.CreateNode(html));            
         }
-        
+
+        public static HtmlNode Wrap(this HtmlNode x, string html) {
+            var result = HtmlNode.CreateNode(html);
+            result.AppendChild(x);
+            return result;
+        }
+
+        public static PropertyInfo[] GetPropertiesPublicStatic(this Type x) {
+            return x.GetProperties(BindingFlags.Public | BindingFlags.Static);
+        }
 
 
         public static void CreateDirectories(string directory) {
@@ -74,6 +84,25 @@ namespace Csml {
             public static string Class(string name) {
                 return $"class = \"{name}\"";
             }
+
+            public static string ThisFilePath([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
+                return sourceFilePath;
+            }
+            public static string ThisDirectory([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
+                return Path.GetDirectoryName(sourceFilePath);
+            }
+
+            public static Dictionary<object, object> BackupStorage;
+            public static T Backup<T>(Func<T> func) {
+                if (BackupStorage == null) BackupStorage = new Dictionary<object, object>();
+                if (BackupStorage.ContainsKey(func)) {
+                    return (T)BackupStorage[func];
+                }
+                T result = func();
+                BackupStorage.Add(func, result);
+                return (T)result;
+            }
+
         }
 
     }

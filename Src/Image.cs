@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using HtmlAgilityPack;
 using ImageMagick;
+using static Csml.Utils.Static;
 
 namespace Csml {
     
@@ -21,7 +23,7 @@ namespace Csml {
         private bool IsResourcesGenerated = false;
         private string Hash;
         private List<KeyValuePair<int, string>> Mips;
-
+        private float Aspect = 1;
         public Image(string filePath) {
             if (Path.IsPathRooted(filePath)) {
                 SourcePath = filePath;
@@ -52,6 +54,8 @@ namespace Csml {
             Mips = new List<KeyValuePair<int, string>>();
 
             var i = new MagickImage(SourcePath);
+            Aspect = i.Height / (float)i.Width;
+
             Func<int, string> outputPath = x=>Path.Combine(directory, Hash+x+extension);
             var w = i.Width;
 
@@ -78,9 +82,39 @@ namespace Csml {
 
             var result = HtmlNode.CreateNode("<img></img>");
             result.SetAttributeValue("src", Mips[0].Value);
+            
+            
             foreach (var e in base.Generate(context)) {
                 result.AppendChild(e);
             }
+
+
+            var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
+            if (File.Exists(roiFilePath)) {
+                var script = context.Head.ChildNodes.Where(x => x.Id == "resizeRoiImages").FirstOrDefault();
+                if (script == null) {
+                    var code = File.ReadAllText(Path.Combine(Path.ChangeExtension(ThisFilePath(), null), "resizeRoiImages.html"));
+                    context.Head.Add(code);
+                }
+                var roi = File.ReadAllText(roiFilePath);
+
+                result.SetAttributeValue("style", $"width: 100%; height: auto;");
+                result = result.Wrap("<div>");
+
+                result.SetAttributeValue("style", "width: 100%; height: 33vh; overflow: hidden;");
+                result.SetAttributeValue("data-roi", roi);
+                result.SetAttributeValue("data-aspect", Aspect.ToString());
+                result.SetAttributeValue("class", "roi-image-container");
+            }
+
+            /*var srcset = string.Join(",", Mips.Select(x => $"{x.Value} {x.Key}w"));
+            result.SetAttributeValue("srcset", srcset);
+
+            result.SetAttributeValue("sizes", "768px");*/
+
+            
+            
+            
             yield return result;
         }
     }

@@ -27,7 +27,7 @@ namespace Csml {
 
         public Language Language { get; set; }
         public HtmlDocument Page { get; set; }
-
+        public HtmlNode Head { get; set; }
 
 
         public Context() {
@@ -69,9 +69,10 @@ namespace Csml {
         public Context BeginPage(Action<HtmlDocument> modifyPage) {
 
             Page = new HtmlDocument();
+            Page.OptionUseIdAttribute = true;
             Page.DocumentNode.AppendChild(HtmlNode.CreateNode("<!DOCTYPE html>"));
             var html = Page.DocumentNode.AppendChild(Page.CreateElement("html"));
-            var head = html.AppendChild(Page.CreateElement("head"));
+            Head = html.AppendChild(Page.CreateElement("head"));
             
             //<BASE>
             //head.AppendChild(HtmlNode.CreateNode($"<base href=\"{BaseUri}\">"));
@@ -80,7 +81,7 @@ namespace Csml {
             var body = html.AppendChild(Page.CreateElement("body"));
 
             if (AutoReload) {
-                head.AppendChild(HtmlNode.CreateNode("<meta http-equiv=\"refresh\" content=\"1\">"));
+                Head.AppendChild(HtmlNode.CreateNode("<meta http-equiv=\"refresh\" content=\"1\">"));
             }
 
             modifyPage(Page);
