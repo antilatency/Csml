@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using HtmlAgilityPack;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Csml {
     public sealed class Text: Text<Text> {
@@ -41,14 +42,43 @@ namespace Csml {
 
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            var args = Elements.Select(x => x.Generate(context).ToHtml()).ToArray();
+            Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Trim('\n').Split('\n');
 
-            var formatWithBr = Format.Replace("\r", "").Replace("\n","<br>");
+            var args = Elements.ToArray();
+            //var args = Elements.Select(x => x.Generate(context).ToHtml()).ToArray();
+            Regex regex = new Regex(@"{(\d+):?(.*?)}");
+            var matches = regex.Matches(Format);
+            var pose = 0;
+            
+            for (int i = 0; i < matches.Count; i++) {
+                if (pose < matches[i].Index) {
+                    var text = Format.Substring(pose, matches[i].Index - pose);
+                    var lines = lineSplit(text);
+                    if (!string.IsNullOrEmpty(lines[0]))
+                        yield return HtmlNode.CreateNode(lines[0]);
+                    for (int l = 1; l < lines.Length; l++) {
+                        yield return HtmlNode.CreateNode("<br>");
+                        if (!string.IsNullOrEmpty(lines[l]))
+                            yield return HtmlNode.CreateNode(lines[l]);
+                    }
+                }
 
+                foreach (var eg in args[i].Generate(context))
+                    yield return eg;
 
-            var content = string.Format(formatWithBr, args);
-   
-            return new HtmlNode[] { HtmlNode.CreateNode($"<div>{content}</div>") };
+                pose = matches[i].Index + matches[i].Length;
+            }
+
+            if (pose < Format.Length) {
+                var text = Format.Substring(pose, Format.Length - pose);
+                var lines = lineSplit(text);
+                yield return HtmlNode.CreateNode(lines[0]);
+                for (int l = 1; l < lines.Length; l++) {
+                    yield return HtmlNode.CreateNode("<br>");
+                    if (!string.IsNullOrEmpty(lines[l]))
+                        yield return HtmlNode.CreateNode(lines[l]);
+                }
+            }
         }
 
     }

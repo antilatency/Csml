@@ -53,12 +53,29 @@ namespace Csml {
 
 
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
-            foreach (var item in source)
+            foreach (var item in source) {
                 action(item);
+            }
         }
 
         public static HtmlNode Add(this HtmlNode x, string html) {
             return x.AppendChild(HtmlNode.CreateNode(html));            
+        }
+
+        public static HtmlNode Add(this HtmlNode x, IEnumerable<HtmlNode> nodes) {
+            nodes.ForEach(c => x.AppendChild(c));
+            return x;
+        }
+
+        public static HtmlNode Add(this HtmlNode x, string html, params string[] classes) {
+            var result = HtmlNode.CreateNode(html);
+            foreach (var c in classes) result.AddClass(c);
+            return x.AppendChild(result);
+        }
+
+        public static HtmlNode Do(this HtmlNode x, Action<HtmlNode> action) {
+            action(x);
+            return x;
         }
 
         public static HtmlNode Wrap(this HtmlNode x, string html) {
@@ -81,9 +98,9 @@ namespace Csml {
 
 
         public static class Static {
-            public static string Class(string name) {
+            /*public static string Class(string name) {
                 return $"class = \"{name}\"";
-            }
+            }*/
 
             public static string ThisFilePath([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
                 return sourceFilePath;

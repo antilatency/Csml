@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Csml {
-    public sealed class Material : Material<Material> {
+    public /*sealed*/ class Material : Material<Material> {
         public Material(string title, Image titleImage, FormattableString description
             ): base(title, titleImage, new Text(description)) {
         }
@@ -23,14 +23,14 @@ namespace Csml {
     public class Material<T> : Collection<T>, IMaterial, IPage where T : Material<T> {
         public string Title { get; set; }
         public Image TitleImage { get; set; }
-        public Text description;
+        public Text Description;
         
         
 
         protected Material(string title, Image titleImage, Text description)  {
             Title = title;
             this.TitleImage = titleImage;
-            this.description = description;
+            this.Description = description;
         }
 
         public override string ToString() {
@@ -60,18 +60,36 @@ namespace Csml {
 
 
                 var body = html.Element("body");
-                var material = body.Add($"<div {Class("material")}> ");
+                body.Do(x => {
+                    x.Add("<div>", "material").Do(x => {
+                        x.Add("<div>", "header").Do(x => {
+                            x.Add($"<h1>", "title").Add(Title);
+                            if (TitleImage != null) {
+                                x.Add(TitleImage.Generate(context));
+                            }
+                            x.Add("<div>", "paragraph")
+                                .Add(Description.Generate(context));
+                        });
+                        x.Add(base.Generate(context));
+                    });
+                });
+
+                
+
+                /*var material = body.Add($"<div {Class("material")}> ");
+                material.AddClass("material");
+ 
 
                 var title = material.Add($"<h1 {Class("material-title")}>{Title}</h1>");
-                /*if (TitleImage != null) {
-                    var image = TitleImage.Generate(context);
-                    image.
-                }*/
+                if (TitleImage != null) {
+                    TitleImage.Generate(context).ForEach(x => material.AppendChild(x));
+
+                }
 
                 description.Generate(context).ForEach(x => material.AppendChild(x));
                     
 
-                base.Generate(context).ForEach(x => material.AppendChild(x));
+                base.Generate(context).ForEach(x => material.AppendChild(x));*/
 
 
                 })

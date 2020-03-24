@@ -98,23 +98,18 @@ namespace Csml {
                 }
                 var roi = File.ReadAllText(roiFilePath);
 
-                result.SetAttributeValue("style", $"width: 100%; height: auto;");
                 result = result.Wrap("<div>");
 
-                result.SetAttributeValue("style", "width: 100%; height: 33vh; overflow: hidden;");
+                result.SetAttributeValue("style", "overflow: hidden;");
                 result.SetAttributeValue("data-roi", roi);
                 result.SetAttributeValue("data-aspect", Aspect.ToString());
                 result.SetAttributeValue("class", "roi-image-container");
             }
 
-            /*var srcset = string.Join(",", Mips.Select(x => $"{x.Value} {x.Key}w"));
-            result.SetAttributeValue("srcset", srcset);
+            result.AddClass("image");
 
-            result.SetAttributeValue("sizes", "768px");*/
 
-            
-            
-            
+
             yield return result;
         }
     }
