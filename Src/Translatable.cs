@@ -4,26 +4,33 @@ using System.Collections.Generic;
 using System;
 
 namespace Csml {
-    
+
     public partial class Language {
-        public string name;
+        public string Name;
         public Language(string name) {
-            this.name = name;
+            this.Name = name;
         }
 
         public static Language NameToLanguage(string name) {
-            var fields = typeof(Language).GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).Where(x=>x.FieldType == typeof(Language));
+            var fields = typeof(Language).GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).Where(x => x.FieldType == typeof(Language));
             foreach (var f in fields) {
                 Language value = (Language)f.GetValue(null);
-                if (name.EndsWith("_" + value.name))
+                if (name.EndsWith("_" + value.Name))
                     return value;
             }
             return null;
         }
 
+        public static List<Language> All => typeof(Language)
+                .GetProperties(BindingFlags.Static | BindingFlags.Public)
+                .Where(x => x.PropertyType == typeof(Language)).Select(x => (Language)x.GetValue(null)).ToList();
+
+
         public override string ToString() {
-            return name;
+            return Name;
         }
+
+
     }
 
     //public class Translatable : Translatable<Translatable> {

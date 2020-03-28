@@ -16,7 +16,7 @@ namespace Csml {
     }
     
     
-    public class Image<T> : Element<T> {
+    public class Image<T> : Element<T> where T : Image<T> {
         public static readonly int MinImageWidth = 128;
         public string SourcePath { get; private set; }        
         

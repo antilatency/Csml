@@ -64,11 +64,17 @@ namespace Csml {
                     File.Copy(i, dest, true);
             }
 
-            var fields = typeof(R).GetNestedTypes().SelectMany(x => x.GetFields(BindingFlags.Static | BindingFlags.Public));
+            /*var fields = typeof(R).GetNestedTypes().SelectMany(x => x.GetFields(BindingFlags.Static | BindingFlags.Public));
             foreach (var f in fields) {
                 var value = f.GetValue(null);
                 (value as IPage)?.Create(context);
-            }
+            }*/
+
+            /*var names = typeof(R).GetProperties().Where(x => x.PropertyType == typeof(Name));
+            foreach (var n in names) {
+                var value = f.GetValue(null);
+                (value as IPage)?.Create(context);
+            }*/
 
         }
 

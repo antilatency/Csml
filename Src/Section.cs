@@ -37,8 +37,7 @@ namespace Csml {
                     });
                 });
 
-                x.Add("<div>", "paragraph")
-                    .Add(base.Generate(context));                
+                x.Add(base.Generate(context));                
             });
 
             yield return section;

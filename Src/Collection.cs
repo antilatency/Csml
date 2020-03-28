@@ -17,7 +17,7 @@ namespace Csml {
             return this as T;
         }
         public T Add(FormattableString formattableString) {
-            List.Add( new Text(formattableString));
+            List.Add( new Paragraph(formattableString));
             return this as T;
         }
 

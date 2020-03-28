@@ -7,7 +7,9 @@ namespace Csml {
 
     public enum ErrorCode {
         LanguageNotDefined = 0,
-        WrongTranslationType = 1
+        WrongTranslationType = 1,
+
+        StaticNotAllowed = 2
     }
 
 
@@ -76,7 +78,7 @@ namespace Csml {
             Console.ForegroundColor = color;
 
             if (type == LogType.error) {
-                Console.ReadLine();
+                //Console.ReadLine();
                 throw new Exception(fullMessage);
             }
         }

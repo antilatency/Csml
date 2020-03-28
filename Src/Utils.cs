@@ -31,8 +31,10 @@ namespace Csml {
         }
 
         internal static string ToHashString(byte[] data) {
-            var h = SHA1.Create().ComputeHash(data);
+            using var sha = SHA1.Create();
+            var h = sha.ComputeHash(data);
             return Convert.ToBase64String(h).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+
         }
 
 
@@ -84,13 +86,15 @@ namespace Csml {
             return result;
         }
 
-        public static PropertyInfo[] GetPropertiesPublicStatic(this Type x) {
-            return x.GetProperties(BindingFlags.Public | BindingFlags.Static);
+        public static PropertyInfo[] GetPropertiesAll(this Type x) {
+            return x.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+        }
+        public static bool ImplementsInterface(this Type x, Type interfaceType) {
+            return x.GetInterfaces().Contains(interfaceType);
         }
 
 
         public static void CreateDirectories(string directory) {
-            var first = Path.GetFileName(directory);
             var last = Path.GetDirectoryName(directory);
             if (!Directory.Exists(last)) CreateDirectories(last);
             Directory.CreateDirectory(directory);
@@ -109,16 +113,6 @@ namespace Csml {
                 return Path.GetDirectoryName(sourceFilePath);
             }
 
-            public static Dictionary<object, object> BackupStorage;
-            public static T Backup<T>(Func<T> func) {
-                if (BackupStorage == null) BackupStorage = new Dictionary<object, object>();
-                if (BackupStorage.ContainsKey(func)) {
-                    return (T)BackupStorage[func];
-                }
-                T result = func();
-                BackupStorage.Add(func, result);
-                return (T)result;
-            }
 
         }
 

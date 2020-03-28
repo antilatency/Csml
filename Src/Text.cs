@@ -7,7 +7,33 @@ using System.Text.RegularExpressions;
 namespace Csml {
     public sealed class Text: Text<Text> {
 
-        private Text() { }
+        public Text(string s) :base(s) {}
+        public Text(FormattableString formattableString) : base(formattableString) { }
+
+
+        //public static implicit operator Text(FormattableString x) => new Text(x);
+    }
+
+    public sealed class Paragraph : Text<Paragraph> {
+        public Paragraph(string s) : base(s) { }
+        public Paragraph(FormattableString formattableString) : base(formattableString) { }
+
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            yield return HtmlNode.CreateNode("<div>").Do(x=> {
+                x.Add(base.Generate(context));
+                x.AddClass("text");
+            });
+        }
+    }
+
+
+
+    public class Text<T> : Collection<T> where T : Text<T> {
+        //private Func<object> 
+        public string Format;
+
+        protected Text() { }
+
         public Text(string s) {
             Format = s;
         }
@@ -30,16 +56,10 @@ namespace Csml {
             }
 
         }
-        public static implicit operator Text(FormattableString x) => new Text(x);
 
-    }
-
-    public class Text<T> : Collection<T> where T : Text<T> {
-        //private Func<object> 
-        public string Format;
-
-        
-
+        public override string ToString() {
+            return string.Format(Format, Elements.Select(x=>x.ToString()));
+        }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
             Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Trim('\n').Split('\n');

@@ -6,7 +6,7 @@ using HtmlAgilityPack;
 
 namespace Csml {
 
-    public class ReferenceContainer: IElement {
+    /*public class ReferenceContainer: IElement {
         private Dictionary<Language, IElement> translations;
         private Dictionary<Language, IElement> Translations {
             get {
@@ -50,12 +50,54 @@ namespace Csml {
             }            
         }
 
+    }*/
+
+    public class MultiLanguageGroup : Element<MultiLanguageGroup> {
+        public string Title => PropertyName.Replace("_", " ").Trim(' ');
+        //private Dictionary<Language, IElement> Translations = new Dictionary<Language, IElement>();
+
+        public override void AfterInitialization(object parent, string propertyName, PropertyInfo propertyInfo) {
+            if (parent == null) {
+                Log.Error.OnObject(this, $"static {nameof(MultiLanguageGroup)} not allowed", ErrorCode.StaticNotAllowed);
+            }
+            base.AfterInitialization(parent, propertyName, propertyInfo);
+        }
+
+
+
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            var properties = PropertyInfo.DeclaringType
+                .GetPropertiesAll();
+            
+            var page = properties
+                .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(Parent) as IPage)
+                .FirstOrDefault(x=>x.NameWithoutLanguage == NameWithoutLanguage);
+            if (page != null) {
+                foreach (var i in page.Generate(context)) {
+                    yield return i;
+                }
+                yield break;
+            }
+
+            var elements = properties
+                .Where(x => x.PropertyType.ImplementsInterface(typeof(IElement)))
+                .Select(x => x.GetValue(Parent) as IElement)
+                .Where(x => x.NameWithoutLanguage == NameWithoutLanguage);
+            var element = elements.FirstOrDefault(x => x.Language == context.Language);
+            foreach (var l in Language.All) {
+                if (element != null) break;
+                element = elements.FirstOrDefault(x => x.Language == l);
+            }
+            if (element != null) {
+                foreach (var i in element.Generate(context)) {
+                    yield return i;
+                }
+            }
+        }        
     }
 
 
-
-
-    public class Name<T> where T : Name<T> {       
+ /*   public class MultiLanguageGroup<T> where T : MultiLanguageGroup<T> {       
 
         public static ReferenceContainer referenceContainer;
         public static ReferenceContainer Reference {
@@ -74,8 +116,8 @@ namespace Csml {
                 .Where(x => x.FieldType == typeof(Language)).Select(x=>(Language)x.GetValue(null));
 
             foreach (var l in languages) {
-                if (name == l.name) return l;
-                if (name.EndsWith('_' + l.name)) return l;
+                if (name == l.Name) return l;
+                if (name.EndsWith('_' + l.Name)) return l;
             }
             return null;
         }
@@ -105,6 +147,6 @@ namespace Csml {
         }
 
 
-    }
+    }*/
 
 }
