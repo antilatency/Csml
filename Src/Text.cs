@@ -24,6 +24,8 @@ namespace Csml {
                 x.AddClass("text");
             });
         }
+
+
     }
 
 
@@ -58,7 +60,7 @@ namespace Csml {
         }
 
         public override string ToString() {
-            return string.Format(Format, Elements.Select(x=>x.ToString()));
+            return string.Format(Format, Elements.Select(x=>x.ToString()).ToArray());
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {

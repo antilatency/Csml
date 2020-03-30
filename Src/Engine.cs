@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Csml {
 
-    public static class Engine {
+    /*public static class Engine {
 
         public static void Process<R>() {
             try {
@@ -29,23 +29,7 @@ namespace Csml {
                 m.Invoke(null, new object[0]);
             }
         }
-
-        /*static void AssignUrls<R>() {
-            var fields = typeof(R).GetNestedTypes().SelectMany(x => x.GetFields());
-            foreach (var f in fields) {
-                if (f is IPage) { 
-                    
-                }
-            }
-        }*/
-
-        static Exception GetDeepestException(Exception e) {
-            if (e.InnerException == null) {
-                return e;
-            } else {
-                return GetDeepestException(e.InnerException);
-            }
-        }
+        
 
         static void CheckForInstanceFields<T>(){
             //typeof(T).GetFields()
@@ -64,20 +48,8 @@ namespace Csml {
                     File.Copy(i, dest, true);
             }
 
-            /*var fields = typeof(R).GetNestedTypes().SelectMany(x => x.GetFields(BindingFlags.Static | BindingFlags.Public));
-            foreach (var f in fields) {
-                var value = f.GetValue(null);
-                (value as IPage)?.Create(context);
-            }*/
-
-            /*var names = typeof(R).GetProperties().Where(x => x.PropertyType == typeof(Name));
-            foreach (var n in names) {
-                var value = f.GetValue(null);
-                (value as IPage)?.Create(context);
-            }*/
-
         }
 
 
-    }
+    }*/
 }

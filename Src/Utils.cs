@@ -53,7 +53,12 @@ namespace Csml {
             return string.Join("", nodes.Select(x => x.OuterHtml));
         }
 
-
+        public static T Single<T>(this IEnumerable<T> source) {
+            if (source.Count() == 1) {
+                return source.First();
+            }
+            throw new ArgumentException("Use of Single assumes that collection contains only one element.");
+        }
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
             foreach (var item in source) {
                 action(item);
@@ -100,6 +105,13 @@ namespace Csml {
             Directory.CreateDirectory(directory);
         }
 
+        public static Exception GetDeepestException(Exception e) {
+            if (e.InnerException == null) {
+                return e;
+            } else {
+                return GetDeepestException(e.InnerException);
+            }
+        }
 
         public static class Static {
             /*public static string Class(string name) {

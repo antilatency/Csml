@@ -13,7 +13,7 @@ namespace Csml {
 
 
     public class Context {
-
+        
         public string SourceRootDirectory { get; set; }
         public string OutputRootDirectory { get; set; }
 
@@ -26,7 +26,8 @@ namespace Csml {
         public string SubDirectory { get; set; }
 
         public Language Language { get; set; }
-        public HtmlDocument Page { get; set; }
+        public HtmlDocument CurrentHtmlDocument { get; set; }
+        public IMaterial CurrentMaterial { get; set; }
         public HtmlNode Head { get; set; }
 
 
@@ -66,40 +67,35 @@ namespace Csml {
         }
 
 
-        public Context BeginPage(Action<HtmlDocument> modifyPage) {
+        public void BeginPage() {
 
-            Page = new HtmlDocument();
-            Page.OptionUseIdAttribute = true;
-            Page.DocumentNode.AppendChild(HtmlNode.CreateNode("<!DOCTYPE html>"));
-            var html = Page.DocumentNode.AppendChild(Page.CreateElement("html"));
-            Head = html.AppendChild(Page.CreateElement("head"));
+            CurrentHtmlDocument = new HtmlDocument();
+            CurrentHtmlDocument.OptionUseIdAttribute = true;
+            CurrentHtmlDocument.DocumentNode.AppendChild(HtmlNode.CreateNode("<!DOCTYPE html>"));
+            var html = CurrentHtmlDocument.DocumentNode.AppendChild(CurrentHtmlDocument.CreateElement("html"));
+            Head = html.AppendChild(CurrentHtmlDocument.CreateElement("head"));
             
             //<BASE>
             //head.AppendChild(HtmlNode.CreateNode($"<base href=\"{BaseUri}\">"));
 
 
-            var body = html.AppendChild(Page.CreateElement("body"));
+            var body = html.AppendChild(CurrentHtmlDocument.CreateElement("body"));
 
             if (AutoReload) {
                 Head.AppendChild(HtmlNode.CreateNode("<meta http-equiv=\"refresh\" content=\"1\">"));
             }
 
-            modifyPage(Page);
-            return this;
+
         }
 
-        public Context EndPage(string outputFilePath) {
+        public void EndPage(string outputFilePath) {
             if (string.IsNullOrEmpty(outputFilePath)) {
                 throw new ArgumentException("outputFilePath is empty");
             }
             Utils.CreateDirectories(OutputDirectory);
-
             var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
-
-            Page.Save(outputFileAbsolutePath);
-
-            Page = null;
-            return this;
+            CurrentHtmlDocument.Save(outputFileAbsolutePath);
+            CurrentHtmlDocument = null;
         }
 
 

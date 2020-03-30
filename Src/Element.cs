@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using HtmlAgilityPack;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Csml {
     public interface IInfo {
@@ -27,6 +28,7 @@ namespace Csml {
         public IEnumerable<HtmlNode> Generate(Context context);
         public string NameWithoutLanguage { get; }
         public Language Language { get; }
+        public List<IElement> Translations { get; }
     }
 
     public class Element<T> : IPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
@@ -69,6 +71,8 @@ namespace Csml {
             }
         }
 
+        List<IElement> IElement.Translations => Translations?.Select(x => x as IElement).ToList();
+
         public List<T> Translations {
             get {
                 if (Language == null) return null;
@@ -88,7 +92,7 @@ namespace Csml {
                         }
                     }
                 }
-                return result;
+                return (result.Count == 0)?null:result;
             }
         }
 
@@ -120,8 +124,6 @@ namespace Csml {
         public virtual IEnumerable<HtmlNode> Generate(Context context) {
             yield break;
         }
-
-        
 
 
     }

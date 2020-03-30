@@ -63,7 +63,9 @@ namespace Csml {
             base.AfterInitialization(parent, propertyName, propertyInfo);
         }
 
-
+        public override string ToString() {
+            return Title;
+        }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
             var properties = PropertyInfo.DeclaringType

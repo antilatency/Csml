@@ -5,6 +5,11 @@ using System.Linq;
 
 namespace Csml {
 
+    
+
+    public sealed class Collection : Collection<Collection> {
+    }
+
     public class Collection<T>: LazyCollection<T> where T : Collection<T> {
         private List<IElement> List = new List<IElement>();
 
