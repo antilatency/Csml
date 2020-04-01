@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace Csml {
     public sealed class Code : Code<Code> {
@@ -42,19 +43,54 @@ namespace Csml {
         }
 
         public T GetClass(string className) {
+            return GetClass("", className);
+        }
+
+        public static string Untab(SyntaxNode node) {
+            var codeFragment = node.ToFullString();
+            if (node.HasLeadingTrivia) {
+                var tabs = node.GetLeadingTrivia().ToString();
+                StringBuilder stringBuilder = new StringBuilder();
+                using (StringReader reader = new StringReader(codeFragment)) {
+                    string line = string.Empty;
+                    do {
+                        line = reader.ReadLine();
+                        if (line != null) {
+                            if (line.StartsWith(tabs))
+                                line = line.Substring(tabs.Length);
+                            stringBuilder.AppendLine(line);
+                        }
+
+                    } while (line != null);
+                }
+                return stringBuilder.ToString();
+            } else {
+                return codeFragment;
+            }            
+        }
+
+        public T GetClass(string namespaceName, string className) {
             var syntaxTree = CSharpSyntaxTree.ParseText(Source);
             var root = syntaxTree.GetRoot();
-            var members = root.GetType().GetProperty("Members")?.GetValue(root);
+            SyntaxList<MemberDeclarationSyntax> members = (SyntaxList<MemberDeclarationSyntax>)root.GetType().GetProperty("Members")?.GetValue(root);
             if (members == null) {
                 Log.Error.OnCaller($"Invalid code fragment.");
             }
-            var membersTyped = (SyntaxList<MemberDeclarationSyntax>)members;
-            var c = membersTyped.OfType<ClassDeclarationSyntax>().Where(x => x.Identifier.ValueText == className).FirstOrDefault();
+            ClassDeclarationSyntax c = null;
+
+            if (!string.IsNullOrEmpty(namespaceName)) {
+                foreach (var n in members.OfType<NamespaceDeclarationSyntax>().Where(x => x.Name.ToString() == namespaceName)) {
+                    c = n.Members.OfType<ClassDeclarationSyntax>().Where(x => x.Identifier.ValueText == className).FirstOrDefault();
+                    if (c != null) break;
+                }
+
+            } else { 
+                c = members.OfType<ClassDeclarationSyntax>().Where(x => x.Identifier.ValueText == className).FirstOrDefault();
+            }
             if (c == null) {
                 Log.Error.OnCaller($"Class {className} not found.");
             }
-
-            return (T)Activator.CreateInstance(typeof(T), new object[] { c.ToString() });
+            return (T)Activator.CreateInstance(typeof(T), new object[] { Untab(c) });
         }
 
 
@@ -63,19 +99,18 @@ namespace Csml {
         }
 
 
-        public T GetMethod(CompilationUnitSyntax compilationUnit, string className, string methodName) {
+        public T GetMethod(string methodName) {
             var syntaxTree = CSharpSyntaxTree.ParseText(Source);
             var root = syntaxTree.GetRoot();
+            SyntaxList<MemberDeclarationSyntax> members = (SyntaxList<MemberDeclarationSyntax>)root.GetType().GetProperty("Members")?.GetValue(root);
 
-            var c = compilationUnit.Members.OfType<ClassDeclarationSyntax>().Where(x=>x.Identifier.ValueText == className).FirstOrDefault();
-            if (c == null) {
-                Log.Error.OnCaller($"Class {className} not found.");
-            }
-            var m = c.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Identifier.ValueText == methodName).FirstOrDefault();
+            var m = members.OfType<MethodDeclarationSyntax>().Where(x => x.Identifier.ValueText == methodName).FirstOrDefault();
             if (m == null) {
                 Log.Error.OnCaller($"Methid {methodName} not found.");
             }
-            return new Code<T>(m.ToString()) as T;
+
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { Untab(m) });
         }
     }
 }
