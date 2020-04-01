@@ -25,11 +25,7 @@ namespace Csml {
         private List<KeyValuePair<int, string>> Mips;
         private float Aspect = 1;
         public Image(string filePath) {
-            if (Path.IsPathRooted(filePath)) {
-                SourcePath = filePath;
-            } else {
-                SourcePath = Path.GetFullPath(filePath, Path.GetDirectoryName(CallerSourceFilePath));
-            }
+            SourcePath = ConvertPathToAbsolute(filePath);
         }
 
         /*private ImageCodecInfo GetEncoder(ImageFormat format) {

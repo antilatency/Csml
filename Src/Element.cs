@@ -126,6 +126,26 @@ namespace Csml {
         }
 
 
+
+
+        //Utils
+        public string ConvertPathToAbsolute(string filePath) {
+            if (Path.IsPathRooted(filePath)) {
+                return filePath;
+            } else {
+                return Path.GetFullPath(filePath, Path.GetDirectoryName(CallerSourceFilePath));
+            }
+        }
+
+        /*public string ReadAllText(string path) {
+            File.ReadAllText
+        }*/
+
+
+
+
+
+
     }
 
 }

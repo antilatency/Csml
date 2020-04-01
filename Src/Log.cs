@@ -6,10 +6,11 @@ using System.Text.RegularExpressions;
 namespace Csml {
 
     public enum ErrorCode {
-        LanguageNotDefined = 0,
-        WrongTranslationType = 1,
+        Unassigned = 0,
+        LanguageNotDefined = 1,
+        WrongTranslationType = 2,
 
-        StaticNotAllowed = 2
+        StaticNotAllowed = 3
     }
 
 
@@ -100,6 +101,12 @@ namespace Csml {
             } else {
                 Print("Unknown", 0, logType, message, code);
             }            
+        }
+
+        public void OnCaller(string message, ErrorCode code = ErrorCode.Unassigned) {
+            var stackTrace = new StackTrace(true);
+            var frame = stackTrace.GetFrame(2);
+            Print(frame.GetFileName(), frame.GetFileLineNumber(), logType, message, code);
         }
 
         public void OnException(Exception e) {

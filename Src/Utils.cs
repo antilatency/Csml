@@ -10,6 +10,10 @@ using HtmlAgilityPack;
 namespace Csml {
     public static class Utils {
 
+        
+
+
+
         public static FormattableString Simplify(this FormattableString formattableString) {
             var format = formattableString.Format;
             var arguments = formattableString.GetArguments();
