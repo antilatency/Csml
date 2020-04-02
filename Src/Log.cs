@@ -103,6 +103,12 @@ namespace Csml {
             }            
         }
 
+        public void On(string path, int line, string message, ErrorCode code = ErrorCode.Unassigned) {
+            var stackTrace = new StackTrace(true);
+            var frame = stackTrace.GetFrame(2);
+            Print(path, line, logType, message, code);
+        }
+
         public void OnCaller(string message, ErrorCode code = ErrorCode.Unassigned) {
             var stackTrace = new StackTrace(true);
             var frame = stackTrace.GetFrame(2);
