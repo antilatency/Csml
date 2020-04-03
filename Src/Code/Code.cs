@@ -20,12 +20,12 @@ namespace Csml {
 
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            if (Source is GithubFile) {
+            if (Source is GitHub.File) {
                 var lineSpan = GetLineSpan();
                 yield return HtmlNode.CreateNode("<a>").Do(x => {
                     x.AddClass("github-link");
                     x.SetAttributeValue("target", "_blank");
-                    var href = (Source as GithubFile).content.Result[0].HtmlUrl;
+                    var href = (Source as GitHub.File).HtmlUri;
                     
                     if (lineSpan.HasValue) {
                         x.SetAttributeValue("href", $"{href}#L{lineSpan.Value.Start.Value + 1}-L{lineSpan.Value.End.Value + 1}");
