@@ -5,10 +5,14 @@ using System.Linq;
 using System.Security.Cryptography;
 using HtmlAgilityPack;
 using ImageMagick;
-using static Csml.Utils.Static;
 
 namespace Csml {
+
+    public partial class ImageInfo : Scope<ImageInfo> { 
     
+    }
+
+
     public sealed class Image : Image<Image> {
         public Image(string filePath) : base(filePath) {
             
@@ -24,7 +28,7 @@ namespace Csml {
         private string Hash;
         private List<KeyValuePair<int, string>> Mips;
         private float Aspect = 1;
-        public Image(string filePath) {
+        public Image(string filePath):base() {
             SourcePath = ConvertPathToAbsolute(filePath);
         }
 
@@ -43,7 +47,7 @@ namespace Csml {
         private void GenerateResources(Context context) {
             var directory = Path.Combine(context.OutputRootDirectory, context.GetSubDirectoryFromSourceAbsoluteFilePath(SourcePath));
             var extension = Path.GetExtension(SourcePath);
-            Utils.CreateDirectories(directory);
+            Utils.CreateDirectory(directory);
 
             Hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
 
@@ -89,7 +93,7 @@ namespace Csml {
             if (File.Exists(roiFilePath)) {
                 var script = context.Head.ChildNodes.Where(x => x.Id == "resizeRoiImages").FirstOrDefault();
                 if (script == null) {
-                    var code = File.ReadAllText(Path.Combine(Path.ChangeExtension(ThisFilePath(), null), "resizeRoiImages.html"));
+                    var code = File.ReadAllText(Path.Combine(Path.ChangeExtension(Utils.ThisFilePath(), null), "resizeRoiImages.html"));
                     context.Head.Add(code);
                 }
                 var roi = File.ReadAllText(roiFilePath);

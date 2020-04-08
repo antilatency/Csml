@@ -103,11 +103,19 @@ namespace Csml {
         }
 
 
-        public static void CreateDirectories(string directory) {
+        public static void CreateDirectory(string directory) {
             var last = Path.GetDirectoryName(directory);
-            if (!Directory.Exists(last)) CreateDirectories(last);
+            if (!Directory.Exists(last)) CreateDirectory(last);
             Directory.CreateDirectory(directory);
         }
+
+
+        public static void DeleteDirectory(string directory) {
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, true);
+        }
+
+        
 
         public static Exception GetDeepestException(Exception e) {
             if (e.InnerException == null) {
@@ -117,20 +125,14 @@ namespace Csml {
             }
         }
 
-        public static class Static {
-            /*public static string Class(string name) {
-                return $"class = \"{name}\"";
-            }*/
-
-            public static string ThisFilePath([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
-                return sourceFilePath;
-            }
-            public static string ThisDirectory([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
-                return Path.GetDirectoryName(sourceFilePath);
-            }
-
-
+        public static string ThisFilePath([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
+            return sourceFilePath;
         }
+        public static string ThisDirectory([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "") {
+            return Path.GetDirectoryName(sourceFilePath);
+        }
+
+
 
     }
 

@@ -53,14 +53,31 @@ namespace Csml {
     }*/
 
     public class MultiLanguageGroup : Element<MultiLanguageGroup> {
-        public string Title => PropertyName.Replace("_", " ").Trim(' ');
+        protected string UserDefinedTitle = null;
+        public string Title {
+            get {
+                if (UserDefinedTitle != null)
+                    return UserDefinedTitle;
+                else {
+                    var n = PropertyName;
+                    if (n == null) throw new Exception("TODO: Log.Error");
+                    return n.Replace("_", " ").Trim(' ');
+                }
+            }
+        }
+
+        public MultiLanguageGroup(string title = null) {
+            UserDefinedTitle = title;
+        }
+
+        //public string Title => PropertyName.Replace("_", " ").Trim(' ');
         //private Dictionary<Language, IElement> Translations = new Dictionary<Language, IElement>();
 
-        public override void AfterInitialization(object parent, string propertyName, PropertyInfo propertyInfo) {
-            if (parent == null) {
+        public override void AfterInitialization(PropertyInfo propertyInfo) {
+            /*if (parent == null) {
                 Log.Error.OnObject(this, $"static {nameof(MultiLanguageGroup)} not allowed", ErrorCode.StaticNotAllowed);
-            }
-            base.AfterInitialization(parent, propertyName, propertyInfo);
+            }*/
+            base.AfterInitialization(propertyInfo);
         }
 
         public override string ToString() {
@@ -72,7 +89,8 @@ namespace Csml {
                 .GetPropertiesAll();
             
             var page = properties
-                .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(Parent) as IPage)
+                .Where(x=>x.GetGetMethod(true).IsStatic)
+                .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(null) as IPage)
                 .FirstOrDefault(x=>x.NameWithoutLanguage == NameWithoutLanguage);
             if (page != null) {
                 foreach (var i in page.Generate(context)) {
@@ -83,7 +101,7 @@ namespace Csml {
 
             var elements = properties
                 .Where(x => x.PropertyType.ImplementsInterface(typeof(IElement)))
-                .Select(x => x.GetValue(Parent) as IElement)
+                .Select(x => x.GetValue(null) as IElement)
                 .Where(x => x.NameWithoutLanguage == NameWithoutLanguage);
             var element = elements.FirstOrDefault(x => x.Language == context.Language);
             foreach (var l in Language.All) {

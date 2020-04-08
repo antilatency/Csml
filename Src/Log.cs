@@ -85,7 +85,7 @@ namespace Csml {
         }
 
         public void Here(
-            string message, ErrorCode code,
+            string message, ErrorCode code = ErrorCode.Unassigned,
             //[System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) {

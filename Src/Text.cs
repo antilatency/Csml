@@ -53,7 +53,13 @@ namespace Csml {
                         Format = Format.Replace("{" + i + "}", "{" + filteredArgumentID + "}");
                     }
                 } else {
-                    Format = Format.Replace("{" + i + "}", arguments[i].ToString());
+                    var text = "";
+                    if (arguments[i] is Func<string>) {
+                        text = (arguments[i] as Func<string>)();
+                    } else {
+                        text = arguments[i].ToString();
+                    }
+                    Format = Format.Replace("{" + i + "}", text);
                 }
             }
 
@@ -64,7 +70,7 @@ namespace Csml {
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Trim('\n').Split('\n');
+            Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Split('\n');
 
             var args = Elements.ToArray();
             //var args = Elements.Select(x => x.Generate(context).ToHtml()).ToArray();
@@ -94,7 +100,8 @@ namespace Csml {
             if (pose < Format.Length) {
                 var text = Format.Substring(pose, Format.Length - pose);
                 var lines = lineSplit(text);
-                yield return HtmlNode.CreateNode(lines[0]);
+                if (!string.IsNullOrEmpty(lines[0]))
+                    yield return HtmlNode.CreateNode(lines[0]);
                 for (int l = 1; l < lines.Length; l++) {
                     yield return HtmlNode.CreateNode("<br>");
                     if (!string.IsNullOrEmpty(lines[l]))

@@ -31,20 +31,17 @@ namespace Csml {
         public List<IElement> Translations { get; }
     }
 
-    public class Element<T> : IPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
+    public class Element<T> : GetOnce.IStaticPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
         public Type ImplementerType => typeof(T);
         public string CallerSourceFilePath { get; set; }
         public int CallerSourceLineNumber { get; set; }
 
         //public string Name { get; set; }//Auto assign by Engine
 
-        protected string PropertyName;
-        protected object Parent;
+        protected string PropertyName => PropertyInfo?.Name;
         protected PropertyInfo PropertyInfo;
 
-        public virtual void AfterInitialization(object parent, string propertyName, PropertyInfo propertyInfo) {
-            Parent = parent;
-            PropertyName = propertyName;
+        public virtual void AfterInitialization(PropertyInfo propertyInfo) {
             PropertyInfo = propertyInfo;            
         }
 
@@ -78,12 +75,12 @@ namespace Csml {
                 if (Language == null) return null;
                 var properties = PropertyInfo.DeclaringType.GetProperties(
                     BindingFlags.Public | BindingFlags.NonPublic
-                    | BindingFlags.Static | ((Parent==null)?0:BindingFlags.Instance));
+                    | BindingFlags.Static);
 
                 var result = new List<T>();
                 foreach (var p in properties) {
                     if (p.PropertyType == typeof(T)) {
-                        var v = p.GetValue(Parent);
+                        var v = p.GetValue(null);
                         if ((v is T) && (v!=this)) {
                             var vt = v as T;
                             if (vt.NameWithoutLanguage == NameWithoutLanguage) {

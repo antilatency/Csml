@@ -23,8 +23,8 @@ namespace Csml {
         }
 
         public static List<Language> All => typeof(Language)
-                .GetProperties(BindingFlags.Static | BindingFlags.Public)
-                .Where(x => x.PropertyType == typeof(Language)).Select(x => (Language)x.GetValue(null)).ToList();
+                .GetFields(BindingFlags.Static | BindingFlags.Public)
+                .Where(x => x.FieldType == typeof(Language)).Select(x => (Language)x.GetValue(null)).ToList();
 
 
         public override string ToString() {

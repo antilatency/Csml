@@ -45,12 +45,22 @@ namespace Csml {
             }
         }
 
+        public void CleanOutputRootDirectory() {
+            Utils.DeleteDirectory(OutputRootDirectory);            
+        }
 
-        
+        public void CopyAssets() {
+            foreach (var i in AssetsToCopy) {
+                var dest = Path.Combine(OutputRootDirectory, Context.GetContentRelativePath(i, SourceRootDirectory));
+                Utils.CreateDirectory(Path.GetDirectoryName(dest));
+                if (!File.Exists(dest) | ForceRebuildAssets)
+                    File.Copy(i, dest, true);
+            }
+        }
 
 
-        
-        public Context IncrementSubDirectory(string value) {
+
+    public Context IncrementSubDirectory(string value) {
             SubDirectory =
                 GetContentRelativePath(
                     Path.GetFullPath(Path.Combine(SourceRootDirectory, SubDirectory, value)),
@@ -92,7 +102,7 @@ namespace Csml {
             if (string.IsNullOrEmpty(outputFilePath)) {
                 throw new ArgumentException("outputFilePath is empty");
             }
-            Utils.CreateDirectories(OutputDirectory);
+            Utils.CreateDirectory(OutputDirectory);
             var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
             CurrentHtmlDocument.Save(outputFileAbsolutePath);
             CurrentHtmlDocument = null;

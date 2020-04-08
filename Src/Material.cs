@@ -1,4 +1,3 @@
-using static Csml.Utils.Static;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -60,6 +59,7 @@ namespace Csml {
             return Title;
         }
 
+        public string SubDirectory => PropertyInfo.DeclaringType.FullName.Replace("+",".").Replace(".", "/");
 
         public void Create(Context patentContext) {
             var context = patentContext.Copy();
@@ -68,7 +68,7 @@ namespace Csml {
             if (pageLanguage == null) pageLanguage = Language.All[0];
 
 
-            context.SubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
+            context.SubDirectory = SubDirectory;// context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
 
             var outputPath = Path.Combine(context.OutputDirectory, $"{NameWithoutLanguage}_{context.Language}.html");
             context.CurrentMaterial = this;
@@ -128,7 +128,7 @@ namespace Csml {
 
         public Uri GetUriRelativeToRoot(Context context) {
             var thisSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
-            Uri uri = new Uri(context.BaseUri, Path.Combine(thisSubDirectory, $"{NameWithoutLanguage}_{context.Language}.html"));
+            Uri uri = new Uri(context.BaseUri, Path.Combine(SubDirectory, $"{NameWithoutLanguage}_{context.Language}.html"));
             return uri;
         }
 
