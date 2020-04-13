@@ -11,28 +11,31 @@ namespace Csml {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
     public class Scope {
         protected Scope() { }
-        
 
-
-        public static IEnumerable<Scope> All {
+        public static IEnumerable<Type> AllStatic {
             get {
                 return Assembly.GetExecutingAssembly().GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(Scope)))
-                    .Where(x => !x.IsGenericType)
-                    .Select(x=> (Scope)Activator.CreateInstance(x));
-                    /*.Select(x => x.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
-                    .Where(x => !x.PropertyType.IsGenericParameter)
-                    .Select(x => x.GetValue(null) as Scope);*/
-               
+                    .Where(x => !x.IsGenericType);
+            }
+        }
+
+        public static IEnumerable<Scope> All {
+            get {
+                return AllStatic.Select(x=> (Scope)Activator.CreateInstance(x));
             }
         }
         
         private IEnumerable<IPage> GetPages() {
-            var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
-
+            //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
+            
             return GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-                .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(this) as IPage);
+            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => {                
+                    return x.GetValue(this) as IPage;
+                }
+                );
+            
         }
 
         public void Verify() {
@@ -84,6 +87,17 @@ namespace Csml {
             }
 
         }
+
+        public static void EnableGetOnce() {
+
+            AllStatic.ForEach(x => 
+
+                x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
+
+
+                );
+        }
+    
     }
 
 
@@ -94,7 +108,7 @@ namespace Csml {
         //public static T Instance => new T();
         public static Type ThisType => typeof(T);
 
-        static Scope() {
+        public static new void EnableGetOnce() {
             var nonStaticMembers = ThisType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (nonStaticMembers.Count() > 0) {
                 Log.Error.Here($"Scope {ThisType.Name} contains non static prooperty {nonStaticMembers.First().Name}");

@@ -31,6 +31,17 @@ namespace Csml {
         public List<IElement> Translations { get; }
     }
 
+    public class Element : Element<Element> {
+        private Func<Context,HtmlNode> Generator { get; set; }
+        public Element(Func<Context, HtmlNode> generator) {
+            Generator = generator;
+        }
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            yield return Generator(context);
+        }
+    }
+
+
     public class Element<T> : GetOnce.IStaticPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
         public Type ImplementerType => typeof(T);
         public string CallerSourceFilePath { get; set; }

@@ -77,10 +77,10 @@ namespace Csml {
                 x.Element("html").Do(x => {
                     x.SetAttributeValue("lang", pageLanguage.Name);
                     x.Element("head").Do(x => {
-                        x.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/Css/main.css\">");
+                        x.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/style.css\">");
                         x.Add("<meta charset=\"utf-8\">");
                         x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
-                        x.Add($"<title>{Title}</title>");
+                        x.Add($"<title>{context.WatchPrefix+Title}</title>");
                     });
                     x.Element("body").Do(x => {
                         if ((Template ?? DefaultTemplate)?.Pre != null) x.Add((Template ?? DefaultTemplate).Pre.Generate(context));

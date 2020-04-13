@@ -8,10 +8,11 @@ using ImageMagick;
 
 namespace Csml {
 
-    public partial class ImageInfo : Scope<ImageInfo> { 
-    
+    public class ImageCache : Cache<ImageCache> {
+        public float Aspect = 1;
+        public string Roi = "";
+        public Dictionary<int, string> Mips;
     }
-
 
     public sealed class Image : Image<Image> {
         public Image(string filePath) : base(filePath) {
@@ -25,9 +26,12 @@ namespace Csml {
         public string SourcePath { get; private set; }        
         
         private bool IsResourcesGenerated = false;
-        private string Hash;
-        private List<KeyValuePair<int, string>> Mips;
-        private float Aspect = 1;
+        private string OutputSubDirectory;
+
+        protected ImageCache ImageCache;
+
+
+
         public Image(string filePath):base() {
             SourcePath = ConvertPathToAbsolute(filePath);
         }
@@ -45,33 +49,62 @@ namespace Csml {
         }*/
 
         private void GenerateResources(Context context) {
-            var directory = Path.Combine(context.OutputRootDirectory, context.GetSubDirectoryFromSourceAbsoluteFilePath(SourcePath));
+            OutputSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(SourcePath);
+            var outputDirectory = Path.Combine(context.OutputRootDirectory, OutputSubDirectory);
             var extension = Path.GetExtension(SourcePath);
-            Utils.CreateDirectory(directory);
+            Utils.CreateDirectory(outputDirectory);
+            var hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
 
-            Hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
+            ImageCache = ImageCache.Load(hash);
 
-            Mips = new List<KeyValuePair<int, string>>();
+            Func<int, string> outputFileName = x => hash + x + extension;
+            Func<int, string> outputPath = x => Path.Combine(ImageCache.Directory, outputFileName(x));
 
-            var i = new MagickImage(SourcePath);
-            Aspect = i.Height / (float)i.Width;
+            if (ImageCache == null) {
+                ImageCache = ImageCache.Create(hash);
+                ImageCache.Mips = new Dictionary<int, string>();
 
-            Func<int, string> outputPath = x=>Path.Combine(directory, Hash+x+extension);
-            var w = i.Width;
+                var i = new MagickImage(SourcePath);
+                ImageCache.Aspect = i.Height / (float)i.Width;
 
-            if (!File.Exists(outputPath(w)) | context.ForceRebuildImages)
-                File.Copy(SourcePath, outputPath(w));            
-            Mips.Add(new KeyValuePair<int, string>(w, outputPath(w)));
+                
+                var w = i.Width;
 
-            while (MinImageWidth <= w / 2) {
-                if (!File.Exists(outputPath(w / 2)) | context.ForceRebuildImages) {
+                File.Copy(SourcePath, outputPath(w));
+                ImageCache.Mips.Add(w, outputFileName(w));
+
+                while (MinImageWidth <= w / 2) {
                     i.Resize(i.Width / 2, i.Height / 2);
-                    
-                    i.Write(outputPath(i.Width));
+                    i.Write(outputPath(i.Width));                    
+                    w /= 2;
+                    ImageCache.Mips.Add(w, outputFileName(w));
                 }
-                w /= 2;
-                Mips.Add(new KeyValuePair<int, string>(w, outputPath(w)));
-            }         
+                
+
+                var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
+                if (File.Exists(roiFilePath)) {
+                    ImageCache.Roi = File.ReadAllText(roiFilePath);
+                }
+
+                ImageCache.Save();
+            }
+
+
+            /*using (new Stopwatch("Parallel image copy")) {
+                ImageCache.Mips.AsParallel().ForAll(x => {
+                    var source = Path.Combine(ImageCache.Directory, x.Value);
+                    var dest = Path.Combine(outputDirectory, x.Value);
+                    File.Copy(source, dest);
+                });
+            }*/
+            //using (new Stopwatch("Sequental image copy")) {
+                foreach (var f in ImageCache.Mips) {
+                    var source = Path.Combine(ImageCache.Directory, f.Value);
+                    var dest = Path.Combine(outputDirectory, f.Value);
+                    File.Copy(source, dest);
+                }
+            //}
+
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
@@ -81,35 +114,29 @@ namespace Csml {
             }
 
             var result = HtmlNode.CreateNode("<img></img>");
-            result.SetAttributeValue("src", Mips[0].Value);
+            Uri uri = new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, ImageCache.Mips.Values.ToArray()[0]));
+            result.SetAttributeValue("src", uri.ToString());
             
             
             foreach (var e in base.Generate(context)) {
                 result.AppendChild(e);
             }
 
-
-            var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
-            if (File.Exists(roiFilePath)) {
+            if (!string.IsNullOrEmpty(ImageCache.Roi)) {
                 var script = context.Head.ChildNodes.Where(x => x.Id == "resizeRoiImages").FirstOrDefault();
                 if (script == null) {
                     var code = File.ReadAllText(Path.Combine(Path.ChangeExtension(Utils.ThisFilePath(), null), "resizeRoiImages.html"));
                     context.Head.Add(code);
                 }
-                var roi = File.ReadAllText(roiFilePath);
-
                 result = result.Wrap("<div>");
 
                 result.SetAttributeValue("style", "overflow: hidden;");
-                result.SetAttributeValue("data-roi", roi);
-                result.SetAttributeValue("data-aspect", Aspect.ToString());
+                result.SetAttributeValue("data-roi", ImageCache.Roi);
+                result.SetAttributeValue("data-aspect", ImageCache.Aspect.ToString());
                 result.SetAttributeValue("class", "roi-image-container");
             }
 
             result.AddClass("image");
-
-
-
             yield return result;
         }
     }

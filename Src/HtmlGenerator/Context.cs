@@ -13,8 +13,12 @@ namespace Csml {
 
 
     public class Context {
-        
+        public bool Watch { get; set; }
+        public string WatchPrefix => Watch? "f5me.":"";
+        public List<string> FontDirectories = new List<string>();
+
         public string SourceRootDirectory { get; set; }
+
         public string OutputRootDirectory { get; set; }
 
         public HashSet<string> AssetsToCopy { get; set; } = new HashSet<string>();
