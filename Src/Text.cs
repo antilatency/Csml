@@ -3,6 +3,7 @@ using System.Linq;
 using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Csml {
     public sealed class Text: Text<Text> {
@@ -69,7 +70,114 @@ namespace Csml {
             return string.Format(Format, Elements.Select(x=>x.ToString()).ToArray());
         }
 
+        public class MarkdownState {
+            public bool Code;
+            public List<HtmlNode> Result = new List<HtmlNode>();
+            public HtmlNode currentElement;
+            public void Add(HtmlNode node) {
+                if (currentElement == null) {
+                    Result.Add(node);
+                } else {
+                    currentElement.AppendChild(node);
+                }
+            }
+            
+            public void AddText(string text) {
+                if (string.IsNullOrEmpty(text)) return;
+                var node = HtmlNode.CreateNode(text);
+                Add(node);
+            }
+            public void Br() {
+                var node = HtmlNode.CreateNode("<br>");
+                Add(node);
+            }
+
+            public bool Tag(string name) {
+                var close = (currentElement != null) && (currentElement.Name == name);
+
+                if (close) {
+                    Close();
+                    return false;
+                }
+                var node = HtmlNode.CreateNode($"<{name}>");
+                if (currentElement == null) {
+                    Result.Add(node);
+                } else {
+                    currentElement.AppendChild(node);
+                    
+                }
+                currentElement = node;
+                return true;
+            }
+            private void Close() {
+                currentElement = currentElement.ParentNode;
+                if (currentElement.Name == "#document") currentElement = null;
+            }
+        }
+
+        public void Markdown(string text, MarkdownState markdownState) {
+            //StringBuilder stringBuilder = new StringBuilder();
+            int start = 0;
+            int length = 0;
+
+            //List<HtmlNode> result = new List<HtmlNode>();
+
+            Action subText =()=>{
+                markdownState.AddText(text.Substring(start, length));
+                start += length;
+                length = 0;
+            };
+
+            /*Func<string, bool> Is = x => {
+                if (markdownState.currentElement == null) return false;
+                return markdownState.currentElement.Name == x;
+            };*/
+
+
+            for(int i=0; i < text.Length; i++ ) {
+                Char c = text[i];
+                if (c == '\r') continue;
+                if (c == '\n') {
+                    subText();
+                    markdownState.Br();
+                    start = i+1;
+                    continue;
+                };
+                if (c == '`') {
+                    subText();
+                    markdownState.Code = markdownState.Tag("code");
+                    start = i + 1;
+                    continue;
+                };
+                if (!markdownState.Code) { 
+                    if (c == '*') {
+                        subText();
+                        markdownState.Tag("b");
+                        start = i + 1;
+                        continue;
+                    };
+                    if (c == '_') {
+                        subText();
+                        markdownState.Tag("i");
+                        start = i + 1;
+                        continue;
+                    };
+                    if (c == '~') {
+                        subText();
+                        markdownState.Tag("s");
+                        start = i + 1;
+                        continue;
+                    };
+                }
+                length++;
+            }
+            subText();
+            //return markdownState.Result;
+
+        }
+
         public override IEnumerable<HtmlNode> Generate(Context context) {
+            MarkdownState markdownState = new MarkdownState();
             Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Split('\n');
 
             var args = Elements.ToArray();
@@ -77,27 +185,32 @@ namespace Csml {
             Regex regex = new Regex(@"{(\d+):?(.*?)}");
             var matches = regex.Matches(Format);
             var pose = 0;
-            
-            for (int i = 0; i < matches.Count; i++) {
-                if (pose < matches[i].Index) {
-                    var text = Format.Substring(pose, matches[i].Index - pose);
-                    var lines = lineSplit(text);
+            var numMatches = matches.Count;
+            for (int i = 0; i < numMatches+1; i++) {
+                var endOfRegion = i == numMatches ? Format.Length : matches[i].Index;
+                if (pose < endOfRegion) {
+                    var text = Format.Substring(pose, endOfRegion - pose);
+                    Markdown(text, markdownState);
+
+                    /*var lines = lineSplit(text);
                     if (!string.IsNullOrEmpty(lines[0]))
                         yield return HtmlNode.CreateNode(lines[0]);
                     for (int l = 1; l < lines.Length; l++) {
                         yield return HtmlNode.CreateNode("<br>");
                         if (!string.IsNullOrEmpty(lines[l]))
                             yield return HtmlNode.CreateNode(lines[l]);
-                    }
+                    }*/
                 }
-
-                foreach (var eg in args[i].Generate(context))
-                    yield return eg;
-
-                pose = matches[i].Index + matches[i].Length;
+                if (i != numMatches) {
+                    foreach (var eg in args[i].Generate(context))
+                        markdownState.Add(eg);
+                    pose = matches[i].Index + matches[i].Length;
+                }
             }
 
-            if (pose < Format.Length) {
+            return markdownState.Result;
+
+            /*if (pose < Format.Length) {
                 var text = Format.Substring(pose, Format.Length - pose);
                 var lines = lineSplit(text);
                 if (!string.IsNullOrEmpty(lines[0]))
@@ -107,7 +220,7 @@ namespace Csml {
                     if (!string.IsNullOrEmpty(lines[l]))
                         yield return HtmlNode.CreateNode(lines[l]);
                 }
-            }
+            }*/
         }
 
     }

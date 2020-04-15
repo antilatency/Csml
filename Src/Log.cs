@@ -92,9 +92,14 @@ namespace Csml {
             Print(sourceFilePath, sourceLineNumber, logType, message, code);
         }
 
+        public void Unknown(
+            string message, ErrorCode code = ErrorCode.Unassigned) {
+            Print("<unknown>", 0, logType, message, code);
+        }
+
         public void OnObject(
             object obj,
-            string message, ErrorCode code) {
+            string message, ErrorCode code = ErrorCode.Unassigned) {
             if (obj is IInfo) {
                 IInfo callerInfo = obj as IInfo;
                 Print(callerInfo.CallerSourceFilePath, callerInfo.CallerSourceLineNumber, logType, message, code);

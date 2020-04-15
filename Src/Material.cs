@@ -78,6 +78,7 @@ namespace Csml {
                     x.SetAttributeValue("lang", pageLanguage.Name);
                     x.Element("head").Do(x => {
                         x.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/style.css\">");
+                        x.Add($"<script src=\"{context.BaseUri}/script.js\">");
                         x.Add("<meta charset=\"utf-8\">");
                         x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
                         x.Add($"<title>{context.WatchPrefix+Title}</title>");
@@ -127,7 +128,6 @@ namespace Csml {
         }
 
         public Uri GetUriRelativeToRoot(Context context) {
-            var thisSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(CallerSourceFilePath);
             Uri uri = new Uri(context.BaseUri, Path.Combine(SubDirectory, $"{NameWithoutLanguage}_{context.Language}.html"));
             return uri;
         }

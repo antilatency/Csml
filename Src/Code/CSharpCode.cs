@@ -21,7 +21,7 @@ namespace Csml {
     
 
     public class CSharpCode<T> : Code<T> where T : CSharpCode<T> {
-        protected override ColorCode.ILanguage ProgrammingLanguage => ColorCode.Languages.CSharp;
+        protected override ProgrammingLanguage GetProgrammingLanguage() => ProgrammingLanguage.CSharp;
         public SyntaxNode ParsedSource;
 
         public CSharpCode(SyntaxNode parsedSource) {

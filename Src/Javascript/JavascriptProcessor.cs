@@ -7,7 +7,7 @@ class JavascriptProcessor : FileProcessor {
 
     public JavascriptProcessor(string sourceRootDirectory, string outputRootDirectory) :
         base(sourceRootDirectory, outputRootDirectory) {
-
+        Error = Update();
     }
     IEnumerable<string> GetFilePathes() {
         return Directory.GetFiles(SourceRootDirectory, "*.js", SearchOption.AllDirectories);
@@ -27,18 +27,22 @@ class JavascriptProcessor : FileProcessor {
         observableFiles = CaptureModificationTimes(GetFilePathes());
         NUglify.JavaScript.CodeSettings codeSettings = new NUglify.JavaScript.CodeSettings();
         //NUglify.SymbolMap
-        //codeSettings.
+        using (StreamWriter writer = new StreamWriter(Path.Combine(OutputRootDirectory, "script.map"))) {
 
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach (var i in observableFiles.Keys) {
-            //var subPath = Path.GetRelativePath(SourceRootDirectory, i);
-            var js = File.ReadAllText(i);
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var i in observableFiles.Keys) {
+                //var subPath = Path.GetRelativePath(SourceRootDirectory, i);
+                var js = File.ReadAllText(i);
 
-            var u = NUglify.Uglify.Js(js);
+                var u = NUglify.Uglify.Js(js, i);
 
-            stringBuilder.AppendLine(u.Code);
+                stringBuilder.AppendLine(u.Code);
+
+            }
+
+            File.WriteAllText(Path.Combine(OutputRootDirectory, "script.js"),stringBuilder.ToString());
         }
-        File.WriteAllText(Path.Combine(OutputRootDirectory, "script.js"),stringBuilder.ToString());
+        
         return null;
     }
 }

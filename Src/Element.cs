@@ -58,6 +58,7 @@ namespace Csml {
 
         public string NameWithoutLanguage {
             get {
+                
                 if (PropertyName == null) return null;
                 foreach (var l in Language.All) {
                     var languageSuffix = "_" + l.Name;
@@ -138,6 +139,10 @@ namespace Csml {
 
         //Utils
         public string ConvertPathToAbsolute(string filePath) {
+            return ConvertPathToAbsolute(filePath, CallerSourceFilePath);
+        }
+
+        public static string ConvertPathToAbsolute(string filePath, string CallerSourceFilePath) {
             if (Path.IsPathRooted(filePath)) {
                 return filePath;
             } else {

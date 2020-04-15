@@ -1,6 +1,7 @@
 using Csml;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,20 +23,20 @@ namespace Csml {
 
         public static IEnumerable<Scope> All {
             get {
-                return AllStatic.Select(x=> (Scope)Activator.CreateInstance(x));
+                return AllStatic.Select(x => (Scope)Activator.CreateInstance(x));
             }
         }
-        
+
         private IEnumerable<IPage> GetPages() {
             //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
-            
+
             return GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => {                
-                    return x.GetValue(this) as IPage;
-                }
+            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => {
+                return x.GetValue(this) as IPage;
+            }
                 );
-            
+
         }
 
         public void Verify() {
@@ -43,9 +44,9 @@ namespace Csml {
         }
 
         public void Generate(Context context) {
-            
 
-            
+
+
 
             var pages = GetPages();
 
@@ -89,35 +90,45 @@ namespace Csml {
         }
 
         public static void EnableGetOnce() {
-
-            AllStatic.ForEach(x => 
-
-                x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
+            var allStatic = AllStatic;
+            foreach (var i in allStatic) {
+                /*var thisType = i.GetProperty("ThisType", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+                if (i != thisType) { 
+                    Log.Error.Unknown($"Type {i.FullName} is invalid: Scope types must pass final type to generic parameter of parent type.")
+                }*/
+            }
+            AllStatic.ForEach(x =>
+                EnableGetOnce(x)
+                //x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
 
 
                 );
         }
-    
-    }
-
-
-    
-    public class Scope<T> : Scope where T: Scope<T>, new(){
-
-        //[GetOnce]
-        //public static T Instance => new T();
-        public static Type ThisType => typeof(T);
-
-        public static new void EnableGetOnce() {
-            var nonStaticMembers = ThisType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        public static void EnableGetOnce(Type t) {
+            var nonStaticMembers = t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (nonStaticMembers.Count() > 0) {
-                Log.Error.Here($"Scope {ThisType.Name} contains non static prooperty {nonStaticMembers.First().Name}");
+                Log.Error.Here($"Scope {t.Name} contains non static prooperty {nonStaticMembers.First().Name}");
             }
 
-            foreach (var p in ThisType.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+            foreach (var p in t.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
                 GetOnce.WrapPropertyGetter(p);
             }
         }
 
+        public static Type ThisType{
+            get {
+                StackTrace stackTrace = new StackTrace(true);
+                var result = stackTrace.GetFrame(1).GetMethod().DeclaringType;
+                return result;
+            }
+        }
     }
+
+
+    
+    //public class Scope<T> : Scope where T: Scope<T>, new(){
+    //}
+
+
+
 }
