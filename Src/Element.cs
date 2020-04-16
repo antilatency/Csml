@@ -125,6 +125,7 @@ namespace Csml {
                     if (fprew != null) {
                         CallerSourceFilePath = fprew.GetFileName();
                         CallerSourceLineNumber = fprew.GetFileLineNumber();
+                        break;
                     }                    
                 }
             }

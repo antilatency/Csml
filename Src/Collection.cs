@@ -17,11 +17,11 @@ namespace Csml {
             Elements = List;
         }
 
-        public T Add(IElement element) {
+        public virtual T Add(IElement element) {
             List.Add(element);
             return this as T;
         }
-        public T Add(FormattableString formattableString) {
+        public virtual T Add(FormattableString formattableString) {
             List.Add( new Paragraph(formattableString));
             return this as T;
         }
