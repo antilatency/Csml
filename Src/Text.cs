@@ -84,7 +84,8 @@ namespace Csml {
             
             public void AddText(string text) {
                 if (string.IsNullOrEmpty(text)) return;
-                var node = HtmlNode.CreateNode(text);
+                var node = HtmlNode.CreateNode(HtmlDocument.HtmlEncode(text));
+
                 Add(node);
             }
             public void Br() {
