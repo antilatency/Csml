@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading;
 using HtmlAgilityPack;
 
 namespace Csml {
@@ -105,8 +106,12 @@ namespace Csml {
 
         public static void CreateDirectory(string directory) {
             var last = Path.GetDirectoryName(directory);
-            if (!Directory.Exists(last)) CreateDirectory(last);
+            if (!Directory.Exists(last)) CreateDirectory(last);            
             Directory.CreateDirectory(directory);
+            while (!Directory.Exists(directory)) {
+                Thread.Sleep(10);
+            }
+            
         }
 
 

@@ -78,7 +78,7 @@ namespace Csml {
                 while (MinImageWidth <= w / 2) {
                     i.Resize(i.Width / 2, i.Height / 2);
                     i.Write(outputPath(i.Width));                    
-                    w /= 2;
+                    w = i.Width;
                     ImageCache.Mips.Add(w, outputFileName(w));
                 }
                 
