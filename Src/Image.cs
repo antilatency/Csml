@@ -53,6 +53,8 @@ namespace Csml {
             var outputDirectory = Path.Combine(context.OutputRootDirectory, OutputSubDirectory);
             var extension = Path.GetExtension(SourcePath);
             Utils.CreateDirectory(outputDirectory);
+
+            //TODO: file not found
             var hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
 
             ImageCache = ImageCache.Load(hash);
@@ -114,7 +116,8 @@ namespace Csml {
             }
 
             var result = HtmlNode.CreateNode("<img></img>");
-            Uri uri = new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, ImageCache.Mips.Values.ToArray()[0]));
+            var biggestMip = ImageCache.Mips.First();
+            Uri uri = new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, biggestMip.Value));
             result.SetAttributeValue("src", uri.ToString());
             
             
@@ -134,6 +137,8 @@ namespace Csml {
                 result.SetAttributeValue("data-roi", ImageCache.Roi);
                 result.SetAttributeValue("data-aspect", ImageCache.Aspect.ToString());
                 result.SetAttributeValue("class", "roi-image-container");
+            } else {
+                result.SetAttributeValue("style", $"height: auto; max-width: {biggestMip.Key}px; margin: 0 auto 0 auto;");
             }
 
             result.AddClass("image");
