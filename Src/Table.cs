@@ -91,6 +91,10 @@ namespace Csml {
         TableHeader[] Headers = new TableHeader[0];
         public int UserDefinedNumColumns;
         public float RowHeaderWidth = 0.1f;
+
+        public Table(params string[] headers) {
+            Headers = headers.Select(x=>new Column(x)).ToArray();
+        }
         public Table(params TableHeader[] headers) {
             Headers = headers;
         }
@@ -128,7 +132,7 @@ namespace Csml {
                 numColumns = numElements / numRows + (((numElements % numRows) > 0) ? 1 : 0);
             }
 
-            if (numColumns*numRows == 0) {
+            if ((numColumns == 0) & (numRows == 0)) {
                 numColumns = Math.Max(1,UserDefinedNumColumns);
                 alignments = Enumerable.Repeat(TextAlignment.Center, numColumns).ToArray();
             }
