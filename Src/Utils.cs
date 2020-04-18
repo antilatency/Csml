@@ -106,9 +106,10 @@ namespace Csml {
 
         public static void CreateDirectory(string directory) {
             var last = Path.GetDirectoryName(directory);
-            if (!Directory.Exists(last)) CreateDirectory(last);            
-            Directory.CreateDirectory(directory);
-            while (!Directory.Exists(directory)) {
+            if (!Directory.Exists(last)) CreateDirectory(last);
+            DirectoryInfo directoryInfo = Directory.CreateDirectory(directory);
+            
+            while (!directoryInfo.Exists) {
                 Thread.Sleep(10);
             }
             
@@ -116,8 +117,13 @@ namespace Csml {
 
 
         public static void DeleteDirectory(string directory) {
-            if (Directory.Exists(directory))
+            if (Directory.Exists(directory)) {
                 Directory.Delete(directory, true);
+                while (Directory.Exists(directory)) {
+                    Thread.Sleep(10);
+                }
+            }
+                
         }
 
         

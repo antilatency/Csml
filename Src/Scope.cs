@@ -7,11 +7,9 @@ using System.Linq;
 using System.Reflection;
 
 namespace Csml {
+    public class ScopeUtils {
 
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
-    public class Scope {
-        protected Scope() { }
+        public static BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         public static IEnumerable<Type> AllStatic {
             get {
@@ -27,15 +25,50 @@ namespace Csml {
             }
         }
 
+        public static void EnableGetOnce() {
+            var allStatic = AllStatic;
+            foreach (var i in allStatic) {
+                /*var thisType = i.GetProperty("ThisType", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+                if (i != thisType) { 
+                    Log.Error.Unknown($"Type {i.FullName} is invalid: Scope types must pass final type to generic parameter of parent type.")
+                }*/
+            }
+            AllStatic.ForEach(x =>
+                EnableGetOnce(x)
+                //x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
+
+
+                );
+        }
+
+        public static void EnableGetOnce(Type t) {
+            var nonStaticMembers = t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (nonStaticMembers.Count() > 0) {
+                Log.Error.Here($"Scope {t.Name} contains non static prooperty {nonStaticMembers.First().Name}");
+            }
+
+            foreach (var p in t.GetProperties(PropertyBindingFlags)) {
+                GetOnce.WrapPropertyGetter(p);
+            }
+        }
+
+
+
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
+    public class Scope {
+        
+        protected Scope() { }
+
+        
+
         private IEnumerable<IPage> GetPages() {
             //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
 
-            return GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => {
-                return x.GetValue(this) as IPage;
-            }
-                );
+            return GetType().GetProperties(ScopeUtils.PropertyBindingFlags)
+            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(this) as IPage);
 
         }
 
@@ -45,15 +78,9 @@ namespace Csml {
 
         public void Generate(Context context) {
 
-
-
-
             var pages = GetPages();
-
             var languages = Language.All;
-
             var matrix = new Dictionary<string, Dictionary<Language, IPage>>();
-
             foreach (var p in pages) {
                 if (!matrix.ContainsKey(p.NameWithoutLanguage)) {
                     matrix.Add(p.NameWithoutLanguage, new Dictionary<Language, IPage>());
@@ -89,31 +116,8 @@ namespace Csml {
 
         }
 
-        public static void EnableGetOnce() {
-            var allStatic = AllStatic;
-            foreach (var i in allStatic) {
-                /*var thisType = i.GetProperty("ThisType", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
-                if (i != thisType) { 
-                    Log.Error.Unknown($"Type {i.FullName} is invalid: Scope types must pass final type to generic parameter of parent type.")
-                }*/
-            }
-            AllStatic.ForEach(x =>
-                EnableGetOnce(x)
-                //x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
+        
 
-
-                );
-        }
-        public static void EnableGetOnce(Type t) {
-            var nonStaticMembers = t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (nonStaticMembers.Count() > 0) {
-                Log.Error.Here($"Scope {t.Name} contains non static prooperty {nonStaticMembers.First().Name}");
-            }
-
-            foreach (var p in t.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
-                GetOnce.WrapPropertyGetter(p);
-            }
-        }
 
         public static Type ThisType{
             get {

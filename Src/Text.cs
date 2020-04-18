@@ -16,7 +16,7 @@ namespace Csml {
     }
 
     public sealed class Paragraph : Text<Paragraph> {
-        public Paragraph(string s) : base(s) { }
+        //public Paragraph(string s) : base(s) { }
         public Paragraph(FormattableString formattableString) : base(formattableString) { }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
