@@ -159,7 +159,11 @@ namespace Csml {
             rgba |= argb >> 24;
             return rgba;
         }
-
+        public static uint ToRgb(this Color color) {
+            var argb = (uint)color.ToArgb();
+            uint rgba = argb & 0xFFFFFF;
+            return rgba;
+        }
     }
 
 

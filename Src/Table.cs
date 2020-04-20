@@ -167,7 +167,7 @@ namespace Csml {
             
 
             return HtmlNode.CreateNode("<table>").Do(x => {
-                x.Add("<colgroup>").Do(x=> {
+                /*x.Add("<colgroup>").Do(x=> {
                     float normalizer = numColumns;
                     if (depthRows > 0) {
                         normalizer += RowHeaderWidth;
@@ -183,7 +183,7 @@ namespace Csml {
                         });
                     }
 
-                });
+                });*/
 
                 x.Add("<tbody>").Do(x => {
                     for (int r = 0; r < matrix.GetLength(1); r++) {
