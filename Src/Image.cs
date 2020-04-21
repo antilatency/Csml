@@ -138,7 +138,7 @@ namespace Csml {
                 result.SetAttributeValue("data-aspect", ImageCache.Aspect.ToString());
                 result.SetAttributeValue("class", "roi-image-container");
             } else {
-                result.SetAttributeValue("style", $"height: auto; max-width: {biggestMip.Key}px; margin: 0 auto 0 auto;");
+                result.SetAttributeValue("style", $"max-width: {biggestMip.Key}px;");
             }
 
             result.AddClass("image");
