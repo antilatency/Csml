@@ -70,6 +70,12 @@ namespace Csml {
                 action(item);
             }
         }
+        public static IEnumerable<T> Visit<T>(this IEnumerable<T> source, Action<T> action) {
+            foreach (var item in source) {
+                action(item);
+                yield return item;
+            }
+        }
 
         public static HtmlNode Add(this HtmlNode x, string html) {
             return x.AppendChild(HtmlNode.CreateNode(html));            
@@ -120,7 +126,7 @@ namespace Csml {
         public static void DeleteDirectory(string directory) {
             if (Directory.Exists(directory)) {
                 Directory.Delete(directory, true);
-                while (Directory.Exists(directory)) {
+                while (Directory.Exists(directory)) {                    
                     Thread.Sleep(10);
                 }
             }
@@ -164,6 +170,20 @@ namespace Csml {
             uint rgba = argb & 0xFFFFFF;
             return rgba;
         }
+
+
+        public static FormattableString ToFormattableString(this string x) {
+            return $"{x}";
+        }
+
+        public static Text ToText(this FormattableString x) {
+            return new Text(x);
+        }
+        public static Paragraph ToParagraph(this FormattableString x) {
+            return new Paragraph(x);
+        }
+
+
     }
 
 

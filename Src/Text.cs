@@ -8,7 +8,7 @@ using System.Text;
 namespace Csml {
     public sealed class Text: Text<Text> {
 
-        public Text(string s) :base(s) {}
+        //public Text(string s) :base(s) {}
         public Text(FormattableString formattableString) : base(formattableString) { }
 
 
@@ -37,9 +37,9 @@ namespace Csml {
 
         protected Text() { }
 
-        public Text(string s) {
+        /*public Text(string s) {
             Format = s;
-        }
+        }*/
 
         public Text(FormattableString formattableString) {
             Format = formattableString.Format;
@@ -134,14 +134,15 @@ namespace Csml {
                 return markdownState.currentElement.Name == x;
             };*/
 
+            text = text.Replace((char)1, '{').Replace((char)2, '}');
 
-            for(int i=0; i < text.Length; i++ ) {
+            for (int i = 0; i < text.Length; i++) {
                 Char c = text[i];
                 if (c == '\r') continue;
                 if (c == '\n') {
                     subText();
                     markdownState.Br();
-                    start = i+1;
+                    start = i + 1;
                     continue;
                 };
                 if (c == '`') {
@@ -182,7 +183,8 @@ namespace Csml {
             Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Split('\n');
 
             var args = Elements.ToArray();
-            //var args = Elements.Select(x => x.Generate(context).ToHtml()).ToArray();
+            Format = Format.Replace("{{", "\u0001").Replace("}}","\u0002");
+
             Regex regex = new Regex(@"{(\d+):?(.*?)}");
             var matches = regex.Matches(Format);
             var pose = 0;

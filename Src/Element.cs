@@ -42,6 +42,129 @@ namespace Csml {
     }
 
 
+    public class Modify : Element<Modify> {
+        private IElement Element;
+        Func<Context, IEnumerable<HtmlNode>> Modifier;
+        //public Func<Context, IEnumerable<HtmlNode>> ModifierClone => (Func<Context, IEnumerable<HtmlNode>>)Modifier.Clone();
+        
+        public Modify(FormattableString formattableString): this(new Text(formattableString)){
+            
+        }
+
+        public Modify(IElement element = null) {
+            if (element == null) {
+                Element = new Element(context => HtmlNode.CreateNode("<span>"));
+            } else {
+                Element = element;
+            }            
+            Modifier = (context) => Element.Generate(context);
+        }
+
+        public Modify ContentReplace(FormattableString replacement) {
+            return ContentReplace(new Text(replacement));
+        }
+        public Modify ContentReplace(IElement replacement) {
+            var prevModifier = Modifier;
+            Modifier = (context) =>
+                prevModifier(context).Visit(x => {
+                    x.InnerHtml = "";
+                    x.Add(replacement.Generate(context));
+                });
+            return this;
+        }
+        public HtmlNode WrapTextToSpan(HtmlNode x) {
+            if (x.Name == "#text") {
+                return HtmlNode.CreateNode($"<span>{x.InnerText}</span>");
+            }
+            return x;
+        }
+
+        public Modify AddClasses(params string[] classes) {
+            var prevModifier = Modifier;
+            Modifier = (context) =>
+                prevModifier(context).Select(x => {
+                    x = WrapTextToSpan(x);                    
+                    foreach (var c in classes)
+                        x.AddClass(c);
+                    return x;
+                });
+            return this;
+        }
+
+        public Modify SetAttributeValue(string name, string value) {
+            var prevModifier = Modifier;
+            Modifier = (context) =>
+                prevModifier(context).Select(x => {
+                    x = WrapTextToSpan(x);
+                    x.SetAttributeValue(name, value);
+                    return x;
+                });
+            return this;
+        }
+
+        public Modify WrapIfMany(string tag) {
+            var prevModifier = Modifier;
+            Modifier = (context) => {
+                var previous = prevModifier(context);
+                var count = previous.Count();
+                if (count == 1) return previous;
+                return new HtmlNode[] {
+                    HtmlNode.CreateNode($"<{tag}>").Add(previous)
+                };
+            };
+            return this;
+        }
+
+        public Modify Wrap(string tag) {
+            var prevModifier = Modifier;
+            Modifier = (context) => {
+                return new HtmlNode[] {
+                    HtmlNode.CreateNode($"<{tag}>").Add(prevModifier(context))
+                };
+            };
+            return this;
+        }
+
+        public Modify Tag(string tag) {
+            var prevModifier = Modifier;
+            Modifier = (context) => prevModifier(context).Visit(x => {
+                x.Name = tag;
+                }
+                ) ;
+            return this;
+        }
+
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            var generated = Modifier(context);
+            foreach (var g in generated) yield return g;
+        }
+
+    }
+
+    public class ContentReplace : Element<ContentReplace> {
+        private IElement Element;
+        private IElement Replacement;
+        public ContentReplace(IElement element, FormattableString replacement) {
+            Element = element;
+            Replacement = new Text(replacement);
+        }
+        public ContentReplace(IElement element, IElement replacement) {
+            Element = element;
+            Replacement = replacement;
+        }
+        public override IEnumerable<HtmlNode> Generate(Context context) {
+            yield return Element.Generate(context).Single().Do(x=> {
+                x.InnerHtml = "";
+                x.Add(Replacement.Generate(context));
+            });
+        }
+        public override string ToString() {
+            return Replacement.ToString();
+        }
+    }
+
+
+
     public class Element<T> : GetOnce.IStaticPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
         public Type ImplementerType => typeof(T);
         public string CallerSourceFilePath { get; set; }

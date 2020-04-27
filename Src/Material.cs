@@ -145,15 +145,23 @@ namespace Csml {
             return this as T;
         }
 
-
+        bool loop = false;
         public override IEnumerable<HtmlNode> Generate(Context context) {
             var translated = SelectTranslation(context);
+
+            var planeDescription = "";
+            if (!loop) {
+                loop = true;
+                planeDescription = string.Join("", translated.Description.Generate(context).Select(x => x.InnerText));
+                loop = false;
+            }
+
 
             yield return HtmlNode.CreateNode("<a>").Do(x => {
                 x.AddClass("text");
                 x.SetAttributeValue("href", GetUriRelativeToRoot(context).ToString());
                 x.InnerHtml = translated.Title;
-                x.SetAttributeValue("title", translated.Description.ToString());
+                x.SetAttributeValue("title", planeDescription);
             });
 
             //yield return HtmlNode.CreateNode($"<a class=\"text\" href=\"{GetUriRelativeToRoot(context)}\">{translated.Title}</a>");

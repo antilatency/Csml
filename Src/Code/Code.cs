@@ -122,11 +122,11 @@ namespace Csml {
 
             //https://github.com/WilliamABradley/ColorCode-Universal
 
-            var formatter = new ColorCode.HtmlFormatter();
+            var formatter = new ColorCode.HtmlClassFormatter();
 
             var html = formatter.GetHtmlString(code, LanguageToColorCode(GetProgrammingLanguage()));
             yield return HtmlNode.CreateNode(html).Do(x => {
-                x.Attributes.RemoveAll();
+                //x.Attributes.RemoveAll();
                 x.AddClass("code");
             });
         }

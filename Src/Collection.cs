@@ -5,15 +5,17 @@ using System.Linq;
 
 namespace Csml {
 
-    
+
 
     public sealed class Collection : Collection<Collection> {
+        public Collection(bool wrapStringToParagraph = true): base(wrapStringToParagraph) {}
     }
 
     public class Collection<T>: LazyCollection<T> where T : Collection<T> {
         private List<IElement> List = new List<IElement>();
-
-        public Collection(){
+        public bool WrapStringToParagraph;
+        public Collection(bool wrapStringToParagraph = true) {
+            WrapStringToParagraph = wrapStringToParagraph;
             Elements = List;
         }
 
@@ -22,7 +24,10 @@ namespace Csml {
             return this as T;
         }
         public virtual T Add(FormattableString formattableString) {
-            List.Add( new Paragraph(formattableString));
+            if (WrapStringToParagraph)
+                List.Add(new Paragraph(formattableString));
+            else
+                List.Add(new Text(formattableString));
             return this as T;
         }
 

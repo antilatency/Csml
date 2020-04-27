@@ -18,7 +18,7 @@ namespace Csml {
 
 
             public static IEnumerable<IElement> GetAllPages() {
-                var scopeTypes = GetTopLevelScopes();
+                var scopeTypes = ScopeUtils.AllStatic;// GetTopLevelScopes();
 
 
                 foreach (var t in scopeTypes) {
@@ -28,9 +28,10 @@ namespace Csml {
                         .Select(x=>x.GetValue(null) as MultiLanguageGroup);
                     if (multiLanguageGroups.Count() == 0) continue;
                     
-                    var listOfMultiLanguageGroups = new OrderedList()[multiLanguageGroups];
+                    var listOfMultiLanguageGroups = new UnorderedList()[multiLanguageGroups];
                     
-                    var element = new Paragraph($"{t.Name}{listOfMultiLanguageGroups}");
+                    var element = new Paragraph($"{t.FullName} materials: {listOfMultiLanguageGroups}");
+
 
                     yield return element;
                 }
