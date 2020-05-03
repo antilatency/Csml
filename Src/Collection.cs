@@ -32,18 +32,18 @@ namespace Csml {
         }
 
 
-        public static object SimplifyFormattableString(FormattableString formattableString) {
+        /*public static object SimplifyFormattableString(FormattableString formattableString) {
             if (formattableString.Format == "{0}") return formattableString.GetArgument(0);
             if (formattableString.ArgumentCount == 0) return formattableString.Format;
             return formattableString;
-        }
+        }*/
 
         public T this[FormattableString element] { get => Add(element); }
         public T this[IElement element] { get => Add(element); }
 
         public T this[IEnumerable<IElement> element] { get => Add(new LazyCollection(element)); }
 
-        public T this[Func<IEnumerable<IElement>> element] { get => Add(new LazyCollection(element())); }
+        //public T this[Func<IEnumerable<IElement>> element] { get => Add(new LazyCollection(element())); }
     }
 
 

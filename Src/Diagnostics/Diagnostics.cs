@@ -21,7 +21,7 @@ namespace Csml {
                 var scopeTypes = ScopeUtils.AllStatic;// GetTopLevelScopes();
 
 
-                foreach (var t in scopeTypes) {
+                /*foreach (var t in scopeTypes) {
                     var multiLanguageGroups = 
                         t.GetProperties(ScopeUtils.PropertyBindingFlags)
                         .Where(x => x.PropertyType == typeof(MultiLanguageGroup))
@@ -34,7 +34,8 @@ namespace Csml {
 
 
                     yield return element;
-                }
+                }*/
+                yield break;
             }
         }
 

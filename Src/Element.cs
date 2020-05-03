@@ -18,17 +18,25 @@ namespace Csml {
         public Type ImplementerType { get; }
     }
 
-    public interface IPage : IElement {
-        public void Create(Context context);
+    public interface IPage: ITranslatable {
+        public void Generate(Context context);
         public Uri GetUriRelativeToRoot(Context context);
         
     }
 
-    public interface IElement {
-        public IEnumerable<HtmlNode> Generate(Context context);
+    
+
+    public interface ITranslatable {
+        //
+        //
+        //public List<IElement> Translations { get; }
+    }
+
+    public interface IElement : ITranslatable {
         public string NameWithoutLanguage { get; }
+        public string PropertyPath { get; }
         public Language Language { get; }
-        public List<IElement> Translations { get; }
+        public IEnumerable<HtmlNode> Generate(Context context);        
     }
 
     public class Element : Element<Element> {
@@ -42,106 +50,8 @@ namespace Csml {
     }
 
 
-    public class Modify : Element<Modify> {
-        private IElement Element;
-        Func<Context, IEnumerable<HtmlNode>> Modifier;
-        //public Func<Context, IEnumerable<HtmlNode>> ModifierClone => (Func<Context, IEnumerable<HtmlNode>>)Modifier.Clone();
-        
-        public Modify(FormattableString formattableString): this(new Text(formattableString)){
-            
-        }
 
-        public Modify(IElement element = null) {
-            if (element == null) {
-                Element = new Element(context => HtmlNode.CreateNode("<span>"));
-            } else {
-                Element = element;
-            }            
-            Modifier = (context) => Element.Generate(context);
-        }
-
-        public Modify ContentReplace(FormattableString replacement) {
-            return ContentReplace(new Text(replacement));
-        }
-        public Modify ContentReplace(IElement replacement) {
-            var prevModifier = Modifier;
-            Modifier = (context) =>
-                prevModifier(context).Visit(x => {
-                    x.InnerHtml = "";
-                    x.Add(replacement.Generate(context));
-                });
-            return this;
-        }
-        public HtmlNode WrapTextToSpan(HtmlNode x) {
-            if (x.Name == "#text") {
-                return HtmlNode.CreateNode($"<span>{x.InnerText}</span>");
-            }
-            return x;
-        }
-
-        public Modify AddClasses(params string[] classes) {
-            var prevModifier = Modifier;
-            Modifier = (context) =>
-                prevModifier(context).Select(x => {
-                    x = WrapTextToSpan(x);                    
-                    foreach (var c in classes)
-                        x.AddClass(c);
-                    return x;
-                });
-            return this;
-        }
-
-        public Modify SetAttributeValue(string name, string value) {
-            var prevModifier = Modifier;
-            Modifier = (context) =>
-                prevModifier(context).Select(x => {
-                    x = WrapTextToSpan(x);
-                    x.SetAttributeValue(name, value);
-                    return x;
-                });
-            return this;
-        }
-
-        public Modify WrapIfMany(string tag) {
-            var prevModifier = Modifier;
-            Modifier = (context) => {
-                var previous = prevModifier(context);
-                var count = previous.Count();
-                if (count == 1) return previous;
-                return new HtmlNode[] {
-                    HtmlNode.CreateNode($"<{tag}>").Add(previous)
-                };
-            };
-            return this;
-        }
-
-        public Modify Wrap(string tag) {
-            var prevModifier = Modifier;
-            Modifier = (context) => {
-                return new HtmlNode[] {
-                    HtmlNode.CreateNode($"<{tag}>").Add(prevModifier(context))
-                };
-            };
-            return this;
-        }
-
-        public Modify Tag(string tag) {
-            var prevModifier = Modifier;
-            Modifier = (context) => prevModifier(context).Visit(x => {
-                x.Name = tag;
-                }
-                ) ;
-            return this;
-        }
-
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            var generated = Modifier(context);
-            foreach (var g in generated) yield return g;
-        }
-
-    }
-
-    public class ContentReplace : Element<ContentReplace> {
+    /*public class ContentReplace : Element<ContentReplace> {
         private IElement Element;
         private IElement Replacement;
         public ContentReplace(IElement element, FormattableString replacement) {
@@ -161,7 +71,7 @@ namespace Csml {
         public override string ToString() {
             return Replacement.ToString();
         }
-    }
+    }*/
 
 
 
@@ -172,6 +82,7 @@ namespace Csml {
 
         //public string Name { get; set; }//Auto assign by Engine
 
+        public string PropertyPath => PropertyInfo.DeclaringType.FullName.Replace("+", ".").Replace(".", "/");
         protected string PropertyName => PropertyInfo?.Name;
         protected PropertyInfo PropertyInfo;
 
@@ -203,9 +114,11 @@ namespace Csml {
             }
         }
 
-        List<IElement> IElement.Translations => Translations?.Select(x => x as IElement).ToList();
+        
 
-        public List<T> Translations {
+        //List<IElement> ITranslatable.Translations => Translations?.Select(x => x as IElement).ToList();
+
+        /*public List<T> Translations {
             get {
                 if (Language == null) return null;
                 var properties = PropertyInfo.DeclaringType.GetProperties(
@@ -226,12 +139,7 @@ namespace Csml {
                 }
                 return (result.Count == 0)?null:result;
             }
-        }
-
-
-
-
-
+        }*/
 
 
         private bool IsConstructorOfT(MethodBase method) {

@@ -12,22 +12,23 @@ namespace Csml {
 
 
 
-    public class Context {
+    public struct Context {
         public bool Watch { get; set; }
-        public string WatchPrefix => Watch? "f5me.":"";
-        public List<string> FontDirectories = new List<string>();
-
         public string SourceRootDirectory { get; set; }
-
         public string OutputRootDirectory { get; set; }
 
-        public HashSet<string> AssetsToCopy { get; set; } = new HashSet<string>();
+        public string WatchPrefix => Watch? "f5me.":"";
+
+        public HashSet<string> AssetsToCopy {
+            get;
+            set;
+        }
 
 
 
         public Uri BaseUri { get; set; }
 
-        public string SubDirectory { get; set; }
+        //public string SubDirectory { get; set; }
 
         public Language Language { get; set; }
         public HtmlDocument CurrentHtmlDocument { get; set; }
@@ -35,19 +36,16 @@ namespace Csml {
         public HtmlNode Head { get; set; }
 
 
-        public Context() {
-        }
 
-        public Context Copy() {
-            return new Context(this);
-        }
 
-        protected Context(Context other) {
+
+
+        /*protected Context(Context other) {
             var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(x=>x.CanWrite & x.CanRead);
             foreach (var p in properties) {
                 p.SetValue(this, p.GetValue(other));
             }
-        }
+        }*/
 
         public void CleanOutputRootDirectory() {
             Utils.DeleteDirectory(OutputRootDirectory);            
@@ -57,21 +55,10 @@ namespace Csml {
             foreach (var i in AssetsToCopy) {
                 var dest = Path.Combine(OutputRootDirectory, Context.GetContentRelativePath(i, SourceRootDirectory));
                 Utils.CreateDirectory(Path.GetDirectoryName(dest));
-                if (!File.Exists(dest) | ForceRebuildAssets)
-                    File.Copy(i, dest, true);
+                File.Copy(i, dest, true);
             }
         }
 
-
-
-    public Context IncrementSubDirectory(string value) {
-            SubDirectory =
-                GetContentRelativePath(
-                    Path.GetFullPath(Path.Combine(SourceRootDirectory, SubDirectory, value)),
-                    SourceRootDirectory
-                );
-            return this;
-        }
         public string GetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
             return GetContentRelativePath(directory, SourceRootDirectory);
 
@@ -95,20 +82,20 @@ namespace Csml {
 
             var body = html.AppendChild(CurrentHtmlDocument.CreateElement("body"));
 
-            if (AutoReload) {
+            /*if (AutoReload) {
                 Head.AppendChild(HtmlNode.CreateNode("<meta http-equiv=\"refresh\" content=\"1\">"));
-            }
+            }*/
 
 
         }
 
-        public void EndPage(string outputFilePath) {
-            if (string.IsNullOrEmpty(outputFilePath)) {
+        public void EndPage(string path) {
+            if (string.IsNullOrEmpty(path)) {
                 throw new ArgumentException("outputFilePath is empty");
             }
-            Utils.CreateDirectory(OutputDirectory);
-            var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
-            CurrentHtmlDocument.Save(outputFileAbsolutePath);
+            Utils.CreateDirectory(Path.GetDirectoryName(path));
+            //var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
+            CurrentHtmlDocument.Save(path);
             CurrentHtmlDocument = null;
         }
 
@@ -121,14 +108,14 @@ namespace Csml {
         }
 
 
-        public string SourceDirectory => Path.Combine(SourceRootDirectory, SubDirectory);
-        public string OutputDirectory => Path.Combine(OutputRootDirectory, SubDirectory);
+        //public string SourceDirectory => Path.Combine(SourceRootDirectory, SubDirectory);
+        //public string OutputDirectory => Path.Combine(OutputRootDirectory, SubDirectory);
 
 
-        public bool ForceRebuildAssets { get; set; } = true;
-        public bool ForceRebuildImages { get; set; } = false;
+        //public bool ForceRebuildAssets { get; set; } = true;
+        //public bool ForceRebuildImages { get; set; } = false;
 
-        public bool AutoReload { get; set; }
+        //public bool AutoReload { get; set; }
 
 
     }

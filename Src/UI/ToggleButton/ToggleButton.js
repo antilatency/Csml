@@ -3,7 +3,7 @@ var ToggleButton = {
 		var button = document.createElement('div');		
 		button.className = "button toggle"
 		button.onclick = function(){ToggleButton.Toggle(element,button)}					
-		button.appendChild(Behaviour.Create("Behaviour.PrintParent","string"));
+		
 		element.appendChild(button);
 	},	
 	Toggle: function(element,button){

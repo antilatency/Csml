@@ -32,7 +32,9 @@ class JavascriptProcessor : FileProcessor {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (var i in observableFiles.Keys) {
                 //var subPath = Path.GetRelativePath(SourceRootDirectory, i);
-                var js = File.ReadAllText(i);
+
+                
+                var js = Csml.Utils.ReadAllText(i);
 
                 var u = NUglify.Uglify.Js(js, i);
 

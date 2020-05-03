@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Csml;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 
 namespace Csml {
     public class Behaviour : Element<Behaviour> {
@@ -23,13 +24,12 @@ namespace Csml {
             Parameters = parameters;
         }
 
-        public static string MakeParameterList(object[] parameters) {
-            return string.Join(",", parameters.Select(x => {
-                if (x.GetType() == typeof(string)) {
-                    return "\"" + (string)x + "\"";
-                }
-                return x.ToString();
-            }));
+
+
+        public static string MakeParameterList(object[] parameters) {         
+
+
+            return string.Join(",", parameters.Select(x => JsonConvert.SerializeObject(x)));
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {

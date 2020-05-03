@@ -8,8 +8,7 @@ namespace Csml {
         public LanguageMenu() : base("nav", "language-menu") { }
 
 
-        public override IEnumerable<HtmlNode> Generate(Context parentContext) {
-            var context = parentContext.Copy();           
+        public override IEnumerable<HtmlNode> Generate(Context context) {
             yield return base.Generate(context).Single().Do(x => {
                 foreach (var l in Language.All) {
                     context.Language = l;

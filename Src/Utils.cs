@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -110,13 +111,33 @@ namespace Csml {
             return x.GetInterfaces().Contains(interfaceType);
         }
 
+        public static string ReadAllText(string path, int timeoutMs = 2000) {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            while(stopwatch.ElapsedMilliseconds < timeoutMs) {
+                try {
+                    return File.ReadAllText(path);
+                }
+                catch (System.IO.IOException) { 
+                    
+                }
+                Thread.Sleep(10);
+            }
+            Log.Error.OnCaller($"Failed to read file: {path}");
 
-        public static void CreateDirectory(string directory) {
+            return "";//will never happen
+        }
+
+        public static void CreateDirectory(string directory, int timeoutMs = 2000) {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             var last = Path.GetDirectoryName(directory);
             if (!Directory.Exists(last)) CreateDirectory(last);
-            DirectoryInfo directoryInfo = Directory.CreateDirectory(directory);
-            
+            DirectoryInfo directoryInfo = Directory.CreateDirectory(directory);            
             while (!directoryInfo.Exists) {
+                if (stopwatch.ElapsedMilliseconds > timeoutMs)
+                    Log.Error.OnCaller($"Failed to create directory: {directory}");
                 Thread.Sleep(10);
             }
             

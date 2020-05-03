@@ -9,7 +9,10 @@ using System.Reflection;
 namespace Csml {
     public class ScopeUtils {
 
-        public static BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        
+
+
+        public static BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
 
         public static IEnumerable<Type> AllStatic {
             get {
@@ -57,41 +60,55 @@ namespace Csml {
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
-    public class Scope {
-        
+    public partial class Scope {
+
         protected Scope() { }
 
         
 
-        private IEnumerable<IPage> GetPages() {
+        private IEnumerable<IMaterial> GetMaterials() {
             //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
 
             return GetType().GetProperties(ScopeUtils.PropertyBindingFlags)
-            .Where(x => x.PropertyType.ImplementsInterface(typeof(IPage))).Select(x => x.GetValue(this) as IPage);
+            .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial))).Select(x => x.GetValue(this) as IMaterial);
 
         }
 
         public void Verify() {
-            GetPages().ToList();
+            GetMaterials().ToList();
+        }
+
+        public ITemplate GetTemplate() {
+            var type = GetType();
+            while (type != null) {
+                var template = type
+                .GetProperty(nameof(Template), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                ?.GetValue(null) as ITemplate;
+                if (template != null) return template;
+
+                type = type.DeclaringType ?? typeof(Scope);
+            }
+            return null;
         }
 
         public void Generate(Context context) {
+            var template = GetTemplate();
 
-            var pages = GetPages();
+            var materials = GetMaterials();
             var languages = Language.All;
-            var matrix = new Dictionary<string, Dictionary<Language, IPage>>();
-            foreach (var p in pages) {
-                if (!matrix.ContainsKey(p.NameWithoutLanguage)) {
-                    matrix.Add(p.NameWithoutLanguage, new Dictionary<Language, IPage>());
+            var matrix = new Dictionary<string, Dictionary<Language, IMaterial>>();
+            foreach (var m in materials) {
+                if (!matrix.ContainsKey(m.NameWithoutLanguage)) {
+                    matrix.Add(m.NameWithoutLanguage, new Dictionary<Language, IMaterial>());
                 }
-                var n = matrix[p.NameWithoutLanguage];
-                if (p.Language == null) {
+                var n = matrix[m.NameWithoutLanguage];
+                if (m.Language == null) {
                     foreach (var l in languages) {
-                        n.Add(l, p);
+                        n.Add(l, m);
                     }
                 } else {
-                    n.Add(p.Language, p);
+                    n.Add(m.Language, m);
                 }
             }
 
@@ -106,11 +123,13 @@ namespace Csml {
             }
 
             foreach (var n in matrix) {
-                Log.Info.Here($"Generation Page {n.Key}");
+                //Log.Info.Here($"Generation Page {n.Key}");
                 foreach (var l in n.Value) {
-                    Log.Info.Here($"Generation Page {n.Key} context {l.Key}");
+                    //Log.Info.Here($"Generation Page {n.Key} context {l.Key}");
                     context.Language = l.Key;
-                    l.Value.Create(context);
+
+                    template.Generate(context, l.Value);
+                    //l.Value.Generate(context);
                 }
             }
 

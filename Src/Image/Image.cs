@@ -5,12 +5,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using HtmlAgilityPack;
 using ImageMagick;
+using Newtonsoft.Json;
 
 namespace Csml {
 
     public class ImageCache : Cache<ImageCache> {
         public float Aspect = 1;
-        public string Roi = "";
+        public float[] Roi;
         public Dictionary<int, string> Mips;
     }
 
@@ -22,6 +23,7 @@ namespace Csml {
     
     
     public class Image<T> : Element<T> where T : Image<T> {
+        
         public static readonly int MinImageWidth = 128;
         public string SourcePath { get; private set; }        
         
@@ -85,7 +87,9 @@ namespace Csml {
 
                 var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
                 if (File.Exists(roiFilePath)) {
-                    ImageCache.Roi = File.ReadAllText(roiFilePath);
+                    //var File.ReadAllText(roiFilePath);
+                    ImageCache.Roi = JsonConvert.DeserializeObject<float[]>(Utils.ReadAllText(roiFilePath));
+                    
                 }
 
                 ImageCache.Save();
@@ -114,29 +118,35 @@ namespace Csml {
                 GenerateResources(context);
                 IsResourcesGenerated = true;
             }
-
-            var result = HtmlNode.CreateNode("<img></img>");
             var biggestMip = ImageCache.Mips.First();
             Uri uri = new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, biggestMip.Value));
-            result.SetAttributeValue("src", uri.ToString());
-            
-            
-            foreach (var e in base.Generate(context)) {
-                result.AppendChild(e);
-            }
 
-            if (!string.IsNullOrEmpty(ImageCache.Roi)) {
-                var script = context.Head.ChildNodes.Where(x => x.Id == "resizeRoiImages").FirstOrDefault();
+
+            var result = HtmlNode.CreateNode("<img>").Do(x => {
+                x.SetAttributeValue("src", uri.ToString());
+                x.Add(base.Generate(context));
+            });
+
+           
+
+
+            if (ImageCache.Roi != null) {
+                result = result.Wrap("<div>");
+                result.Add(new Behaviour("RoiImage", ImageCache.Aspect, ImageCache.Roi).Generate(context));
+                result.SetAttributeValue("style", "overflow: hidden;");
+
+
+                /*var script = context.Head.ChildNodes.Where(x => x.Id == "resizeRoiImages").FirstOrDefault();
                 if (script == null) {
                     var code = File.ReadAllText(Path.Combine(Path.ChangeExtension(Utils.ThisFilePath(), null), "resizeRoiImages.html"));
                     context.Head.Add(code);
-                }
-                result = result.Wrap("<div>");
+                }*/
 
-                result.SetAttributeValue("style", "overflow: hidden;");
+
+                /*result.SetAttributeValue("style", "overflow: hidden;");
                 result.SetAttributeValue("data-roi", ImageCache.Roi);
                 result.SetAttributeValue("data-aspect", ImageCache.Aspect.ToString());
-                result.SetAttributeValue("class", "roi-image-container");
+                result.SetAttributeValue("class", "roi-image-container");*/
             } else {
                 result.SetAttributeValue("style", $"max-width: {biggestMip.Key}px;");
             }

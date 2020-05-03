@@ -50,7 +50,7 @@ namespace Csml {
                 if (arguments[i] is IElement) {
                     Add(arguments[i] as IElement);
                     filteredArgumentID++;
-                    if (i != filteredArgumentID) {
+                    if (i != filteredArgumentID) {                                                 //fix i
                         Format = Format.Replace("{" + i + "}", "{" + filteredArgumentID + "}");
                     }
                 } else {
@@ -183,7 +183,10 @@ namespace Csml {
             Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Split('\n');
 
             var args = Elements.ToArray();
-            Format = Format.Replace("{{", "\u0001").Replace("}}","\u0002");
+
+            Regex regexB = new Regex("}}(?!})");
+            Format = Format.Replace("{{", "\u0001");
+            Format = regexB.Replace(Format, "\u0002");
 
             Regex regex = new Regex(@"{(\d+):?(.*?)}");
             var matches = regex.Matches(Format);
