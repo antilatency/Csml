@@ -59,10 +59,10 @@ namespace Csml {
             }
         }
 
-        public string GetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
+        /*public string GetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
             return GetContentRelativePath(directory, SourceRootDirectory);
 
-        }
+        }*/
         public string GetSubDirectoryFromSourceAbsoluteFilePath(string path) {
             return GetContentRelativePath(Path.GetDirectoryName(path), SourceRootDirectory);
         }

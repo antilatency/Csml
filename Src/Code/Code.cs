@@ -104,7 +104,7 @@ namespace Csml {
             if (Source is GitHub.File) {
                 var lineSpan = GetLineSpan();
                 yield return HtmlNode.CreateNode("<a>").Do(x => {
-                    x.AddClass("github-link");
+                    x.AddClass("GitHubLink");
                     x.SetAttributeValue("target", "_blank");
                     var href = (Source as GitHub.File).HtmlUri;
                     
@@ -114,8 +114,6 @@ namespace Csml {
                         x.SetAttributeValue("href", $"{href}");
                     }
                 });
-
-
             }
 
             var code = GetFinalSourceCode();

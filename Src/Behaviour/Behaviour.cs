@@ -35,7 +35,7 @@ namespace Csml {
         public override IEnumerable<HtmlNode> Generate(Context context) {
             yield return HtmlNode.CreateNode("<script>").Do(x => {
                 var parameters = MakeParameterList(Parameters);
-                var code = $"Behaviour.Initialize(\"{ClassName}.Create\"";
+                var code = $"Behaviour.Initialize(\"{ClassName}\"";
                 if (!string.IsNullOrWhiteSpace(parameters))
                     code += "," + parameters;
                 code += ")";

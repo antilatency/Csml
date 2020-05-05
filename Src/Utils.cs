@@ -144,10 +144,15 @@ namespace Csml {
         }
 
 
-        public static void DeleteDirectory(string directory) {
+        public static void DeleteDirectory(string directory, int timeoutMs = 2000) {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             if (Directory.Exists(directory)) {
                 Directory.Delete(directory, true);
-                while (Directory.Exists(directory)) {                    
+                while (Directory.Exists(directory)) {
+                    if (stopwatch.ElapsedMilliseconds > timeoutMs)
+                        Log.Error.OnCaller($"Failed to delete directory: {directory}");
                     Thread.Sleep(10);
                 }
             }

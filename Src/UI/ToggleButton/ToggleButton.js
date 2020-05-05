@@ -1,18 +1,18 @@
-var ToggleButton = {				
-	Create: function(element, ...parameters){
-		var button = document.createElement('div');		
-		button.className = "button toggle"
-		button.onclick = function(){ToggleButton.Toggle(element,button)}					
-		
-		element.appendChild(button);
-	},	
-	Toggle: function(element,button){
-		if (button.classList.contains("checked")){
-			element.classList.remove("checked")
-			button.classList.remove("checked")
+function ToggleButton(element, ...parameters) {
+    this.element = element;
+    this.button = document.createElement('div');		
+    this.button.className = "button toggle"
+
+    this.Toggle = function () {
+        if (this.button.classList.contains("checked")){
+            this.element.classList.remove("checked")
+            this.button.classList.remove("checked")
 		}else{
-			element.classList.add("checked")
-			button.classList.add("checked")
+            this.element.classList.add("checked")
+            this.button.classList.add("checked")
 		}
-	}
+    }
+
+    this.button.onclick = this.Toggle;					
+    this.element.appendChild(this.button);
 }

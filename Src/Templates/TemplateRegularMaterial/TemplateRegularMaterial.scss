@@ -1,0 +1,180 @@
+
+
+.TemplateRegularMaterial {
+    $anchorLineWidth: 64px;
+
+    //@include transition( margin-left 0.15s ease-in-out);
+    > .LeftSideMenu {
+        position: fixed;
+
+        left: 0;
+        //@include transition( left 0.15s ease-in-out);
+
+        top: 0;
+        height: 100%;
+        //max-width: $max-menu-width;
+        z-index: 10;
+        opacity: 0.93;
+
+        > * {
+            display: block;
+            color: inherit;
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        > .HamburgerButton {
+            //visibility: hidden;
+            background-color: inherit;
+            position: absolute;
+            top: 0px;
+            padding: 8px;
+            left: 100%;
+
+
+            &:after {
+                color: inherit;
+                font-family: "Material Design Icons";
+                font-size: 2em;
+                content: "\F035C";
+            }
+
+            &.Checked:after {
+                content: "\F0156";
+            }
+        }
+    }
+
+
+
+
+    > .Content {
+
+        $min-width: 320px;
+        min-width: $min-width;
+        margin: 0 auto 0 auto;
+
+
+        @mixin SectionTitleLink {
+            text-decoration: none;
+
+            &:after {
+                color: #ccc;
+                font-family: "Material Design Icons";
+                content: "\F0339";
+            }
+        }
+
+        &.anchorsOutside .section > .title > .link {
+            @include SectionTitleLink;
+            float: left;
+
+            &:after {
+                position: absolute;
+                float: left;
+                margin-left: -1.2em;
+            }
+        }
+
+        &.anchorsInside .section > .title > .link {
+            @include SectionTitleLink;
+            float: right;
+
+            &:after {
+                position: relative;
+                float: right;
+                margin-left: 0;
+            }
+        }
+
+
+
+        .header {
+            margin-bottom: 4vh;
+            border-bottom: 1px solid #ddd;
+
+            .title {
+                text-align: center;
+                font-weight: 200;
+                font-size: 3.2rem;
+                color: #000;
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+                /*@include small-screen {
+                    font-size: 6.4vmax;
+                }*/
+            }
+        }
+
+        .section > .title {
+            font-weight: 300;
+            font-size: 1.7rem;
+            color: #888;
+            margin-bottom: 0.2rem;
+        }
+
+        .section > .section {
+            margin-left: 20px;
+
+            .title {
+                font-weight: 400;
+                font-size: 1.6rem;
+                color: #aaa;
+            }
+        }
+
+        .section > .section > .section > .title {
+            font-weight: 500;
+            font-size: 1.4rem;
+            color: #ccc;
+        }
+
+
+
+        .text {
+            font-weight: 400;
+            font-size: 1rem;
+            color: #777;
+            line-height: 1.6;
+            letter-spacing: 0.01em;
+            //text-align: justify;
+        }
+
+        *:not(:last-child)[style*="display:block"] {
+            margin-bottom: $verticalGap;
+        }
+
+        .header div.image {
+            display: block;
+            width: 100%;
+            height: 50vh;
+            margin-bottom: 2vh;
+        }
+
+        .section div.image {
+            display: block;
+            width: 100%;
+            height: 30vh;
+            margin-bottom: 1vh;
+        }
+
+        img.image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            width: 100%;
+        }
+
+        > .header, > .section {
+            > .text, > .title {
+                @media only screen and (max-width: 816px) {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+            }
+        }
+    }
+}

@@ -2,26 +2,8 @@ using System.IO;
 using HtmlAgilityPack;
 
 namespace Csml {
-    public interface ITemplate {
-        void Generate(Context context, IMaterial material);
-    }
-
-    /*public class RegularPage : Template {
-        public IElement Pre { get; set; }
-        public IElement Post { get; set; }
-        public RegularPage(IElement additionalElements) {
-            Pre = pre;
-            Post = post;
-        }
-    }*/
 
     public class Template : ITemplate {
-        /*public IElement Pre { get; set; }
-        public IElement Post { get; set; }
-        public Template(IElement pre, IElement post) {
-            Pre = pre;
-            Post = post;
-        }*/
 
         public virtual void ModifyHead(HtmlNode x, Context context, IMaterial material) { 
             x.Add($"<link rel = \"stylesheet\" href=\"{context.BaseUri}/style.css\">");
@@ -32,16 +14,8 @@ namespace Csml {
         }
 
         public virtual void ModifyBody(HtmlNode x, Context context, IMaterial material) {
-            x.Add("<div>", "material").Do(x => {
-                x.Add("<div>", "header").Do(x => {
-                    x.Add($"<h1>", "title").Add(material.Title);
-                    if (material.TitleImage != null) {
-                        x.Add(material.TitleImage.Generate(context));
-                    }
-                    x.Add(material.Description.Generate(context));
-                });
-                x.Add(material.Content.Generate(context));
-            });
+            x.AddClass(GetType().Name);
+            
         }
 
         public void Generate(Context context, IMaterial material) {
