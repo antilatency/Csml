@@ -1,14 +1,14 @@
 @import "../TemplateLeftSideMenu/TemplateLeftSideMenu.scss";
 
-.TemplateRegularMaterial {
+.TemplateLanding {
     @extend .TemplateLeftSideMenu;
-    //@include transition( margin-left 0.15s ease-in-out);
+
+
     > .Content {
-        //margin-top: 40px;
-        
+
         $minWidth: 320px;
         min-width: $minWidth;
-        margin: 40px auto 0 auto;
+        margin: 0 auto 0 auto;
 
 
         @mixin SectionTitleLink {

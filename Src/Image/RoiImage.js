@@ -32,7 +32,6 @@ function RoiImage(element, aspect, roi) {
         height = Math.max(height, minHeight);            
         height = Math.min(height, maxHeight);
 
-        console.log("Align " + height)
         var containerAspect = height / width;
             
         if (containerAspect < aspect) {

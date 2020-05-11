@@ -1,6 +1,4 @@
-
 using System.Collections.Generic;
-using System.Linq;
 using HtmlAgilityPack;
 
 namespace Csml {
@@ -19,7 +17,6 @@ namespace Csml {
             });
         }
     }
-
 }
 
 

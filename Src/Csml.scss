@@ -30,8 +30,9 @@
 }
 
 $verticalGap: 0.4rem !default;
-
+@import "Youtube/VideoPlayer.scss";
 @import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
+@import "Templates/TemplateLanding/TemplateLanding.scss";
 @import "Table/Table.scss";
 
 @import "Code/Code.scss";

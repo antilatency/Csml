@@ -11,6 +11,8 @@ namespace Csml {
             "opera"
         };
 
+        public static string Prefix = "f5me.";
+
         public static void Send() {
 
             var processes = Process.GetProcesses();
@@ -20,7 +22,7 @@ namespace Csml {
                 var h = p.MainWindowHandle;
                 if (h != IntPtr.Zero) {
                     var text = GetWindowText(h);
-                    if (text.StartsWith("f5me")) {
+                    if (text.StartsWith(Prefix)) {
                         Console.WriteLine(p.ProcessName);
 
                         SetForegroundWindow(h);

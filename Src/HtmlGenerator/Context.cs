@@ -13,11 +13,11 @@ namespace Csml {
 
 
     public struct Context {
-        public bool Watch { get; set; }
-        public string SourceRootDirectory { get; set; }
-        public string OutputRootDirectory { get; set; }
+        //public bool Watch { get; set; }
+        //public string SourceRootDirectory { get; set; }
+        //public string OutputRootDirectory { get; set; }
 
-        public string WatchPrefix => Watch? "f5me.":"";
+        //public string WatchPrefix => Watch? "f5me.":"";
 
         public HashSet<string> AssetsToCopy {
             get;
@@ -26,7 +26,7 @@ namespace Csml {
 
 
 
-        public Uri BaseUri { get; set; }
+        //public Uri BaseUri { get; set; }
 
         //public string SubDirectory { get; set; }
 
@@ -47,7 +47,7 @@ namespace Csml {
             }
         }*/
 
-        public void CleanOutputRootDirectory() {
+        /*public void CleanOutputRootDirectory() {
             Utils.DeleteDirectory(OutputRootDirectory);            
         }
 
@@ -57,15 +57,15 @@ namespace Csml {
                 Utils.CreateDirectory(Path.GetDirectoryName(dest));
                 File.Copy(i, dest, true);
             }
-        }
+        }*/
 
         /*public string GetSubDirectoryFromSourceAbsoluteDiectory(string directory) {
             return GetContentRelativePath(directory, SourceRootDirectory);
 
         }*/
-        public string GetSubDirectoryFromSourceAbsoluteFilePath(string path) {
+        /*public string GetSubDirectoryFromSourceAbsoluteFilePath(string path) {
             return GetContentRelativePath(Path.GetDirectoryName(path), SourceRootDirectory);
-        }
+        }*/
 
 
         public void BeginPage() {

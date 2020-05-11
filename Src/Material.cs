@@ -5,22 +5,22 @@ using System.Linq;
 using HtmlAgilityPack;
 
 namespace Csml {
-    public /*sealed*/ class Material : Material<Material> {
+    public sealed class Material : Material<Material> {
         
 
         public Material(string title, Image titleImage, FormattableString description
-            ) : base(null, title, titleImage, new Paragraph(description)) {
+            ) : base(title, titleImage, new Paragraph(description)) {
         }
         public Material(string title, Image titleImage, Paragraph description
-            ) : base(null, title, titleImage, description) {
+            ) : base(title, titleImage, description) {
         }
 
-        public Material(Template template, string title, Image titleImage, FormattableString description
+        /*public Material(Template template, string title, Image titleImage, FormattableString description
             ): base(template, title, titleImage, new Paragraph(description)) {
         }
         public Material(Template template, string title, Image titleImage, Paragraph description
             ) : base(template, title, titleImage, description) {
-        }
+        }*/
     }
 
     public interface IMaterial : IElement {
@@ -38,7 +38,7 @@ namespace Csml {
         IElement IMaterial.Description => Description;
         IElement IMaterial.Content => new LazyCollection(Elements);
 
-        protected Template Template;
+        //protected Template Template;
         //public static Template DefaultTemplate { get; set; }
 
         protected string UserDefinedTitle = null;
@@ -60,8 +60,7 @@ namespace Csml {
 
         public Paragraph Description;        
 
-        protected Material(Template template, string title, Image titleImage, Paragraph description)  {
-            Template = template;
+        protected Material(string title, Image titleImage, Paragraph description)  {
             UserDefinedTitle = title;
             TitleImage = titleImage;
             Description = description;
@@ -75,7 +74,7 @@ namespace Csml {
 
 
         public string GetUri(Context context) {
-            Uri uri = new Uri(context.BaseUri, GetPath(context));
+            Uri uri = new Uri(Application.BaseUri, GetPath(context));
             return uri.ToString();
         }
 

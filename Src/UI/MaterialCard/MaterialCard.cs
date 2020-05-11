@@ -6,6 +6,17 @@ namespace Csml {
     public class MaterialCard: Element<MaterialCard> {
         Func<Context,IMaterial> MaterialGetter;
 
+        public MaterialCard(IElement element) {
+            if (element is IMaterial) {
+                MaterialGetter = (context) => (element as IMaterial);
+                return;
+            }
+            if (element is LanguageSelector<IMaterial>) {
+                MaterialGetter = (context) => (element as LanguageSelector<IMaterial>)[context.Language];
+                return;
+            }
+            Log.Error.OnCaller("Only IMaterial or LanguageSelector<IMaterial> expected.");
+        }
         public MaterialCard(IMaterial material) {
             MaterialGetter = (context)=>material;
         }

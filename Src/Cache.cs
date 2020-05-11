@@ -5,14 +5,30 @@ using System.IO;
 namespace Csml {
     public class Cache {
         public string Hash;
-        [JsonIgnore]
-        public string Directory => Path.Combine(RootDirectory, Hash);
-        public static string RootDirectory;
+        
         protected Cache() { }
     }
 
     public class Cache<T> : Cache where T : Cache<T>, new() {
-        
+        [JsonIgnore]
+        public string Directory => Path.Combine(RootDirectory, Hash);
+
+        public Uri GetFileUri(string fileName) => new Uri(RootUri, $"{Hash}/{fileName}");
+
+
+        public static string RootDirectory;
+        private static Uri UserDefinedRootUri;
+        public static Uri RootUri {
+            get {
+                if (UserDefinedRootUri != null) return UserDefinedRootUri;
+                return new Uri(RootDirectory+"/");
+            }
+            set {
+                UserDefinedRootUri = value;
+            }
+        }
+
+
 
         public static T Create(string hash) {
             if (string.IsNullOrEmpty(RootDirectory))

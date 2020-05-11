@@ -23,9 +23,6 @@ var Behaviour = {
             });
         }
 
-        //document.addEventListener("readystatechange", function () { console.log("readystatechange = " + document.readyState) })
-        //console.log(x)
-        //eval(code)
 
     },
     /*Create: function(methodName, ...parameters){

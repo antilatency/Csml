@@ -27,8 +27,8 @@ namespace Csml {
         public static readonly int MinImageWidth = 128;
         public string SourcePath { get; private set; }        
         
-        private bool IsResourcesGenerated = false;
-        private string OutputSubDirectory;
+        //private bool IsResourcesGenerated = false;
+        //private string OutputSubDirectory;
 
         protected ImageCache ImageCache;
 
@@ -51,10 +51,11 @@ namespace Csml {
         }*/
 
         private void GenerateResources(Context context) {
-            OutputSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(SourcePath);
-            var outputDirectory = Path.Combine(context.OutputRootDirectory, OutputSubDirectory);
+            //OutputSubDirectory = context.GetSubDirectoryFromSourceAbsoluteFilePath(SourcePath);
+
+            //var outputDirectory = Path.Combine(context.OutputRootDirectory, OutputSubDirectory);
             var extension = Path.GetExtension(SourcePath);
-            Utils.CreateDirectory(outputDirectory);
+            //Utils.CreateDirectory(outputDirectory);
 
             //TODO: file not found
             var hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
@@ -104,22 +105,24 @@ namespace Csml {
                 });
             }*/
             //using (new Stopwatch("Sequental image copy")) {
-                foreach (var f in ImageCache.Mips) {
+                /*foreach (var f in ImageCache.Mips) {
                     var source = Path.Combine(ImageCache.Directory, f.Value);
                     var dest = Path.Combine(outputDirectory, f.Value);
                     File.Copy(source, dest);
-                }
+                }*/
             //}
 
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            if (!IsResourcesGenerated) {
+            if (ImageCache == null) {
                 GenerateResources(context);
-                IsResourcesGenerated = true;
             }
+
             var biggestMip = ImageCache.Mips.First();
-            Uri uri = new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, biggestMip.Value));
+
+
+            Uri uri = ImageCache.GetFileUri(biggestMip.Value);// new Uri(context.BaseUri, Path.Combine(OutputSubDirectory, biggestMip.Value));
 
 
             var result = HtmlNode.CreateNode("<img>").Do(x => {

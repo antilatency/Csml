@@ -55,7 +55,7 @@ namespace Csml {
                 Path = path;
                 var hash = RepositoryBranch.Owner.Name + RepositoryBranch.Name + RepositoryBranch.Reference + path;
                 hash = string.Concat(hash.Split(System.IO.Path.GetInvalidFileNameChars()));
-                using (new Stopwatch("Load hash of " + hash)) {
+                //using (new Stopwatch("Load hash of " + hash)) {
                     FileCache = FileCache.Load(hash);
                     if (FileCache == null) {
                         FileCache = FileCache.Create(hash);
@@ -68,7 +68,7 @@ namespace Csml {
                         }
                         FileCache.Save();
                     }
-                }
+                //}
                 //var
                 
             }

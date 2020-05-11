@@ -1,0 +1,43 @@
+
+.TemplateLeftSideMenu {
+    > .LeftSideMenu {
+        position: fixed;
+        left: 0;
+        //@include transition( left 0.15s ease-in-out);
+        top: 0;
+        height: 100%;
+        //max-width: $max-menu-width;
+        z-index: 10;
+        opacity: 0.93;
+
+        > * {
+            display: block;
+            color: inherit;
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        > .HamburgerButton {
+            //visibility: hidden;
+            background-color: inherit;
+            position: absolute;
+            top: 0px;
+            padding: 8px;
+            left: 100%;
+
+
+            &:after {
+                color: inherit;
+                font-family: "Material Design Icons";
+                font-size: 2em;
+                content: "\F035C";
+            }
+
+            &.Checked:after {
+                content: "\F0156";
+            }
+        }
+    }
+}

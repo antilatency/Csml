@@ -1,10 +1,10 @@
-/*function TemplateRegularMaterial(element, contentWidth = 800, anchorLineWidth = 48) {
-   // document.addEventListener("readystatechange", function () { console.log("readystatechange = " + document.readyState) })
+function TemplateLeftSideMenu(element, contentWidth, anchorLineWidth = 48) {
+    // document.addEventListener("readystatechange", function () { console.log("readystatechange = " + document.readyState) })
     this.element = element;
     this.contentWidth = contentWidth;
     this.anchorLineWidth = anchorLineWidth;
     this.buttonChecked = false;
-
+    //console.log(contentWidth)
 
     this.OnWindowResize = function () {
         this.Align();
@@ -32,18 +32,18 @@
         if (enoughSpaceForMenu) {
 
             let rightSpace = (width - menuWidth) - this.contentWidth - this.anchorLineWidth;
-            
+
             this.content.style.paddingLeft = anchorLineWidth + "px"
             this.element.style.marginLeft = menuWidth + "px";
             this.element.style.marginRight = Math.min(0.5 * rightSpace, menuWidth) + "px"
 
         } else {
-            
+
             // setProperty("visible", "hidden", priority);
 
             this.element.style.marginLeft = 0;
             this.element.style.marginRight = 0;
-            
+
             if (width < (this.contentWidth + this.anchorLineWidth)) {
                 this.content.style.paddingLeft = 0
                 this.content.classList.add("anchorsInside");
@@ -54,7 +54,7 @@
                 this.content.classList.remove("anchorsInside");
             }
         }
-       
+
     }
 
 
@@ -79,7 +79,7 @@
         this.content.style.maxWidth = this.contentWidth + "px";
         this.content.classList.add("anchorsOutside");
         this.Align();
-        
+
     }
 
     this.OnResourcesLoaded = function () {
@@ -87,5 +87,4 @@
 
     }
 
-
-}*/
+}
