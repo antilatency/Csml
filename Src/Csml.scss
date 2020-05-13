@@ -29,6 +29,14 @@
     transition: $params;
 }
 
+@mixin selectable($params) {
+    -webkit-user-select: $params; /* Chrome all / Safari all */
+    -moz-user-select: $params; /* Firefox all */
+    -ms-user-select: $params; /* IE 10+ */
+    user-select: $params; /* Likely future */
+}
+
+
 $verticalGap: 0.4rem !default;
 @import "Youtube/VideoPlayer.scss";
 @import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
