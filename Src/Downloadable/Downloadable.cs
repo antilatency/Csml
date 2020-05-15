@@ -10,7 +10,12 @@ using System.Linq;
 
 namespace Csml
 {
-    public class DownloadableCache : Cache<DownloadableCache> { }
+    public class DownloadableCache : Cache<DownloadableCache> {
+        /// <summary>
+        /// Size in bytes of cached file
+        /// </summary>
+        public long Size;
+    }
 
     public enum  DownloadableIcon {
         None,
@@ -111,6 +116,7 @@ namespace Csml
                         File.Copy(SourcePath, outputPath);
                     }
 
+                    _cache.Size = new FileInfo(outputPath).Length;
                     _cache.Save();
                 }
             }
@@ -137,6 +143,8 @@ namespace Csml
 
             if (!string.IsNullOrEmpty(Tooltip)) {
                 button.SetAttributeValue("title", Tooltip);
+            } else {
+                button.SetAttributeValue("title", string.Format("Download -- {0}", StringUtils.HumanizeSize(_cache.Size)));
             }
 
             if (Icon != DownloadableIcon.None) {
