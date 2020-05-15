@@ -22,6 +22,15 @@ namespace Csml {
             }
         }
 
+
+        public static IEnumerable<T> GetScopePropertiesOfType<ScopeType,T>() {
+            var result = typeof(ScopeType).GetProperties(PropertyBindingFlags)
+                .Where(x=>typeof(T).IsAssignableFrom(x.PropertyType))                
+                .Select(x => (T)x.GetValue(null));
+            return result;
+        }
+
+
         public static IEnumerable<Scope> All {
             get {
                 return AllStatic.Select(x => (Scope)Activator.CreateInstance(x));

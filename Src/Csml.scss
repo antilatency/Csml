@@ -42,6 +42,10 @@ $verticalGap: 0.4rem !default;
 @import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
 @import "Templates/TemplateLanding/TemplateLanding.scss";
 @import "Table/Table.scss";
+@import "Lists/Lists.scss";
+
+@import "MaterialCard/MaterialCard.scss";
+@import "Grid/Grid.scss";
 
 @import "Code/Code.scss";
 @import "Code/GitHubLink.scss";

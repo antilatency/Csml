@@ -101,7 +101,7 @@ namespace Csml {
 
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            if (Source is GitHub.File) {
+            if ((Source is GitHub.File) & (!context.AForbidden)) {
                 var lineSpan = GetLineSpan();
                 yield return HtmlNode.CreateNode("<a>").Do(x => {
                     x.AddClass("GitHubLink");

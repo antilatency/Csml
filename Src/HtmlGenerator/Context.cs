@@ -13,22 +13,8 @@ namespace Csml {
 
 
     public struct Context {
-        //public bool Watch { get; set; }
-        //public string SourceRootDirectory { get; set; }
-        //public string OutputRootDirectory { get; set; }
+        public bool AForbidden;
 
-        //public string WatchPrefix => Watch? "f5me.":"";
-
-        public HashSet<string> AssetsToCopy {
-            get;
-            set;
-        }
-
-
-
-        //public Uri BaseUri { get; set; }
-
-        //public string SubDirectory { get; set; }
 
         public Language Language { get; set; }
         public HtmlDocument CurrentHtmlDocument { get; set; }

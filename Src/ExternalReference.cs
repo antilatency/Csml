@@ -22,9 +22,12 @@ namespace Csml {
 
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode("<a>").Do(x => {
+
+            yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
                 x.AddClass("text");
-                x.SetAttributeValue("href", Href.ToString());
+                if (!context.AForbidden)
+                    x.SetAttributeValue("href", Href.ToString());
+
                 if (string.IsNullOrEmpty(Text))
                     x.InnerHtml = Href.ToString();
                 else

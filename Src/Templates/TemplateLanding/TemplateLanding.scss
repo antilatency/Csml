@@ -100,14 +100,14 @@
             margin-bottom: $verticalGap;
         }
 
-        .header div.image {
+        .header>div.image {
             display: block;
             width: 100%;
             height: 50vh;
             margin-bottom: 2vh;
         }
 
-        .section div.image {
+        .section>div.image {
             display: block;
             width: 100%;
             height: 30vh;

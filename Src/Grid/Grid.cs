@@ -10,7 +10,7 @@ namespace Csml {
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
             yield return HtmlNode.CreateNode("<div>").Do(x=>{
-                x.AddClass("grid");
+                x.AddClass("Grid");
                 x.Add(Behaviour.Generate(context));
                 x.Add(base.Generate(context));
                 

@@ -7,15 +7,17 @@ using HtmlAgilityPack;
 namespace Csml {
 
     public interface ILanguageSelector<I> {
+        bool HasTarget { get; }
         public I this[Language language] {
             get;
         }
+        public string Title { get; }
     }
 
-    public class LanguageSelector : LanguageSelector<LanguageSelector, IElement> {
+    public class LanguageSelector : LanguageSelector<LanguageSelector, IElement>, ILanguageSelector<IElement> {
     }
 
-    public class LanguageSelector<I> : LanguageSelector<LanguageSelector<I>, I> where I : IElement {    
+    public class LanguageSelector<I> : LanguageSelector<LanguageSelector<I>, I>, ILanguageSelector<I> where I : IElement {    
     }
 
 
@@ -48,6 +50,8 @@ namespace Csml {
             
         }
 
+        public bool HasTarget => Translations.Count > 0;
+
         public I this[Language language] {
             get {
                 if (Translations.ContainsKey(language)) {
@@ -58,6 +62,7 @@ namespace Csml {
                         return Translations[l];
                     }
                 }
+
                 return default;
             }
         }
@@ -76,12 +81,15 @@ namespace Csml {
             return this[context.Language].Generate(context);
         }
 
-        private string Title {
+        public string Title {
             get {
                 var n = PropertyName;
                 if (n == null) throw new Exception("TODO: Log.Error");
                 return n.Replace("_", " ").Trim(' ');                
             }
+        }
+        public override string ToString() {
+            return Title;
         }
 
     }

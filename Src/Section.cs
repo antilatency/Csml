@@ -31,10 +31,13 @@ namespace Csml {
                 x.Add($"<h2>", "title").Do(x => {
                     x.Id = Id;
                     x.Add(Title);
-                    x.Add("<a>","link").Do(x=> {
-                        x.SetAttributeValue("href", "#"+Id);
-                        x.SetAttributeValue("title", "Heading anchor");
-                    });
+                    if (!context.AForbidden) {
+                        x.Add("<a>", "link").Do(x => {
+                            x.SetAttributeValue("href", "#" + Id);
+                            x.SetAttributeValue("title", "Heading anchor");
+                        });
+                    }
+                    
                 });
 
                 x.Add(base.Generate(context));                

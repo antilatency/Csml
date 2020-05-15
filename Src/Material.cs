@@ -103,11 +103,13 @@ namespace Csml {
             }
 
 
-            yield return HtmlNode.CreateNode("<a>").Do(x => {
+            yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
                 x.AddClass("text");
-                x.SetAttributeValue("href", GetUri(context));
-                x.InnerHtml = Title;
-                x.SetAttributeValue("title", planeDescription);
+                if (!context.AForbidden) {
+                    x.SetAttributeValue("href", GetUri(context));
+                    x.SetAttributeValue("title", planeDescription);
+                }
+                x.InnerHtml = Title;                
             });
 
             //yield return HtmlNode.CreateNode($"<a class=\"text\" href=\"{GetUriRelativeToRoot(context)}\">{translated.Title}</a>");

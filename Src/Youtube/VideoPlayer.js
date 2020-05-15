@@ -168,7 +168,12 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
     
     console.log("VideoPlayer " + mips[0].Value);
-    this.CreateYouTubeIFrameApiScript();
+    if (!showControls || autoPlay) {
+        this.CreateVideoTag()
+    } else {
+        this.CreateYouTubeIFrameApiScript();
+    }
+    
 
     //var document.getElementById()
     //var tag = document.createElement('script');
