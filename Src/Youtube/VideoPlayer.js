@@ -165,8 +165,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
 
     
-
-    
     console.log("VideoPlayer " + mips[0].Value);
     if (!showControls || autoPlay) {
         this.CreateVideoTag()
