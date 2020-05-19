@@ -13,8 +13,8 @@ namespace Csml {
         public T this[IElement element] { get => Add(element); }
 
         public virtual void ModifyHead(HtmlNode x, Context context, IMaterial material) { 
-            x.Add($"<link rel = \"stylesheet\" href=\"{Application.BaseUri}style.css\">");
-            x.Add($"<script src=\"{Application.BaseUri}script.js\">");
+            x.Add($"<link rel = \"stylesheet\" href=\"{Application.CssUri}\">");
+            x.Add($"<script src=\"{Application.JsUri}\">");
             x.Add("<meta charset=\"utf-8\">");
             x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
             x.Add($"<title>{Application.TitlePrefix + material.Title}</title>");

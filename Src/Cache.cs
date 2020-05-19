@@ -51,9 +51,9 @@ namespace Csml {
 
             return result;
         }
-        public bool CanSave() {
+        /*public bool CanSave() {
             return !string.IsNullOrEmpty(RootDirectory);
-        }
+        }*/
         //public bool Stored => !string.IsNullOrEmpty(Directory);
 
         public void Save() {

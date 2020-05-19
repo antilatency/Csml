@@ -5,12 +5,14 @@ using System.IO;
 abstract class FileProcessor {
     protected string SourceRootDirectory;
     protected string OutputRootDirectory;
+    protected bool DeveloperMode;
     public string Error { get; protected set; }
     public bool Success => Error == null;
 
     protected Dictionary<string, DateTime> observableFiles = new Dictionary<string, DateTime>();
 
-    public FileProcessor(string sourceRootDirectory, string outputRootDirectory) {
+    public FileProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory) {
+        DeveloperMode = developerMode;
         SourceRootDirectory = sourceRootDirectory;
         OutputRootDirectory = outputRootDirectory;
     }

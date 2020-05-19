@@ -13,11 +13,11 @@ using HtmlAgilityPack;
 namespace Csml {
     public static class Utils {
 
-        
 
 
 
-        public static FormattableString Simplify(this FormattableString formattableString) {
+
+        /*public static FormattableString Simplify(this FormattableString formattableString) {
             var format = formattableString.Format;
             var arguments = formattableString.GetArguments();
             var filteredArguments = new List<IElement>();
@@ -35,13 +35,19 @@ namespace Csml {
                 }
             }
             return FormattableStringFactory.Create(format, filteredArguments.ToArray());
+        }*/
+
+
+        internal static string ToHashString(string text) {
+            var bytes = System.Text.Encoding.Unicode.GetBytes(text);
+            return ToHashString(bytes);
         }
 
         internal static string ToHashString(byte[] data) {
-            using var sha = SHA1.Create();
-            var h = sha.ComputeHash(data);
-            return Convert.ToBase64String(h).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-
+            using var md5 = MD5.Create();
+            var hash = md5.ComputeHash(data);
+            var result = string.Join("", hash.Select(x => x.ToString("X2")));
+            return result;
         }
 
 

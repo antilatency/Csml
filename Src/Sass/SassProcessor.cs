@@ -1,16 +1,18 @@
 ﻿
+using Csml;
 using LibSassHost;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 class SassProcessor : FileProcessor, IFileManager {
-    
-    private string InitialFilePath;    
+    public string OutputFileName { get; private set; } 
+    private string InitialFilePath;
 
-    public SassProcessor(string sourceRootDirectory, string outputRootDirectory, string initialFilePath):
-        base(sourceRootDirectory, outputRootDirectory) {
+    public SassProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory, string initialFilePath):
+        base(developerMode, sourceRootDirectory, outputRootDirectory) {
         
         if (Path.IsPathRooted(initialFilePath)) {
             InitialFilePath = initialFilePath;
@@ -18,7 +20,7 @@ class SassProcessor : FileProcessor, IFileManager {
             InitialFilePath = Path.Combine(SourceRootDirectory, initialFilePath);
         }
         
-        InitializeWriteTimes();
+        if (DeveloperMode) InitializeWriteTimes();
         Error = Update();
     } 
 
@@ -65,8 +67,7 @@ class SassProcessor : FileProcessor, IFileManager {
 
 
     protected override string Update() {
-        string outputFilePath = Path.Combine(OutputRootDirectory, "style.css");
-        string sourceMapFilePath = Path.Combine(OutputRootDirectory, "style.css.map");
+        
         try {
             var options = new CompilationOptions { SourceMap = true };
             options.OutputStyle = OutputStyle.Compact;
@@ -75,10 +76,23 @@ class SassProcessor : FileProcessor, IFileManager {
 
 
             SassCompiler.FileManager = this;// new FileManager(Path.GetDirectoryName(InputFilePath), LibSassHost.FileManager.Instance);
-            CompilationResult result = SassCompiler.CompileFile(InitialFilePath, outputFilePath,
-                sourceMapFilePath, options);
+            CompilationResult result = SassCompiler.CompileFile(InitialFilePath, null, null, options);
 
-            observableFiles = CaptureModificationTimes(result.IncludedFilePaths);
+            if (!DeveloperMode) {
+                observableFiles = CaptureModificationTimes(result.IncludedFilePaths);
+            }
+
+            OutputFileName = "style.css";
+            var outputMapFileName = "style.css.map";
+            if (!DeveloperMode) {
+                var hash = Utils.ToHashString(result.CompiledContent);
+                OutputFileName = hash + ".css";
+                outputMapFileName = OutputFileName + ".map";
+            }
+            
+
+            string outputFilePath = Path.Combine(OutputRootDirectory, OutputFileName);
+            string sourceMapFilePath = Path.Combine(OutputRootDirectory, outputMapFileName);
 
             File.WriteAllText(outputFilePath, result.CompiledContent);
             File.WriteAllText(sourceMapFilePath, result.SourceMap);
@@ -88,9 +102,12 @@ class SassProcessor : FileProcessor, IFileManager {
             if (e.File != null)
                 if (!observableFiles.ContainsKey(e.File)) {
                     observableFiles.Add(e.File, File.GetLastWriteTime(e.File));
-                } else {
-                    observableFiles[e.File] = File.GetLastWriteTime(e.File);
                 }
+
+            var files = observableFiles.Select(x => x.Key).ToArray();
+            observableFiles = CaptureModificationTimes(files);
+
+            if (!DeveloperMode) throw e;
 
             return e.Message;
         }

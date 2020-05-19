@@ -1,12 +1,16 @@
 
+using Csml;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 class JavascriptProcessor : FileProcessor {
 
-    public JavascriptProcessor(string sourceRootDirectory, string outputRootDirectory) :
-        base(sourceRootDirectory, outputRootDirectory) {
+    public string OutputFileName { get; private set; }
+
+    public JavascriptProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory) :
+        base(developerMode, sourceRootDirectory, outputRootDirectory) {
         Error = Update();
     }
     IEnumerable<string> GetFilePathes() {
@@ -24,24 +28,30 @@ class JavascriptProcessor : FileProcessor {
     }
 
     protected override string Update() {
-        observableFiles = CaptureModificationTimes(GetFilePathes());
-        NUglify.JavaScript.CodeSettings codeSettings = new NUglify.JavaScript.CodeSettings();
-        //NUglify.SymbolMap
-        using (StreamWriter writer = new StreamWriter(Path.Combine(OutputRootDirectory, "script.map"))) {
+        var pathes = GetFilePathes();
 
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var i in observableFiles.Keys) {
-                
-                var js = Csml.Utils.ReadAllText(i);
-
-                var u = NUglify.Uglify.Js(js, i);
-
-                stringBuilder.AppendLine(u.Code);
-
-            }
-
-            File.WriteAllText(Path.Combine(OutputRootDirectory, "script.js"),stringBuilder.ToString());
+        if (DeveloperMode) {
+            observableFiles = CaptureModificationTimes(pathes);
         }
+
+        
+
+        StringBuilder stringBuilder = new StringBuilder();
+        foreach (var i in pathes) {
+                
+            var js = Csml.Utils.ReadAllText(i);
+            var u = NUglify.Uglify.Js(js, i);
+            stringBuilder.AppendLine(u.Code);
+        }
+
+        var result = stringBuilder.ToString();
+        OutputFileName = "script.js";
+        if (!DeveloperMode) {
+            OutputFileName = Utils.ToHashString(result)+".js";
+        }
+
+        File.WriteAllText(Path.Combine(OutputRootDirectory, OutputFileName), result);
+        
         
         return null;
     }
