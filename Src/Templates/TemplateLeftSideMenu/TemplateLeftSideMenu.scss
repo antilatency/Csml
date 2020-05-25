@@ -7,8 +7,10 @@
         top: 0;
         height: 100%;
         //max-width: $max-menu-width;
-        z-index: 10;
-        opacity: 0.93;
+        z-index: 1000;
+        opacity: 0.96;
+        background-color: white;
+        border-right: 1px solid #ddd;
 
         > * {
             display: block;
@@ -20,6 +22,7 @@
         }
 
         > .HamburgerButton {
+            
             //visibility: hidden;
             background-color: inherit;
             position: absolute;
@@ -29,13 +32,17 @@
 
 
             &:after {
+                position: relative;
                 color: inherit;
                 font-family: "Material Design Icons";
                 font-size: 2em;
                 content: "\F035C";
+                border-radius: 50%;
+                padding: 8px;
             }
 
             &.Checked:after {
+                
                 content: "\F0156";
             }
         }

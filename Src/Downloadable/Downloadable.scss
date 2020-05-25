@@ -1,6 +1,64 @@
 
 .Downloadable {
-	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    $lineHeight: 48px;
+    //position: relative;
+    //width: 100%;
+    left: 0;
+    right: 0;
+    //height: 48px;
+    background-color: #f7f7f7;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding: 4px 0 0 4px;
+    border-radius: 2px;
+    //overflow: scroll;
+    @include materialShadow();
+
+
+    & > * {
+        display: flex;
+        height: $lineHeight;
+        justify-content: center;
+        text-align: center;
+        padding: 0px 16px 0px 16px;
+        font: inherit;
+        margin: 0 4px 4px 0;
+        flex: 10;
+    }
+
+
+    > .Title {
+        display: flex;
+        flex-direction: column;
+        white-space: nowrap;
+    }
+
+    > .Select {
+        display: flex;
+        font: inherit;
+        //height: $lineHeight;
+        //flex: 10;
+        border: 1px solid #ddd
+    }
+
+    > .Button {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        $color: #c3de3e;
+        text-decoration: none;
+        color: white;
+        border-radius: 2px;
+        background-color: $color;
+        @include materialShadow();
+
+        &:hover {
+            background-color: lighten($color, 10%);
+        }
+    }
+    /*font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
 	box-sizing: inherit;
@@ -25,12 +83,10 @@
 	-webkit-tap-highlight-color: transparent;
 	vertical-align: middle;
 	z-index: 1;
-	transition: .3s ease-out;
+	transition: .3s ease-out;*/
 }
 
-.Downloadable:hover {
-	background-color: #c3de3e;
-}
+
 
 .DownloadableIcon {
 	color: #ffffff;

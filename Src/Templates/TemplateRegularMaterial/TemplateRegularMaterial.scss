@@ -96,10 +96,16 @@
             //text-align: justify;
         }
 
-        *:not(:last-child)[style*="display:block"] {
+        > *, .section > * {
+            margin-top: $verticalGap;
+        }
+        /*> *:not(:last-child), .section>*:not(:last-child) {
             margin-bottom: $verticalGap;
         }
-
+        
+        *:not(:last-child)[style*="display:flex"] {
+            margin-bottom: $verticalGap;
+        }*/
         .header div.image {
             display: block;
             width: 100%;

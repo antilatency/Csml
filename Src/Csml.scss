@@ -36,18 +36,29 @@
     user-select: $params; /* Likely future */
 }
 
+@mixin materialShadow{
+    @include box-shadow( 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24));
+    }
 
-$verticalGap: 0.4rem !default;
-@import "Youtube/VideoPlayer.scss";
-@import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
-@import "Templates/TemplateLanding/TemplateLanding.scss";
-@import "Table/Table.scss";
-@import "Lists/Lists.scss";
 
-@import "MaterialCard/MaterialCard.scss";
-@import "Grid/Grid.scss";
+@mixin materialShadowHover {
+    @include transition( box-shadow 0.15s ease-in-out);
+    &:hover {
+        @include box-shadow( 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23));
+    }
+}
 
-@import "Code/Code.scss";
-@import "Code/GitHubLink.scss";
+    $verticalGap: 0.4rem !default;
+    @import "Youtube/VideoPlayer.scss";
+    @import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
+    @import "Templates/TemplateLanding/TemplateLanding.scss";
+    @import "Table/Table.scss";
+    @import "Lists/Lists.scss";
 
-@import "Downloadable/Downloadable.scss";
+    @import "MaterialCard/MaterialCard.scss";
+    @import "Grid/Grid.scss";
+
+    @import "Code/Code.scss";
+    @import "Code/GitHubLink.scss";
+
+    @import "Downloadable/Downloadable.scss";

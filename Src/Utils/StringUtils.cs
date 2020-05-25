@@ -5,22 +5,19 @@ using System.Text;
 namespace Csml {
     class StringUtils {
 
-        private static readonly string[] SizeSuffixes = { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"};
-
         /// <summary>
         /// Convert size in bytes to human-readable string
         /// </summary>
         /// <param name="size">Size in bytes</param>
         /// <returns></returns>
-        public static string HumanizeSize(long size) {
-            int order = 0;
-
-            while (size >= 1024 || size <= -1024) {
-                order++;
-                size /= 1024;
-            }
-
-            return size + " " + SizeSuffixes[order];
+        public static string HumanizeSize(long byteCount) {
+            string[] suffix = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+            if (byteCount == 0)
+                return "0" + suffix[0];
+            long byteCountAbs = Math.Abs(byteCount);
+            int order = Convert.ToInt32(Math.Floor(Math.Log(byteCountAbs, 1024)));
+            double num = Math.Round(byteCountAbs / Math.Pow(1024, order), 1);
+            return String.Format("{0:0.#}", Math.Sign(byteCount) * num) + suffix[order];
         }
     }
 }

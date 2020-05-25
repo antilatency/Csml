@@ -78,7 +78,7 @@ class SassProcessor : FileProcessor, IFileManager {
             SassCompiler.FileManager = this;// new FileManager(Path.GetDirectoryName(InputFilePath), LibSassHost.FileManager.Instance);
             CompilationResult result = SassCompiler.CompileFile(InitialFilePath, null, null, options);
 
-            if (!DeveloperMode) {
+            if (DeveloperMode) {
                 observableFiles = CaptureModificationTimes(result.IncludedFilePaths);
             }
 
