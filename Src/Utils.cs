@@ -117,7 +117,7 @@ namespace Csml {
             return x.GetInterfaces().Contains(interfaceType);
         }
 
-        public static string ReadAllText(string path, int timeoutMs = 2000) {
+        public static string ReadAllText(string path, int timeoutMs = 5000) {
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
             while(stopwatch.ElapsedMilliseconds < timeoutMs) {
@@ -197,12 +197,19 @@ namespace Csml {
             rgba |= argb >> 24;
             return rgba;
         }
+
+        public static string ToRgbaString(this Color color) {
+            return color.ToRgba().ToString("X8");
+        }
+
         public static uint ToRgb(this Color color) {
             var argb = (uint)color.ToArgb();
             uint rgba = argb & 0xFFFFFF;
             return rgba;
         }
-
+        public static string ToRgbString(this Color color) {
+            return color.ToRgb().ToString("X6");
+        }
 
         public static FormattableString ToFormattableString(this string x) {
             return $"{x}";

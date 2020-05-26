@@ -27,8 +27,12 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
     this.mips = mips;
     this.previousContainerWidth = -1;
 
-    this.element.style.paddingTop = 100 / this.aspect + "%";
-
+    //this.element.style.paddingTop = 100 / this.aspect + "%";
+    var ResizeContainer = function () {
+        console.log(ResizeContainer);
+        element.style.height = (element.offsetWidth / aspect)+"px";
+    }    
+    window.addEventListener("resize", ResizeContainer);
 
     this.onYoutubePlayerReady = function (event) {
         /*if (this.autoPlay) {
@@ -92,16 +96,59 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
         
         
     }
+
     this.CreateVideoTag = function () {
-        console.log(this.mips[0].Value)
+
         var video = document.createElement("video");
         video.className = "VideoPlayerInner";
-        video.src = this.mips[0].Value;
+        
         video.controls = this.showControls;
         video.autoplay = this.autoPlay;
         video.muted = this.autoPlay || (!this.sound);
         video.loop = this.loop;
         this.element.appendChild(video);
+
+        var previousContainerWidth = element.offsetWidth * window.devicePixelRatio;
+
+        var SelectClosestMip = function (elementWidth) {
+
+            console.log("SelectClosestMip "+element.offsetWidth + " x " + window.devicePixelRatio + " = " + elementWidth);
+
+            for (var i = 0; i < mips.length; i++) {
+                var width = mips[i].Key * aspect;
+                if (width > 0.95 * elementWidth) return mips[i];
+            }
+            return mips[mips.length-1];
+        }
+        var closestMip = SelectClosestMip(element.offsetWidth * window.devicePixelRatio);
+
+        video.src = closestMip.Value;
+
+
+        var onResize = function () {
+            
+
+            var width = element.offsetWidth * window.devicePixelRatio;
+
+            
+
+            if (previousContainerWidth == width) {
+                return;
+            }
+            previousContainerWidth = width;
+            var newClosestMip = SelectClosestMip(width);
+
+            if (newClosestMip.Key != closestMip.Key) {
+                closestMip = newClosestMip;
+                var time = video.currentTime;
+                video.src = closestMip.Value;
+                console.log("element.offsetWidth=" + width + " => " + video.src);
+                video.currentTime = time;
+            }
+        }
+
+        window.addEventListener("resize", onResize);
+
     }
 
     this.CreateYouTubeIFrameApiScript = function () {
@@ -163,32 +210,33 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
         }
     }
 
-
+    console.log(element.offsetWidth);
     
-    console.log("VideoPlayer " + mips[0].Value);
-    if (!showControls || autoPlay) {
-        this.CreateVideoTag()
-    } else {
-        this.CreateYouTubeIFrameApiScript();
-    }
+    
     
 
     //var document.getElementById()
     //var tag = document.createElement('script');
 
 
-    this.OnWindowResize = function () {
+    /*this.OnWindowResize = function () {
         var width = this.element.offsetWidth;
         if (this.previousContainerWidth == width) {
             return;
         }
         this.previousContainerWidth = width;
-    }
+    }*/
 
     
 
     this.OnDOMContentLoaded = function (event) {
-        this.OnWindowResize();
+        ResizeContainer();
+
+        if (!showControls || autoPlay) {
+            this.CreateVideoTag()
+        } else {
+            this.CreateYouTubeIFrameApiScript();
+        }
     }
 
 }

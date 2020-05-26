@@ -81,7 +81,7 @@ namespace Csml {
             result.Mips = new Dictionary<int, string>(
                 videosToDownload.Select(
                     x => new KeyValuePair<int, string>(x.Resolution, $"{result.Hash}_{x.Resolution}{x.FileExtension}")
-                    )
+                    ).OrderBy(x=>x.Key)
                 );
 
             result.Save();
