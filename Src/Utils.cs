@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading;
 using HtmlAgilityPack;
 
@@ -81,7 +82,21 @@ namespace Csml {
             foreach (var item in source) {
                 action(item);
                 yield return item;
+            }            
+        }
+
+        public static HtmlNode AddTextWithWordBreaks(this HtmlNode x, string text) {
+            var BreackingChars = @"\.";
+            Regex regex = new Regex($@"[^{BreackingChars}]*[{BreackingChars}]?");
+            int start = 0;
+            while (true) {
+                var m = regex.Match(text, start);
+                start = m.Index + m.Value.Length;
+                x.Add(m.Value);
+                if (start == text.Length) break;
+                x.Add("<wbr/>");
             }
+            return x;
         }
 
         public static HtmlNode Add(this HtmlNode x, string html) {

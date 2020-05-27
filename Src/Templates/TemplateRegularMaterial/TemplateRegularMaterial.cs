@@ -12,7 +12,7 @@ namespace Csml {
         public override HtmlNode WriteMaterial(Context context, IMaterial material) {
             return HtmlNode.CreateNode("<div>").Do(x => {
                 x.Add("<div>", "header").Do(x => {
-                    x.Add($"<h1>", "title").Add(material.Title);
+                    x.Add($"<h1>", "title").AddTextWithWordBreaks(material.Title);
                     if (material.TitleImage != null) {
                         x.Add(material.TitleImage.Generate(context));
                     }

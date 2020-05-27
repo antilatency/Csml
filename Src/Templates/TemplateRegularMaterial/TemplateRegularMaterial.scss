@@ -9,6 +9,14 @@
         $minWidth: 320px;
         min-width: $minWidth;
         margin: 40px auto 0 auto;
+        
+        
+        font-weight: 400;
+        font-size: 1rem;
+        color: #777;
+        line-height: 1.6;
+        letter-spacing: 0.01em;
+
 
 
         @mixin SectionTitleLink {
@@ -85,16 +93,6 @@
             color: #ccc;
         }
 
-
-
-        .text {
-            font-weight: 400;
-            font-size: 1rem;
-            color: #777;
-            line-height: 1.6;
-            letter-spacing: 0.01em;
-            //text-align: justify;
-        }
 
         > *, .section > * {
             margin-top: $verticalGap;

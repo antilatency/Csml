@@ -14,13 +14,6 @@ namespace Csml {
         public Material(string title, Image titleImage, Paragraph description
             ) : base(title, titleImage, description) {
         }
-
-        /*public Material(Template template, string title, Image titleImage, FormattableString description
-            ): base(template, title, titleImage, new Paragraph(description)) {
-        }
-        public Material(Template template, string title, Image titleImage, Paragraph description
-            ) : base(template, title, titleImage, description) {
-        }*/
     }
 
     public interface IMaterial : IElement {
@@ -55,8 +48,12 @@ namespace Csml {
         }
         public Image TitleImage { get; set; }
 
-        public string GetPath(Context context) => Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{context.Language}.html");
-
+        public string GetPath(Context context) {
+            if (NameWithoutLanguage == "Material") {
+                return $"{PropertyPath}_{context.Language}.html";
+            }
+            return Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{context.Language}.html");
+        }
 
         public Paragraph Description;        
 
@@ -78,18 +75,6 @@ namespace Csml {
             return uri.ToString();
         }
 
-        /*public T SelectTranslation(Context context) {
-            if (this.Language == context.Language) return this as T;
-            var translated = Translations?.FirstOrDefault(x => x.Language == context.Language);
-            if (translated != null) return translated;
-            if (Translations != null) {
-                foreach (var l in Language.All) {
-                    translated = (l==Language)?(this as T):Translations.FirstOrDefault(x => x.Language == l);
-                    if (translated != null) return translated;
-                }
-            }
-            return this as T;
-        }*/
 
         bool loop = false;//TODO: delete 
         public override IEnumerable<HtmlNode> Generate(Context context) {

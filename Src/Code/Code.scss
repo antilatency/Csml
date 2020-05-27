@@ -5,9 +5,41 @@
 }
 $code-font: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
 
+$backgroundColor: #faf6fa;
+
+@mixin highlight($baseColor) {
+    color: $baseColor;
+    text-decoration-color: mix($baseColor,$backgroundColor,25%);
+
+    &:hover {
+        text-decoration-color: $baseColor;
+    }
+}
+
 @mixin code {
     font-family: $code-font;
-    background-color: #faf6fa;
+    background-color: $backgroundColor;
+    color: black;
+
+
+    > .type, > .Type {
+        @include highlight(#008080);
+    }
+
+    > .namespace, > .Namespace {
+        @include highlight(#888);
+    }
+
+    > .method, > .Method {
+        @include highlight(#74531f);
+        
+        /*&:last-child{
+            &:after{
+                content:"()";
+            }
+        }*/
+    }
+
 }
 
 code {
@@ -30,11 +62,10 @@ code {
     .htmlElementName,
     .stringCSharpVerbatim{color: #a31515;}
 
-    .namespace{color:#000080;}
+    
 
-    .method{color: #74531f;}
+    
 
-    .type{color:#008080;}
     .className{color:#48D1CC;}
 
 
