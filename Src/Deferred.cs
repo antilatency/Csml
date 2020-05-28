@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Csml {
     public class Deferred : Element<Deferred> {
-        Func<IElement> Getter;
+        readonly Func<IElement> Getter;
         public Deferred(Func<IElement> getter) {
             Getter = getter;
         }

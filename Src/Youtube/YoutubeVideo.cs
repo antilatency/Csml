@@ -22,19 +22,15 @@ namespace Csml {
 
 
     public class YoutubeVideo {
-        string Code;
-        float Aspect;
-        private Task<YoutubeVideoCache> CacheAsync;
+        readonly string Code;
+        readonly float Aspect;
+        readonly Task<YoutubeVideoCache> CacheAsync;
         public YoutubeVideoCache Cache => CacheAsync.Result;
 
         public YoutubeVideo(string code, float aspect = 16f/9f) {
             Code = code;
             Aspect = aspect;
             CacheAsync = GetCacheAsync();
-        }
-
-        public void CopyFiles(string outputRootDirectory) { 
-            
         }
 
         public Player GetPlayer() {
@@ -64,9 +60,8 @@ namespace Csml {
 
             Console.WriteLine($"{Code}:Got videos list");
 
-            
-            result = new YoutubeVideoCache();
-            result.Hash = Code;
+
+            result = new YoutubeVideoCache {Hash = Code};
 
             var videosToDownload = videos
                 .Where(x => x.Resolution > 0 && x.AudioBitrate > 0);
@@ -90,16 +85,12 @@ namespace Csml {
         }
 
         public class Player : Element<Player> {
-            private YoutubeVideo YoutubeVideo;
-            //Dictionary<string, string> Parameters;
-            //Behaviour Behaviour;
+            readonly YoutubeVideo YoutubeVideo;
 
             public bool ShowControls { get; set; } = true;
             public bool AutoPlay { get; set; } = false;
             public bool Loop { get; set; } = false;
             public bool Sound { get; set; } = true;
-
-
 
             public Player(YoutubeVideo youtubeVideo) {
                 YoutubeVideo = youtubeVideo;

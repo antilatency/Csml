@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#pragma warning disable IDE1006 // Do not warn about naming style violations
+
 namespace Csml {
     public struct SemVer : IComparable<SemVer> {
-        uint major;
-        uint minor;
-        uint patch;
+        public uint major { get; private set; }
+        public uint minor { get; private set; }
+        public uint patch { get; private set; }
         private IEnumerable<string> _labels;
         public IEnumerable<string> labels {
             get => _labels;
@@ -87,10 +89,8 @@ namespace Csml {
                     for (int i = 0; i < compareBlocksCount; ++i) {
                         var thisBlock = thisBlocks[i];
                         var otherBlock = otherBlocks[i];
-                        uint thisBlockNumeric;
-                        bool thisBlockIsNumeric = uint.TryParse(thisBlock, out thisBlockNumeric);
-                        uint otherBlockNumeric;
-                        bool otherBlockIsNumeric = uint.TryParse(otherBlock, out otherBlockNumeric);
+                        bool thisBlockIsNumeric = uint.TryParse(thisBlock, out uint thisBlockNumeric);
+                        bool otherBlockIsNumeric = uint.TryParse(otherBlock, out uint otherBlockNumeric);
 
                         if (thisBlockIsNumeric) {
                             if (otherBlockIsNumeric) {

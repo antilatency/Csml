@@ -11,21 +11,16 @@ namespace Csml {
     }
 
     public class Modify : Element<Modify> {
-        private IElement Element;
-        Func<Context, IEnumerable<HtmlNode>> Modifier;
-        //public Func<Context, IEnumerable<HtmlNode>> ModifierClone => (Func<Context, IEnumerable<HtmlNode>>)Modifier.Clone();
-        
+        Func<Context, IEnumerable<HtmlNode>> Modifier;        
         public Modify(FormattableString formattableString): this(new Text(formattableString)){
             
         }
 
         public Modify(IElement element = null) {
             if (element == null) {
-                Element = new Element(context => HtmlNode.CreateNode("<span>"));
-            } else {
-                Element = element;
-            }            
-            Modifier = (context) => Element.Generate(context);
+                element = new Element(context => HtmlNode.CreateNode("<span>"));
+            }        
+            Modifier = (context) => element.Generate(context);
         }
 
         public Modify ContentReplace(FormattableString replacement) {

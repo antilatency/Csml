@@ -5,7 +5,7 @@ using HtmlAgilityPack;
 namespace Csml {
 
     public class Template<T> : ITemplate where T: Template<T> {
-        private List<IElement> AdditionalBodyElements = new List<IElement>();
+        readonly List<IElement> AdditionalBodyElements = new List<IElement>();
         public virtual T Add(IElement element) {
             AdditionalBodyElements.Add(element);
             return this as T;

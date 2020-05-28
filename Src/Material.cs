@@ -83,6 +83,7 @@ namespace Csml {
             var planeDescription = "";
             if (!loop) {
                 loop = true;
+                var it = Description.Generate(context).Select(x => x.InnerText);
                 planeDescription = string.Join("", Description.Generate(context).Select(x => x.InnerText));
                 loop = false;
             }

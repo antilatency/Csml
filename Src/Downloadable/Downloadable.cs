@@ -26,26 +26,10 @@ namespace Csml{
             Version = 1,
             CanSelectAll = 1<<1
         }
-        /*private struct PathFragmentInternal {
-            public PathFragmentSemantic Semantic;
-        }
-        public class PathFragment {
-            private PathFragmentInternal Data;
 
-            public bool CanSelectAll = false;
-            public static PathFragment Version => new PathFragment() { Data.Semantic = PathFragmentSemantic.Version };
-            public static PathFragment Fragment => new PathFragment() { Semantic = PathFragmentSemantic.Fragment };
-            public static PathFragment Extension => new PathFragment() { Semantic = PathFragmentSemantic.Extension };
-            public PathFragment EnableSelectAll {
-                get {
-                    CanSelectAll = true;
-                    return this;
-                }
-            }
-        }*/
-        private string PrimaryName { get; set; }
-        private string SourcePath { get; set; }
-        private object OptionsTree;
+        string PrimaryName { get; set; }
+        string SourcePath { get; set; }
+        readonly object OptionsTree;
 
         public Downloadable(string primaryName, string sourcePath, params PathFragment[] pathFragments) {
             SourcePath = ConvertPathToAbsolute(sourcePath);
@@ -58,9 +42,7 @@ namespace Csml{
                 OptionsTree = FinalizeOptionsBranch(SourcePath, PrimaryName);
             } else {
                 OptionsTree = BuildOptionsTree(SourcePath, pathFragments, 0, PrimaryName);
-            }
-
-            
+            }            
         }
 
         public object BuildOptionsTree(string path, PathFragment[] pathFragments, int index, string name) {            
@@ -159,10 +141,9 @@ namespace Csml{
                 if (files.Length == 1) {
                     File.Copy(files[0], outputPath);
                 } else {
-                    using (var zip = ZipFile.Open(outputPath, ZipArchiveMode.Create)) {
-                        foreach (var f in files) {
-                            zip.CreateEntryFromFile(f, Path.GetRelativePath(path, f), CompressionLevel.Optimal);
-                        }
+                    using var zip = ZipFile.Open(outputPath, ZipArchiveMode.Create);
+                    foreach (var f in files) {
+                        zip.CreateEntryFromFile(f, Path.GetRelativePath(path, f), CompressionLevel.Optimal);
                     }
                 }
                 cache.FileSize = new FileInfo(outputPath).Length;

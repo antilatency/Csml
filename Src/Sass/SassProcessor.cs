@@ -8,8 +8,8 @@ using System.Linq;
 using System.Threading;
 
 class SassProcessor : FileProcessor, IFileManager {
-    public string OutputFileName { get; private set; } 
-    private string InitialFilePath;
+    public string OutputFileName { get; private set; }
+    readonly string InitialFilePath;
 
     public SassProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory, string initialFilePath):
         base(developerMode, sourceRootDirectory, outputRootDirectory) {
@@ -25,8 +25,9 @@ class SassProcessor : FileProcessor, IFileManager {
     } 
 
     void InitializeWriteTimes() {
-        observableFiles = new Dictionary<string, DateTime>();
-        observableFiles.Add(InitialFilePath, new DateTime());
+        observableFiles = new Dictionary<string, DateTime> {
+            { InitialFilePath, new DateTime() }
+        };
     }
 
 
@@ -42,7 +43,7 @@ class SassProcessor : FileProcessor, IFileManager {
         return LibSassHost.FileManager.Instance.IsAbsolutePath(path);
     }
     public string ReadFile(string path) {
-        string content = "";
+        string content;
         while (true) {
             try {
                 content = File.ReadAllText(path);
