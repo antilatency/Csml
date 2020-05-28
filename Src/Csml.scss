@@ -58,17 +58,19 @@
 }
 
 
-    $verticalGap: 0.4rem !default;
-    @import "Youtube/VideoPlayer.scss";
-    @import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
-    @import "Templates/TemplateLanding/TemplateLanding.scss";
-    @import "Table/Table.scss";
-    @import "Lists/Lists.scss";
+$verticalGap: 0.4rem !default;
 
-    @import "MaterialCard/MaterialCard.scss";
-    @import "Grid/Grid.scss";
+@import "Youtube/VideoPlayer.scss";
+@import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
+@import "Templates/TemplateLanding/TemplateLanding.scss";
+@import "Table/Table.scss";
+@import "Lists/Lists.scss";
 
-    @import "Code/Code.scss";
-    @import "Code/GitHubLink.scss";
+@import "MaterialCard/MaterialCard.scss";
+@import "Grid/Grid.scss";
 
-    @import "Downloadable/Downloadable.scss";
+@import "Code/Code.scss";
+@import "Code/GitHubLink.scss";
+
+@import "Downloadable/Downloadable.scss";
+@import "Panels/Panels.scss";

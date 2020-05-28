@@ -1,0 +1,57 @@
+
+$panelRadius: 8px;
+$panelIconSize: 24px;
+.Panel {
+    position: relative;
+    //background-color: greenyellow;
+    border-radius: $panelRadius;
+    padding: $panelRadius;
+    padding-left: 42px;
+    //padding-bottom: 0;
+    font-size: inherit;
+    min-height: $panelIconSize;
+}
+.Panel::before {
+    display: block;
+    position: absolute;
+    top: $panelRadius;
+    left: $panelRadius;
+    font-size: $panelIconSize;
+    line-height: $panelIconSize;
+    font-family: "Material Design Icons";
+    content: "\F0339";
+    color: #ccc;
+}
+.Info{background-color: #deebff;}
+.Info::before{
+    color: #5590e8;
+    content: "\F02FC";
+}
+.Warning{background-color: #fffae6;}
+.Warning::before{
+    color: #ff991f;
+    content: "\F0026";
+}
+.Error{background-color: #ffebe6;}
+.Error::before{
+    color: #e65835;
+    content: "\F0159";
+}
+.Note{background-color: #eae6ff;}
+.Note::before{
+    color: #5243aa;
+    content: "\F082E";
+}
+.Success{background-color: #e3fce8;}
+.Success::before{
+    color: #2db647;
+    content: "\F05E0";
+}
+.bug{
+    background-color: #f4dfd9;    
+}
+
+.bug::before{
+    color: #de350b;
+    content: "\F00E4";
+}
