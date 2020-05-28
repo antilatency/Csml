@@ -29,7 +29,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
     //this.element.style.paddingTop = 100 / this.aspect + "%";
     var ResizeContainer = function () {
-        console.log(ResizeContainer);
         element.style.height = (element.offsetWidth / aspect)+"px";
     }    
     window.addEventListener("resize", ResizeContainer);
