@@ -180,6 +180,15 @@ namespace Csml {
                 
         }
 
+        public static void DeleteEmptySubdirectories(string directory) {
+            foreach (var d in Directory.GetDirectories(directory)) {
+                DeleteEmptySubdirectories(d);
+                if (Directory.GetFiles(d).Length == 0 &&
+                    Directory.GetDirectories(d).Length == 0) {
+                    Directory.Delete(d, false);
+                }
+            }            
+        }
         
 
         public static Exception GetDeepestException(Exception e) {

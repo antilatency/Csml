@@ -122,6 +122,10 @@ namespace Csml {
             }
 
             foreach (var n in matrix) {
+                Application.SiteMap.Add(n.Value.First().Value);
+            }
+
+            foreach (var n in matrix) {
                 if (n.Value.Count != languages.Count) {
                     var replacementPage = n.Value[languages.First(x => n.Value.ContainsKey(x))];
                     foreach (var l in languages) {

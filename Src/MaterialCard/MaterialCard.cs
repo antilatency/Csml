@@ -28,7 +28,7 @@ namespace Csml {
             var material = MaterialGetter(context);
             yield return HtmlNode.CreateNode(context.AForbidden?"<div>":"<a>").Do(x => {                
                 if (!context.AForbidden)
-                    x.SetAttributeValue("href", material.GetUri(context));
+                    x.SetAttributeValue("href", material.GetUri(context.Language));
                 x.AddClass("MaterialCard");
 
                 context.AForbidden = true;

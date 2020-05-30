@@ -21,8 +21,8 @@ namespace Csml {
         Image TitleImage { get; }
         IElement Description { get; }
         IElement Content { get; }
-        string GetPath(Context context);
-        string GetUri(Context context);
+        string GetPath(Language language);
+        string GetUri(Language language);
     }
     
 
@@ -48,11 +48,11 @@ namespace Csml {
         }
         public Image TitleImage { get; set; }
 
-        public string GetPath(Context context) {
+        public string GetPath(Language language) {
             if (NameWithoutLanguage == "Material") {
-                return $"{PropertyPath}_{context.Language}.html";
+                return $"{PropertyPath}_{language}.html";
             }
-            return Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{context.Language}.html");
+            return Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{language}.html");
         }
 
         public Paragraph Description;        
@@ -70,8 +70,8 @@ namespace Csml {
         
 
 
-        public string GetUri(Context context) {
-            Uri uri = new Uri(Application.BaseUri, GetPath(context));
+        public string GetUri(Language language) {
+            Uri uri = new Uri(Application.BaseUri, GetPath(language));
             return uri.ToString();
         }
 
@@ -92,7 +92,7 @@ namespace Csml {
             yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
                 x.AddClass("text");
                 if (!context.AForbidden) {
-                    x.SetAttributeValue("href", GetUri(context));
+                    x.SetAttributeValue("href", GetUri(context.Language));
                     x.SetAttributeValue("title", planeDescription);
                 }
                 x.InnerHtml = Title;                

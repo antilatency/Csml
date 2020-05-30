@@ -30,7 +30,7 @@ namespace Csml {
             Language pageLanguage = material.Language;
             if (pageLanguage == null) pageLanguage = Language.All[0];
 
-            var outputPath = Path.Combine(Application.OutputRootDirectory, material.GetPath(context));
+            var outputPath = Path.Combine(Application.OutputRootDirectory, material.GetPath(context.Language));
             context.CurrentMaterial = material;
             context.BeginPage();
             context.CurrentHtmlDocument.DocumentNode.Do(x => {
