@@ -4,7 +4,13 @@ using System;
 
 namespace Csml {
     public sealed class Section : Section<Section> {
-        public Section(string title) : base(title) {
+        /// <summary>
+        /// <param  name="identifier"/>
+        /// Null - identifier not defined. Identifier will be created from title
+        /// Empty - identifier set as "deleted". Html will not contains an identifier for that element
+        /// </param>
+        /// </summary>
+        public Section(string title, string identifier = null) : base(title, identifier) {
         }
     }
 
@@ -16,10 +22,18 @@ namespace Csml {
 
     public class Section<T> : Collection<T>, ISection where T : Section<T> {
         public string Title { get; set; }
-        public string Id => Title.Replace(" ","_");
-        
-        protected Section(string title) {
+        public string Id {
+            get {
+                if (UserDefinedIdentifier != null) return UserDefinedIdentifier;
+                else return Title.Replace(" ", "_");
+            }
+        }        
+        public string UserDefinedIdentifier { get; set; }
+
+
+        protected Section(string title, string identifier) {
             Title = title;
+            UserDefinedIdentifier = identifier;
         }
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
@@ -29,7 +43,8 @@ namespace Csml {
 
             section.Do(x => {
                 x.Add($"<h2>", "title").Do(x => {
-                    x.Id = Id;
+                    if (Id != "")
+                        x.Id = Id;
                     x.Add(Title);
                     if (!context.AForbidden) {
                         x.Add("<a>", "link").Do(x => {

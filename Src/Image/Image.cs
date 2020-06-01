@@ -37,7 +37,7 @@ namespace Csml {
         public Image(string filePath):base() {
             SourcePath = ConvertPathToAbsolute(filePath);
             if (!File.Exists(SourcePath)) {
-                Log.Error.OnCaller($"File {filePath} not found");
+                Log.Error.OnObject(this, $"File {filePath} not found");
             }
         }
 

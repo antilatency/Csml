@@ -208,6 +208,12 @@ namespace Csml {
                     }*/
                 }
                 if (i != numMatches) {
+                    if (!string.IsNullOrEmpty(matches[i].Groups[2].Value)) {
+                        context.FormatString = matches[i].Groups[2].Value;
+                    } else {
+                        context.FormatString = null;
+                    }
+
                     foreach (var eg in args[i].Generate(context))
                         markdownState.Add(eg);
                     pose = matches[i].Index + matches[i].Length;

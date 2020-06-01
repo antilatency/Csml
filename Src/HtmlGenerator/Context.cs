@@ -14,7 +14,7 @@ namespace Csml {
 
     public struct Context {
         public bool AForbidden;
-
+        public string FormatString;
 
         public Language Language { get; set; }
         public HtmlDocument CurrentHtmlDocument { get; set; }

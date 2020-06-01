@@ -92,7 +92,11 @@ namespace Csml {
             yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
                 x.AddClass("text");
                 if (!context.AForbidden) {
-                    x.SetAttributeValue("href", GetUri(context.Language));
+                    var href = GetUri(context.Language);
+                    if (context.FormatString != null) {
+                        href += "#" + context.FormatString;
+                    }
+                    x.SetAttributeValue("href", href);
                     x.SetAttributeValue("title", planeDescription);
                 }
                 x.InnerHtml = Title;                
