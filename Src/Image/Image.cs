@@ -36,6 +36,9 @@ namespace Csml {
 
         public Image(string filePath):base() {
             SourcePath = ConvertPathToAbsolute(filePath);
+            if (!File.Exists(SourcePath)) {
+                Log.Error.OnCaller($"File {filePath} not found");
+            }
         }
 
         /*private ImageCodecInfo GetEncoder(ImageFormat format) {
