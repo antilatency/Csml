@@ -37,7 +37,13 @@ namespace Csml {
                 };
             }
         }
-
+        public static LogContext ToDo {
+            get {
+                return new LogContext {
+                    logType = LogContext.LogType.todo
+                };
+            }
+        }
 
 
     }
@@ -48,6 +54,7 @@ namespace Csml {
 
         public enum LogType {
             info,
+            todo,
             warning,
             error
         };
@@ -56,6 +63,7 @@ namespace Csml {
         public LogType logType;
 
         protected static ConsoleColor PrintTypeToColor(LogType printType) {
+            if (printType == LogType.todo) return ConsoleColor.Green;
             if (printType == LogType.info) return ConsoleColor.Gray;
             if (printType == LogType.warning) return ConsoleColor.Yellow;
             if (printType == LogType.error) return ConsoleColor.Red;
@@ -69,7 +77,7 @@ namespace Csml {
         protected static void Print(string sourceFilePath, int sourceLineNumber, LogType type, string message, ErrorCode code) {
             ConsoleColor color = Console.ForegroundColor;
             Console.ForegroundColor = PrintTypeToColor(type);
-
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             string codeString = "";
             if (type != LogType.info) codeString = prefix + ErrorCodeToNumber(code) + ": ";
 
@@ -129,91 +137,9 @@ namespace Csml {
                 Print("Unknown", 0, logType, e.Message, 0);
             }
 
-            /*if (obj is ICallerInfo) {
-                ICallerInfo callerInfo = obj as ICallerInfo;
-                Print(callerInfo.callerSourceFilePath, callerInfo.callerSourceLineNumber, logType, message, code);
-            } else {
-                Print("Unknown", 0, logType, message, code);
-            }*/
         }
 
 
-        /*protected static string GetTypeSourceFilePath(ICustomAttributeProvider type) {
-            var attributes = (SourceCodeMarkerAttribute[])type.GetCustomAttributes(typeof(SourceCodeMarkerAttribute), true);
-            if (attributes.Length > 0)
-                return attributes[0].sourceFilePath;
-            return "";
-        }
-        protected static int GetTypeSourceLineNumber(ICustomAttributeProvider type) {
-            var attributes = (SourceCodeMarkerAttribute[])type.GetCustomAttributes(typeof(SourceCodeMarkerAttribute), true);
-            if (attributes.Length > 0)
-                return attributes[0].sourceLineNumber;
-            return 0;
-        }
-
-        protected static void StackTraceToPublicApi(out string sourceFilePath, out int sourceLineNumber) {
-            StackTrace stackTrace = new StackTrace(true);
-            var generatorAssembly = Assembly.GetAssembly(typeof(AntilatencyApiGenerator));
-
-            foreach (var f in stackTrace.GetFrames()) {
-                if (Assembly.GetAssembly(f.GetMethod().DeclaringType) != generatorAssembly) {
-                    sourceFilePath = f.GetFileName();
-                    sourceLineNumber = f.GetFileLineNumber();
-                    return;
-                }
-            }
-            sourceFilePath = "";
-            sourceLineNumber = 0;
-        }*/
 
     }
 }
-
-/*
-public class Error : Log {
-    
-    public static void PublicApiCall(string message, ErrorCode code) {
-        string sourceFilePath;
-        int sourceLineNumber;
-        StackTraceToPublicApi(out sourceFilePath, out sourceLineNumber);
-        Print(sourceFilePath, sourceLineNumber, PrintType.error, message, code);
-    }
-    public static void Idlcs(ICustomAttributeProvider item, string message, ErrorCode code,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) {
-        Print(GetTypeSourceFilePath(item), GetTypeSourceLineNumber(item), PrintType.error, message, code);
-    }
-
-
-
-}
-
-public class Warning : Log {
-
-    public static void Here(
-        string message, ErrorCode code,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) {
-        Print(sourceFilePath, sourceLineNumber, PrintType.warning, message, code);
-    }
-
-    public static void Idlcs(ICustomAttributeProvider item, string message, ErrorCode code,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) {
-        Print(GetTypeSourceFilePath(item), GetTypeSourceLineNumber(item), PrintType.warning, message, code);
-    }
-}
-
-public class Info : Log {
-    public static void Here(
-        string message,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) {
-        Print(sourceFilePath, sourceLineNumber, PrintType.info, message, (ErrorCode)0);
-    }
-
-}*/
