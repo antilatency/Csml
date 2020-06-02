@@ -7,8 +7,10 @@ namespace Csml {
     public class ToDo : Element<ToDo>{
         public static bool Enabled { get; set; } = false;
         public string Text { get; private set; }
-        public ToDo(string text, bool suppressWarning = false) {            
+        public bool ShowText { get; private set; }
+        public ToDo(string text, bool showText = false, bool suppressWarning = false) {            
             Text = text;
+            ShowText = showText;
             if (!suppressWarning) Log.ToDo.OnObject(this, text);
         }
 
@@ -18,6 +20,9 @@ namespace Csml {
 
             yield return HtmlNode.CreateNode("<span>").Do(x=> {
                 x.AddClass("ToDo");
+                if (ShowText) {
+                    x.Add(Text);
+                }
                 x.SetAttributeValue("title", Text);
             });
         }
