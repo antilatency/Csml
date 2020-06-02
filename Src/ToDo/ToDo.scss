@@ -1,0 +1,30 @@
+.ToDo {
+    $color: red;
+    $iconSize: 20px;
+
+    display: inline-block;
+    position: relative;
+    width: 1px;
+    height: 1em;
+    background-color: $color;
+
+
+
+    &:after {
+        position: absolute;
+        display: block;
+        left: -0.5*$iconSize;
+        top: 100%;
+        width: $iconSize;
+        line-height: $iconSize;
+        //height: $iconSize;
+        border-radius: 0.5*$iconSize;
+        background-color: $color;
+        color: white;
+        text-align: center;
+        vertical-align: central;
+        font-size: 0.8*$iconSize;
+        font-family: "Material Design Icons";
+        content: "\F02A0"
+    }
+}

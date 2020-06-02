@@ -43,14 +43,15 @@ namespace Csml {
 
             section.Do(x => {
                 x.Add($"<h2>", "title").Do(x => {
-                    if (Id != "")
-                        x.Id = Id;
                     x.Add(Title);
-                    if (!context.AForbidden) {
-                        x.Add("<a>", "link").Do(x => {
-                            x.SetAttributeValue("href", "#" + Id);
-                            x.SetAttributeValue("title", "Heading anchor");
-                        });
+                    if (Id != "") {
+                        x.Id = Id;
+                        if (!context.AForbidden) {
+                            x.Add("<a>", "link").Do(x => {
+                                x.SetAttributeValue("href", "#" + Id);
+                                x.SetAttributeValue("title", "Heading anchor");
+                            });
+                        }
                     }
                     
                 });
