@@ -61,7 +61,7 @@ namespace Csml {
             //Utils.CreateDirectory(outputDirectory);
 
             //TODO: file not found
-            var hash = Utils.ToHashString(File.ReadAllBytes(SourcePath));
+            var hash = Hash.CreateFromFile(SourcePath).ToString();
 
             ImageCache = ImageCache.Load(hash);
 

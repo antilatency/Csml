@@ -39,7 +39,7 @@ namespace Csml {
         }*/
 
 
-        internal static string ToHashString(string text) {
+        /*internal static string ToHashString(string text) {
             var bytes = System.Text.Encoding.Unicode.GetBytes(text);
             return ToHashString(bytes);
         }
@@ -49,7 +49,7 @@ namespace Csml {
             var hash = md5.ComputeHash(data);
             var result = string.Join("", hash.Select(x => x.ToString("X2")));
             return result;
-        }
+        }*/
 
 
         /*public static IElement FormattableStringToElement(FormattableString formattableString) {

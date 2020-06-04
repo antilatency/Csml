@@ -47,7 +47,7 @@ class JavascriptProcessor : FileProcessor {
         var result = stringBuilder.ToString();
         OutputFileName = "script.js";
         if (!DeveloperMode) {
-            OutputFileName = Utils.ToHashString(result)+".js";
+            OutputFileName = Hash.CreateFromString(result).ToString() +".js";
         }
 
         File.WriteAllText(Path.Combine(OutputRootDirectory, OutputFileName), result);

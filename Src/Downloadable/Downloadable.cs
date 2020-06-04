@@ -107,7 +107,7 @@ namespace Csml{
 
         public string CalculateHash(IEnumerable<string> paths) {            
             var source =  string.Join("?", paths.Select(x => Path.GetRelativePath(Application.ProjectRootDirectory, x)).OrderBy(x=>x));
-            return Utils.ToHashString(source);
+            return Hash.CreateFromString(source).ToString();
         }
 
         public string FinalizeOptionsBranch(string path, string name) {

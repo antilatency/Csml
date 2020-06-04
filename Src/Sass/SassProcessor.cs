@@ -86,7 +86,7 @@ class SassProcessor : FileProcessor, IFileManager {
             OutputFileName = "style.css";
             var outputMapFileName = "style.css.map";
             if (!DeveloperMode) {
-                var hash = Utils.ToHashString(result.CompiledContent);
+                var hash = Hash.CreateFromString(result.CompiledContent).ToString();
                 OutputFileName = hash + ".css";
                 outputMapFileName = OutputFileName + ".map";
             }
