@@ -28,10 +28,4 @@ namespace Csml {
             yield return section;
         }
     }
-
-    public sealed class FooterMenuSectionList : ContainerWithSpecificChildren<FooterMenuSectionList> {
-        public FooterMenuSectionList() : base("ul", "li", "FooterMenuSectionList") {
-
-        }
-    }
 }
