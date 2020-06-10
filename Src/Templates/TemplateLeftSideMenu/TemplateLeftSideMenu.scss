@@ -1,5 +1,9 @@
 
 .TemplateLeftSideMenu {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
     > .LeftSideMenu {
         position: fixed;
         left: 0;

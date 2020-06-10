@@ -9,16 +9,14 @@
         $minWidth: 320px;
         min-width: $minWidth;
         margin: 0 auto 0 auto;
+        flex: 1 0 auto;
 
-
-        >.VideoPlayer{
+        > .VideoPlayer {
             max-height: calc(100vh - 128px);
-
         }
 
-        .section > .title > .link{
+        .section > .title > .link {
             visibility: hidden;
-
         }
 
         .section > .title {
