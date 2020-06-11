@@ -14,6 +14,8 @@ namespace Csml {
             footer.AddClass("Footer");
             container.AddClass("FooterContainer");
 
+            context.AForbidden = true;
+
             container.Add(base.Generate(context));
 
             yield return footer;
