@@ -42,7 +42,7 @@ namespace Csml {
 
                 
                 x.Add("<div>").Do(x=> {
-                    x.AddClass("title");
+                    x.AddClass("Title");
                     x.InnerHtml = material.Title;
                 });                
                 x.Add(material.Description.Generate(context));

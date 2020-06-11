@@ -15,11 +15,11 @@
             max-height: calc(100vh - 128px);
         }
 
-        .section > .title > .link {
+        .Section > .Title > .Link {
             visibility: hidden;
         }
 
-        .section > .title {
+        .Section > .Title {
             font-weight: 200;
             font-size: 2.5rem;
             text-align: center;
@@ -27,17 +27,17 @@
             margin-bottom: 0.2rem;
         }
 
-        .section > .section {
+        .Section > .Section {
             margin-left: 20px;
 
-            .title {
+            .Title {
                 font-weight: 400;
                 font-size: 1.6rem;
                 color: #aaa;
             }
         }
 
-        .section > .section > .section > .title {
+        .Section > .Section > .Section > .Title {
             font-weight: 500;
             font-size: 1.4rem;
             color: #ccc;
@@ -45,7 +45,7 @@
 
 
 
-        .text {
+        .Text {
             font-weight: 400;
             font-size: 1rem;
             color: #777;
@@ -58,21 +58,21 @@
             margin-bottom: $verticalGap;
         }
 
-        .header > div.image {
+        .Header > div.Image {
             display: block;
             width: 100%;
             height: 50vh;
             margin-bottom: 2vh;
         }
 
-        .section > div.image {
+        .Section > div.Image {
             display: block;
             width: 100%;
             height: 30vh;
             margin-bottom: 1vh;
         }
 
-        img.image {
+        img.Image {
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -80,8 +80,8 @@
             width: 100%;
         }
 
-        > .header, > .section {
-            > .text, > .title {
+        > .Header, > .Section {
+            > .Text, > .Title {
                 @media only screen and (max-width: 816px) {
                     padding-left: 8px;
                     padding-right: 8px;

@@ -39,15 +39,15 @@ namespace Csml {
         public override IEnumerable<HtmlNode> Generate(Context context) {
 
             var section = HtmlNode.CreateNode("<div>");
-            section.AddClass("section");
+            section.AddClass("Section");
 
             section.Do(x => {
-                x.Add($"<h2>", "title").Do(x => {
+                x.Add($"<h2>", "Title").Do(x => {
                     x.Add(Title);
                     if (Id != "") {
                         x.Id = Id;
                         if (!context.AForbidden) {
-                            x.Add("<a>", "link").Do(x => {
+                            x.Add("<a>", "Link").Do(x => {
                                 x.SetAttributeValue("href", "#" + Id);
                                 x.SetAttributeValue("title", "Heading anchor");
                             });

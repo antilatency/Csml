@@ -157,7 +157,7 @@ namespace Csml {
                 result.SetAttributeValue("style", $"max-width: {biggestMip.Key}px;");
             }
 
-            result.AddClass("image");
+            result.AddClass("Image");
             yield return result;
         }
     }

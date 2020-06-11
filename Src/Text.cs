@@ -22,7 +22,7 @@ namespace Csml {
         public override IEnumerable<HtmlNode> Generate(Context context) {
             yield return HtmlNode.CreateNode("<div>").Do(x=> {
                 x.Add(base.Generate(context));
-                x.AddClass("text");
+                x.AddClass("Text");
             });
         }
 

@@ -27,13 +27,13 @@
     }
 
 
-    & > .title, & > .text {
+    & > .Title, & > .Text {
         text-align: left;
         margin-left: 16px;
         margin-right: 8px;
     }
 
-    .title {
+    .Title {
         top: $imageHeight;
         //left: 0;
         margin-top: 8px;
@@ -42,13 +42,13 @@
         color: #777;
     }
 
-    .image {
+    .Image {
         //top: 0;
         width: 100%;
         height: $imageHeight;
     }
 
-    & > .text {
+    & > .Text {
         top: calc(#{$imageHeight} + 1.5rem + 8px);
         //bottom: 0;
         margin-top: 8px;

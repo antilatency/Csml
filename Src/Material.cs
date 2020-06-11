@@ -90,7 +90,7 @@ namespace Csml {
 
 
             yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
-                x.AddClass("text");
+                x.AddClass("Text");
                 if (!context.AForbidden) {
                     var href = GetUri(context.Language);
                     if (context.FormatString != null) {
