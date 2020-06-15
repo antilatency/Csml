@@ -50,14 +50,26 @@
 
 	a {
 		color: #848d95;
+		font-size: 14px;
 		padding: 4px 0;
-		line-height: 1.30769231;
+		line-height: 1.4em;
 		display: inline-block;
 		text-decoration: none;
 
 		&:hover {
 			color: #bbc0c4;
 		}
+	}
+
+	div.Text {
+		text-align: left;
+		color: #3d5154;
+		font-size: 14px;
+		box-sizing: border-box;
+		display: inline-block;
+		line-height: 1.4em;
+		margin: auto;
+		padding: 0;
 	}
 }
 
