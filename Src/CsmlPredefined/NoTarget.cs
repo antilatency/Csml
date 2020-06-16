@@ -1,4 +1,4 @@
-﻿using Csml;
+﻿
 namespace Csml {
     public partial class CsmlPredefined : Scope {
         public static LanguageSelector<IMaterial> NoTarget => new LanguageSelector<IMaterial>();

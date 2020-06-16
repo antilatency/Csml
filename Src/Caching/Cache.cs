@@ -23,6 +23,7 @@ namespace Csml {
                 if (UserDefinedRootUri != null) return UserDefinedRootUri;
                 return new Uri(RootDirectory+"/");
             }
+
             set {
                 UserDefinedRootUri = value;
             }
@@ -51,10 +52,6 @@ namespace Csml {
 
             return result;
         }
-        /*public bool CanSave() {
-            return !string.IsNullOrEmpty(RootDirectory);
-        }*/
-        //public bool Stored => !string.IsNullOrEmpty(Directory);
 
         public void Save() {
             if (string.IsNullOrEmpty(RootDirectory))
