@@ -1,5 +1,5 @@
 ﻿namespace Csml {
-    public interface ITemplate {
+    public interface IPageTemplate {
         void Generate(Context context, IMaterial material);
     }
 }

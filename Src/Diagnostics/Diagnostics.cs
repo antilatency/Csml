@@ -18,7 +18,7 @@ namespace Csml {
 
 
             public static IEnumerable<IElement> GetAllPages() {
-                var scopeTypes = ScopeUtils.AllStatic;// GetTopLevelScopes();
+                var scopeTypes = ScopeHelper.AllStatic;// GetTopLevelScopes();
 
 
                 /*foreach (var t in scopeTypes) {

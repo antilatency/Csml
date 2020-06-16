@@ -60,21 +60,21 @@
 
 $verticalGap: 0.4rem !default;
 
-@import "Youtube/VideoPlayer.scss";
-@import "Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
-@import "Templates/TemplateLanding/TemplateLanding.scss";
-@import "Table/Table.scss";
-@import "Lists/Lists.scss";
+@import "Components/Youtube/VideoPlayer.scss";
+@import "Page/Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
+@import "Page/Templates/TemplateLanding/TemplateLanding.scss";
+@import "Components/Table/Table.scss";
+@import "Components/Lists/Lists.scss";
 
-@import "MaterialCard/MaterialCard.scss";
-@import "Grid/Grid.scss";
+@import "Components/MaterialCard/MaterialCard.scss";
+@import "Components/Grid/Grid.scss";
 
-@import "Code/Code.scss";
-@import "Code/GitHubLink.scss";
+@import "Components/Code/Code.scss";
+@import "Components/Code/GitHubLink.scss";
 
-@import "Downloadable/Downloadable.scss";
-@import "Panels/Panels.scss";
+@import "Components/Downloadable/Downloadable.scss";
+@import "Components/Panels/Panels.scss";
 
-@import "ToDo/ToDo.scss";
+@import "Components/ToDo/ToDo.scss";
 
-@import "Footer/Footer.scss";
+@import "Components/Footer/Footer.scss";

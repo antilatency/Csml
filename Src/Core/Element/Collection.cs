@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace Csml {
 
-
-
     public sealed class Collection : Collection<Collection> {
         public Collection(bool wrapStringToParagraph = true): base(wrapStringToParagraph) {}
     }

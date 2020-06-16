@@ -7,76 +7,17 @@ using System.Linq;
 using System.Reflection;
 
 namespace Csml {
-    public class ScopeUtils {
-
-        public static BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-
-        public static IEnumerable<Type> AllStatic {
-            get {
-                return Assembly.GetExecutingAssembly().GetTypes()
-                    .Where(x => x.IsSubclassOf(typeof(Scope)))
-                    .Where(x => !x.IsGenericType);
-            }
-        }
-
-
-        public static IEnumerable<T> GetScopePropertiesOfType<ScopeType,T>() {
-            var result = typeof(ScopeType).GetProperties(PropertyBindingFlags)
-                .Where(x=>typeof(T).IsAssignableFrom(x.PropertyType))                
-                .Select(x => (T)x.GetValue(null));
-            return result;
-        }
-
-
-        public static IEnumerable<Scope> All {
-            get {
-                return AllStatic.Select(x => (Scope)Activator.CreateInstance(x));
-            }
-        }
-
-        public static void EnableGetOnce() {
-            var allStatic = AllStatic;
-            foreach (var i in allStatic) {
-                /*var thisType = i.GetProperty("ThisType", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
-                if (i != thisType) { 
-                    Log.Error.Unknown($"Type {i.FullName} is invalid: Scope types must pass final type to generic parameter of parent type.")
-                }*/
-            }
-            AllStatic.ForEach(x =>
-                EnableGetOnce(x)
-                //x.GetMethod("EnableGetOnce", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Invoke(null, new object[0])
-
-
-                );
-        }
-
-        public static void EnableGetOnce(Type t) {
-            var nonStaticMembers = t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (nonStaticMembers.Count() > 0) {
-                Log.Error.Here($"Scope {t.Name} contains non static prooperty {nonStaticMembers.First().Name}");
-            }
-
-            foreach (var p in t.GetProperties(PropertyBindingFlags)) {
-                GetOnce.WrapPropertyGetter(p);
-            }
-        }
-
-
-
-    }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
     public partial class Scope {
 
         protected Scope() { }
 
-        
-
         private IEnumerable<IMaterial> GetMaterials() {
             //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
 
-            return GetType().GetProperties(ScopeUtils.PropertyBindingFlags)
+            return GetType().GetProperties(ScopeHelper.PropertyBindingFlags)
             .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial))).Select(x => x.GetValue(this) as IMaterial);
 
         }
@@ -85,12 +26,12 @@ namespace Csml {
             GetMaterials().ToList();
         }
 
-        public ITemplate GetTemplate() {
+        public IPageTemplate GetTemplate() {
             var type = GetType();
             while (type != null) {
                 var template = type
                 .GetProperty(nameof(Template), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                ?.GetValue(null) as ITemplate;
+                ?.GetValue(null) as IPageTemplate;
                 if (template != null) return template;
 
                 type = type.DeclaringType ?? typeof(Scope);
@@ -144,9 +85,6 @@ namespace Csml {
             }
 
         }
-
-        
-
 
         public static Type ThisType{
             get {
