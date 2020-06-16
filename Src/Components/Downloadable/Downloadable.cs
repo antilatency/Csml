@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Csml{
 
+    [CacheConfig("Downloads", true)]
     public class DownloadableCache : Cache<DownloadableCache> {
         /// <summary>
         /// Size in bytes of cached file

@@ -1,68 +1,44 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Csml {
-    public class Cache {
+
+    public class Cache<T> where T : Cache<T>, new() {
+
+        private static readonly CacheConfigAttribute Config = typeof(T).GetCustomAttribute<CacheConfigAttribute>();
+
+        private const string JsonDataFileName = "cache.json";
+
         public string Hash;
-        
-        protected Cache() { }
-    }
 
-    public class Cache<T> : Cache where T : Cache<T>, new() {
         [JsonIgnore]
-        public string Directory => Path.Combine(RootDirectory, Hash);
+        public string Directory => Path.Combine(Config.GetRootDirectory(), Hash);
 
-        public Uri GetFileUri(string fileName) => new Uri(RootUri, $"{Hash}/{fileName}");
-
-
-        public static string RootDirectory;
-        private static Uri UserDefinedRootUri;
-        public static Uri RootUri {
-            get {
-                if (UserDefinedRootUri != null) return UserDefinedRootUri;
-                return new Uri(RootDirectory+"/");
-            }
-
-            set {
-                UserDefinedRootUri = value;
-            }
-        }
-
-
+        public Uri GetFileUri(string fileName) => new Uri(Config.GetRootUri(), $"{Hash}/{fileName}");
 
         public static T Create(string hash) {
-            if (string.IsNullOrEmpty(RootDirectory))
-                throw new Exception("Cache.RootDirectory undefined.");
-            
-            var result = new T();
-            result.Hash = hash;
+            var result = new T() { Hash = hash };
+
             Utils.CreateDirectory(result.Directory);
 
             return result;
         }
 
         public static T Load(string hash) {
-            if (string.IsNullOrEmpty(RootDirectory)) return null;
-            var directory = Path.Combine(RootDirectory, hash);
-            var jsonFullPath = Path.Combine(directory, "cache.json");
-            if (!File.Exists(jsonFullPath)) return null;
-            var json = File.ReadAllText(jsonFullPath);
-            var result = JsonConvert.DeserializeObject<T>(json);
+            var path = Path.Combine(Config.GetRootDirectory(), hash, JsonDataFileName);
 
-            return result;
+            return File.Exists(path) ? JsonConvert.DeserializeObject<T>(File.ReadAllText(path)) : null;
         }
 
         public void Save() {
-            if (string.IsNullOrEmpty(RootDirectory))
-                throw new Exception("Cache.RootDirectory undefined.");
-
-            //var directory = Path.Combine(RootDirectory, hash);
             Utils.CreateDirectory(Directory);
-            var jsonFullPath = Path.Combine(Directory, "cache.json");
-            var json = JsonConvert.SerializeObject((T)this);
-            File.WriteAllText(jsonFullPath, json);
-            //Directory = directory;
+
+            var jsonFullPath = Path.Combine(Directory, JsonDataFileName);
+            var jsonData = JsonConvert.SerializeObject((T)this);
+
+            File.WriteAllText(jsonFullPath, jsonData);
         }
     }
 }

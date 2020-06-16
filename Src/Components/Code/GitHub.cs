@@ -38,6 +38,7 @@ namespace Csml {
             }
         }
 
+        [CacheConfig("GitHubCache", false)]
         public class FileCache : Cache<FileCache> {
             public string Content;
         }

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace Csml {
 
+    [CacheConfig("Images", true)]
     public class ImageCache : Cache<ImageCache> {
         public float Aspect = 1;
         public float[] Roi;

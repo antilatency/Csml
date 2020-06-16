@@ -15,6 +15,7 @@ namespace Csml {
             : base("VideoPlayer", code, aspect, showControls, autoPlay, loop, sound, mips) { }
     };
 
+    [CacheConfig("Videos", true)]
     public class YoutubeVideoCache : Cache<YoutubeVideoCache> {
 
         public Dictionary<int, string> Mips;
