@@ -9,9 +9,6 @@ using System.Reflection;
 namespace Csml {
     public class ScopeUtils {
 
-        
-
-
         public static BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
 
         public static IEnumerable<Type> AllStatic {
@@ -159,12 +156,4 @@ namespace Csml {
             }
         }
     }
-
-
-    
-    //public class Scope<T> : Scope where T: Scope<T>, new(){
-    //}
-
-
-
 }

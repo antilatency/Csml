@@ -10,29 +10,13 @@ namespace Csml {
     public interface IInfo {
         public string CallerSourceFilePath { get; }
         public int CallerSourceLineNumber { get; }
-        //public string Name { get; set; }//Auto assign by Engine
-        //public Language Language { get; }//Auto assign by Engine
     }
 
     public interface IFinal {
         public Type ImplementerType { get; }
     }
 
-    public interface IPage: ITranslatable {
-        public void Generate(Context context);
-        public Uri GetUriRelativeToRoot(Context context);
-        
-    }
-
-    
-
-    public interface ITranslatable {
-        //
-        //
-        //public List<IElement> Translations { get; }
-    }
-
-    public interface IElement : ITranslatable {
+    public interface IElement {
         public string NameWithoutLanguage { get; }
         public string PropertyPath { get; }
         public Language Language { get; }
@@ -49,38 +33,10 @@ namespace Csml {
         }
     }
 
-
-
-    /*public class ContentReplace : Element<ContentReplace> {
-        private IElement Element;
-        private IElement Replacement;
-        public ContentReplace(IElement element, FormattableString replacement) {
-            Element = element;
-            Replacement = new Text(replacement);
-        }
-        public ContentReplace(IElement element, IElement replacement) {
-            Element = element;
-            Replacement = replacement;
-        }
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return Element.Generate(context).Single().Do(x=> {
-                x.InnerHtml = "";
-                x.Add(Replacement.Generate(context));
-            });
-        }
-        public override string ToString() {
-            return Replacement.ToString();
-        }
-    }*/
-
-
-
     public class Element<T> : GetOnce.IStaticPropertyInitializer, IElement, IInfo, IFinal where T : Element<T> {
         public Type ImplementerType => typeof(T);
         public string CallerSourceFilePath { get; set; }
         public int CallerSourceLineNumber { get; set; }
-
-        //public string Name { get; set; }//Auto assign by Engine
 
         public string PropertyPath => PropertyInfo.DeclaringType.FullName.Replace("+", ".").Replace(".", "/");
         protected string PropertyName => PropertyInfo?.Name;
@@ -114,34 +70,6 @@ namespace Csml {
             }
         }
 
-        
-
-        //List<IElement> ITranslatable.Translations => Translations?.Select(x => x as IElement).ToList();
-
-        /*public List<T> Translations {
-            get {
-                if (Language == null) return null;
-                var properties = PropertyInfo.DeclaringType.GetProperties(
-                    BindingFlags.Public | BindingFlags.NonPublic
-                    | BindingFlags.Static);
-
-                var result = new List<T>();
-                foreach (var p in properties) {
-                    if (p.PropertyType == typeof(T)) {
-                        var v = p.GetValue(null);
-                        if ((v is T) && (v!=this)) {
-                            var vt = v as T;
-                            if (vt.NameWithoutLanguage == NameWithoutLanguage) {
-                                result.Add(vt);
-                            }
-                        }
-                    }
-                }
-                return (result.Count == 0)?null:result;
-            }
-        }*/
-
-
         private bool IsConstructorOfT(MethodBase method) {
             if (method.Name != ".ctor") return false;
             return method.DeclaringType == typeof(T);
@@ -166,9 +94,6 @@ namespace Csml {
             yield break;
         }
 
-
-
-
         //Utils
         public string ConvertPathToAbsolute(string filePath) {
             return ConvertPathToAbsolute(filePath, CallerSourceFilePath);
@@ -181,16 +106,6 @@ namespace Csml {
                 return Path.GetFullPath(filePath, Path.GetDirectoryName(CallerSourceFilePath));
             }
         }
-
-        /*public string ReadAllText(string path) {
-            File.ReadAllText
-        }*/
-
-
-
-
-
-
     }
 
 }

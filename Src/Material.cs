@@ -5,16 +5,6 @@ using System.Linq;
 using HtmlAgilityPack;
 
 namespace Csml {
-    public sealed class Material : Material<Material> {
-        
-
-        public Material(string title, Image titleImage, FormattableString description
-            ) : base(title, titleImage, new Paragraph(description)) {
-        }
-        public Material(string title, Image titleImage, Paragraph description
-            ) : base(title, titleImage, description) {
-        }
-    }
 
     public interface IMaterial : IElement {
         string Title { get; }
@@ -26,15 +16,13 @@ namespace Csml {
     }
     
 
-    public class Material<T> : Collection<T>, IMaterial where T : Material<T> {
-        
+    public class Material : Collection<Material>, IMaterial {
+
         IElement IMaterial.Description => Description;
         IElement IMaterial.Content => new LazyCollection(Elements);
 
-        //protected Template Template;
-        //public static Template DefaultTemplate { get; set; }
-
         protected string UserDefinedTitle = null;
+
         public string Title {
             get {
                 if (UserDefinedTitle != null)
@@ -46,7 +34,10 @@ namespace Csml {
                 }
             }
         }
+
         public Image TitleImage { get; set; }
+
+        public Paragraph Description;
 
         public string GetPath(Language language) {
             if (NameWithoutLanguage == "Material") {
@@ -55,9 +46,11 @@ namespace Csml {
             return Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{language}.html");
         }
 
-        public Paragraph Description;        
+        public Material(string title, Image titleImage, FormattableString description) 
+            : this(title, titleImage, new Paragraph(description))
+        { }
 
-        protected Material(string title, Image titleImage, Paragraph description)  {
+        public Material(string title, Image titleImage, Paragraph description)  {
             UserDefinedTitle = title;
             TitleImage = titleImage;
             Description = description;
@@ -66,9 +59,6 @@ namespace Csml {
         public override string ToString() {
             return Title;
         }
-
-        
-
 
         public string GetUri(Language language) {
             Uri uri = new Uri(Application.BaseUri, GetPath(language));
@@ -101,11 +91,6 @@ namespace Csml {
                 }
                 x.InnerHtml = Title;                
             });
-
-            //yield return HtmlNode.CreateNode($"<a class=\"text\" href=\"{GetUriRelativeToRoot(context)}\">{translated.Title}</a>");
         }
-
-
-
     }
 }
