@@ -60,7 +60,7 @@ namespace Csml {
             }
 
             foreach (var n in matrix) {
-                Application.SiteMap.Add(n.Value.First().Value);
+                CsmlWorkspace.Current.SiteMapMaterials.Add(n.Value.First().Value);
             }
 
             foreach (var n in matrix) {

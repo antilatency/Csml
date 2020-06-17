@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 
 namespace Csml {
-    class JavascriptProcessor : FileProcessor {
+    public class JavascriptProcessor : FileProcessor {
         public string OutputFileName { get; private set; }
 
         public JavascriptProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory) :

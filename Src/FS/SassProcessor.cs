@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 
 namespace Csml {
-    class SassProcessor : FileProcessor, IFileManager {
+    public class SassProcessor : FileProcessor, IFileManager {
         public string OutputFileName { get; private set; }
         readonly string InitialFilePath;
 

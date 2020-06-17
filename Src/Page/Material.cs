@@ -51,7 +51,7 @@ namespace Csml {
         }
 
         public string GetUri(Language language) {
-            Uri uri = new Uri(Application.BaseUri, GetPath(language));
+            Uri uri = new Uri(CsmlWorkspace.Current.WwwRootUri, GetPath(language));
             return uri.ToString();
         }
 

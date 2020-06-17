@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace Csml {
-    abstract class FileProcessor {
+    public abstract class FileProcessor {
 
         protected string SourceRootDirectory;
         protected string OutputRootDirectory;
