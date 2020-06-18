@@ -43,6 +43,9 @@ namespace Csml {
         }
 
         public void Build() {
+            Log.Info.Here($"Csml builder: Enable Scope Properties Caching");
+            ScopeHelper.EnableGetOnce();
+
             Log.Info.Here($"Csml builder: Setup Cache");
             SetupCache();
 

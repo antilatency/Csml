@@ -14,41 +14,27 @@ namespace Csml {
         protected Scope() { }
 
         private IEnumerable<IMaterial> GetMaterials() {
-            //var pros = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            //var o = pros.Where(x => x.PropertyType.ImplementsInterface(typeof(IPage)));
-
             return GetType().GetProperties(ScopeHelper.PropertyBindingFlags)
-            .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial))).Select(x => x.GetValue(this) as IMaterial);
-
-        }
-
-        public void Verify() {
-            GetMaterials().ToList();
+                .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial)))
+                .Select(x => x.GetValue(this) as IMaterial);
         }
 
         public IPageTemplate GetTemplate() {
-            var type = GetType();
-            while (type != null) {
-                var template = type
-                .GetProperty(nameof(Template), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                ?.GetValue(null) as IPageTemplate;
-                if (template != null) return template;
-
-                type = type.DeclaringType ?? typeof(Scope);
-            }
-            return null;
+            return GetType().GetProperty(nameof(Template), ScopeHelper.PropertyBindingFlags)?.GetValue(null, null) as IPageTemplate;
         }
 
         public void Generate(Context context) {
             var template = GetTemplate();
-
             var materials = GetMaterials();
             var languages = Language.All;
+
             var matrix = new Dictionary<string, Dictionary<Language, IMaterial>>();
+
             foreach (var m in materials) {
                 if (!matrix.ContainsKey(m.NameWithoutLanguage)) {
                     matrix.Add(m.NameWithoutLanguage, new Dictionary<Language, IMaterial>());
                 }
+
                 var n = matrix[m.NameWithoutLanguage];
                 if (m.Language == null) {
                     foreach (var l in languages) {
@@ -84,14 +70,6 @@ namespace Csml {
                 }
             }
 
-        }
-
-        public static Type ThisType{
-            get {
-                StackTrace stackTrace = new StackTrace(true);
-                var result = stackTrace.GetFrame(1).GetMethod().DeclaringType;
-                return result;
-            }
         }
     }
 }

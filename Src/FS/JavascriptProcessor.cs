@@ -37,7 +37,7 @@ namespace Csml {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (var i in pathes) {
 
-                var js = Csml.Utils.ReadAllText(i);
+                var js = Utils.ReadAllText(i);
                 var u = NUglify.Uglify.Js(js, i);
                 stringBuilder.AppendLine(u.Code);
             }

@@ -6,7 +6,7 @@ namespace Csml {
     public class CsmlWorkspace {
 
         private static CsmlWorkspace _instance;
-        internal static CsmlWorkspace Current => _instance ?? (_instance = new CsmlWorkspace());
+        internal static CsmlWorkspace Current => _instance ??= new CsmlWorkspace();
 
         public string ProjectRootDirectory { get; internal set; }
 
@@ -27,6 +27,6 @@ namespace Csml {
         public Uri WwwCssUri => SassProcessor != null ? new Uri(WwwRootUri, SassProcessor.OutputFileName) : null;
         public Uri WwwJsUri => JavascriptProcessor != null ? new Uri(WwwRootUri, JavascriptProcessor.OutputFileName) : null;
 
-        private CsmlWorkspace() { }
+        private CsmlWorkspace() {  }
     }
 }

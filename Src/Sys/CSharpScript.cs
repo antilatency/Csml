@@ -6,20 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Csml {
     public static class CSharpScript {
-        public static Task<bool> WarmUpAsync() {
-            return Task<bool>.Run(() => WarmUp());
-        }
-        public static bool WarmUp() {
-            return Eval("", null);
-        }
 
         public static bool ExecuteCommandLineArguments<T>(string[] args) {
             return ExecuteCommandLineArguments(args, typeof(T));
         }
+
         public static bool ExecuteCommandLineArguments(string[] args, Type staticType = null) {
             var script = string.Join(" ", args).Replace('~', '"');
             return Eval(script, staticType);
@@ -51,7 +45,7 @@ namespace Csml {
             }
         }
 
-        static HashSet<MetadataReference> GetMetadataReferencesForThisContext() {
+        private static HashSet<MetadataReference> GetMetadataReferencesForThisContext() {
             var result = new HashSet<MetadataReference>();
             var systemRuntime = Assembly.GetExecutingAssembly().GetReferencedAssemblies().First(x => x.Name == "System.Runtime");
 
