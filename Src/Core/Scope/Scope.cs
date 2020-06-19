@@ -1,10 +1,5 @@
-using Csml;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Csml {
 
@@ -30,46 +25,42 @@ namespace Csml {
 
             var matrix = new Dictionary<string, Dictionary<Language, IMaterial>>();
 
-            foreach (var m in materials) {
-                if (!matrix.ContainsKey(m.NameWithoutLanguage)) {
-                    matrix.Add(m.NameWithoutLanguage, new Dictionary<Language, IMaterial>());
+            foreach (var material in materials) {
+                var materialName = material.NameWithoutLanguage;
+
+                if (!matrix.ContainsKey(materialName)) {
+                    matrix.Add(materialName, new Dictionary<Language, IMaterial>());
                 }
 
-                var n = matrix[m.NameWithoutLanguage];
-                if (m.Language == null) {
-                    foreach (var l in languages) {
-                        n.Add(l, m);
+                var translations = matrix[materialName];
+
+                if (material.Language == null) {
+                    foreach (var lang in languages) {
+                        translations.Add(lang, material);
                     }
                 } else {
-                    n.Add(m.Language, m);
+                    translations.Add(material.Language, material);
                 }
             }
 
             foreach (var n in matrix) {
-                CsmlWorkspace.Current.SiteMapMaterials.Add(n.Value.First().Value);
-            }
+                var translations = n.Value;
 
-            foreach (var n in matrix) {
-                if (n.Value.Count != languages.Count) {
-                    var replacementPage = n.Value[languages.First(x => n.Value.ContainsKey(x))];
+                CsmlWorkspace.Current.SiteMapMaterials.Add(translations.First().Value);
+
+                if (translations.Count != languages.Count) {
+                    var replacementPage = translations[languages.First(x => translations.ContainsKey(x))];
                     foreach (var l in languages) {
-                        if (!n.Value.ContainsKey(l))
-                            n.Value.Add(l, replacementPage);
+                        if (!translations.ContainsKey(l))
+                            translations.Add(l, replacementPage);
                     }
                 }
-            }
 
-            foreach (var n in matrix) {
-                //Log.Info.Here($"Generation Page {n.Key}");
-                foreach (var l in n.Value) {
-                    //Log.Info.Here($"Generation Page {n.Key} context {l.Key}");
+                foreach (var l in translations) {
                     context.Language = l.Key;
-
                     template.Generate(context, l.Value);
-                    //l.Value.Generate(context);
                 }
             }
-
         }
     }
 }
