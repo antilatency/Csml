@@ -55,7 +55,7 @@
         }
 
         *:not(:last-child)[style*="display:block"] {
-            margin-bottom: $verticalGap;
+            margin-bottom: $VerticalGap;
         }
 
         .Header > div.Image {

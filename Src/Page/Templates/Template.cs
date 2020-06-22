@@ -36,7 +36,6 @@ namespace Csml {
             context.CurrentHtmlDocument.DocumentNode.Do(x => {
                 x.Element("html").Do(x => {
                     x.SetAttributeValue("lang", pageLanguage.Name);
-                    x.SetAttributeValue("style", "height: 100%;");
                     x.Element("head").Do(x => ModifyHead(x, context, material));
                     x.Element("body").Do(x => {
                         ModifyBody(x, context, material);

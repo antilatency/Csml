@@ -3,7 +3,6 @@
 	overflow: auto;
 	margin-bottom: 1rem;
 }
-$code-font: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
 
 $backgroundColor: #faf6fa;
 
@@ -17,7 +16,7 @@ $backgroundColor: #faf6fa;
 }
 
 @mixin code {
-    font-family: $code-font;
+    font-family: $FontFamilyMonospace;
     background-color: $backgroundColor;
     color: black;
 
@@ -32,14 +31,12 @@ $backgroundColor: #faf6fa;
 
     > .method, > .Method {
         @include highlight(#74531f);
-        
         /*&:last-child{
             &:after{
                 content:"()";
             }
         }*/
     }
-
 }
 
 code {

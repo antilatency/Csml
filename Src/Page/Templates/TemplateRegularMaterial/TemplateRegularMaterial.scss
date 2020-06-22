@@ -94,14 +94,14 @@
 
 
         > *, .Section > * {
-            margin-top: $verticalGap;
+            margin-top: $VerticalGap;
         }
         /*> *:not(:last-child), .section>*:not(:last-child) {
-            margin-bottom: $verticalGap;
+            margin-bottom: $VerticalGap;
         }
         
         *:not(:last-child)[style*="display:flex"] {
-            margin-bottom: $verticalGap;
+            margin-bottom: $VerticalGap;
         }*/
         .Header div.Image {
             display: block;

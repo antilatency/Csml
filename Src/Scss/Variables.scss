@@ -1,0 +1,59 @@
+
+// Options
+
+$EnableShadows: false !default;
+
+
+// Colors
+
+$AntilatencyColor: #acc435;
+
+$White: #fff !default;
+$Gray1: #f8f9fa !default;
+$Gray2: #e9ecef !default;
+$Gray3: #dee2e6 !default;
+$Gray4: #ced4da !default;
+$Gray5: #adb5bd !default;
+$Gray6: #6c757d !default;
+$Gray7: #495057 !default;
+$Gray8: #343a40 !default;
+$Gray9: #212529 !default;
+$Black: #000 !default;
+
+$Blue: #007bff !default;
+$Indigo: #6610f2 !default;
+$Purple: #6f42c1 !default;
+$Pink: #e83e8c !default;
+$Red: #dc3545 !default;
+$Orange: #fd7e14 !default;
+$Yellow: #ffc107 !default;
+$Green: #28a745 !default;
+$Teal: #20c997 !default;
+$Cyan: #17a2b8 !default;
+
+// Spacing 
+
+$VerticalGap: 0.4rem !default;
+
+// Typography
+
+$FontFamilySansSerif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$FontFamilyMonospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$FontFamilyBase: $FontFamilySansSerif !default;
+
+$FontSizeBase: 1rem !default;
+$FontSizeLg: $FontSizeBase * 1.25 !default;
+$FontSizeSm: $FontSizeBase * .875 !default;
+
+$FontWeightLighter: lighter !default;
+$FontWeightLight: 300 !default;
+$FontWeightNormal: 400 !default;
+$FontWeightBold: 700 !default;
+$FontWeightBolder: bolder !default;
+
+$FontWeightBase: $FontWeightNormal !default;
+$LineHeightBase: 1.5 !default;
+
+
+
+
