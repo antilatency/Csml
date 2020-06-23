@@ -40,14 +40,6 @@
 		}
 	}
 
-	ul {
-		margin: 0;
-	}
-
-	ul li {
-		list-style: none;
-	}
-
 	a {
 		color: #848d95;
 		font-size: 14px;
@@ -66,20 +58,8 @@
 		color: #3d5154;
 		font-size: 14px;
 		box-sizing: border-box;
-		display: inline-block;
 		line-height: 1.4em;
 		margin: auto;
 		padding: 0;
 	}
 }
-
-/*.FooterMenu {
-	display: flex;
-	flex: 2 1 auto;
-	flex-wrap: wrap;
-}
-
-.FooterMenuSection {
-	padding: 0 12px 24px 0;
-	flex: 1 0 auto;
-}*/
