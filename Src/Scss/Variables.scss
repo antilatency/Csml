@@ -8,17 +8,15 @@ $EnableShadows: false !default;
 
 $AntilatencyColor: #acc435;
 
-$White: #fff !default;
-$Gray1: #f8f9fa !default;
-$Gray2: #e9ecef !default;
-$Gray3: #dee2e6 !default;
-$Gray4: #ced4da !default;
-$Gray5: #adb5bd !default;
-$Gray6: #6c757d !default;
-$Gray7: #495057 !default;
-$Gray8: #343a40 !default;
-$Gray9: #212529 !default;
-$Black: #000 !default;
+$White: #ffffff !default;
+$GrayLightest: #f8f9fa !default;
+$GrayLighter: #e9ecef !default;
+$GrayLight: #dee2e6 !default;
+$Gray: #adb5bd !default;
+$GrayDark: #6c757d !default;
+$GrayDarker: #343a40 !default;
+$GrayDarkest: #212529 !default;
+$Black: #000000 !default;
 
 $Blue: #007bff !default;
 $Indigo: #6610f2 !default;
@@ -31,9 +29,36 @@ $Green: #28a745 !default;
 $Teal: #20c997 !default;
 $Cyan: #17a2b8 !default;
 
-// Spacing 
+$PrimaryColor: $Blue !default;
+$SecondaryColor: $GrayDark !default;
+$SuccessColor: $Green !default;
+$InfoColor: $Cyan !default;
+$WarningColor: $Yellow !default;
+$DangerColor: $Red !default;
+$LightColor: $GrayLightest !default;
+$DarkColor: $GrayDarker !default;
+
+
+// Layout
+
+$Spacer: 1rem !default;
 
 $VerticalGap: 0.4rem !default;
+
+$Z_Index0: -1;
+$Z_Index1: 10;
+$Z_Index2: 20;
+$Z_Index3: 30;
+$Z_Index4: 40;
+$Z_Index5: 50;
+$Z_Index6: 60;
+$Z_Index7: 70;
+$Z_Index8: 80;
+$Z_Index9: 90;
+$Z_Index10: 100;
+
+$BorderWidth: 1px !default;
+
 
 // Typography
 
@@ -43,7 +68,9 @@ $FontFamilyBase: $FontFamilySansSerif !default;
 
 $FontSizeBase: 1rem !default;
 $FontSizeLg: $FontSizeBase * 1.25 !default;
-$FontSizeSm: $FontSizeBase * .875 !default;
+$FontSizeMd: $FontSizeBase * 1.14 !default;
+$FontSizeSm: $FontSizeBase * 0.92 !default;
+$FontSizeXs: $FontSizeBase * 0.875 !default;
 
 $FontWeightLighter: lighter !default;
 $FontWeightLight: 300 !default;
@@ -54,6 +81,20 @@ $FontWeightBolder: bolder !default;
 $FontWeightBase: $FontWeightNormal !default;
 $LineHeightBase: 1.5 !default;
 
+$H1FontSize: $FontSizeBase * 2.5 !default;
+$H2FontSize: $FontSizeBase * 2 !default;
+$H3FontSize: $FontSizeBase * 1.75 !default;
+$H4FontSize: $FontSizeBase * 1.5 !default;
+$H5FontSize: $FontSizeBase * 1.25 !default;
+$H6FontSize: $FontSizeBase !default;
+
+$HeadingsFontWeight: 500 !default;
+$HeadingsLineHeight: 1.2 !default;
 
 
+// Links 
 
+$LinkColor: $PrimaryColor !default;
+$LinkDecoration: none !default;
+$LinkHoverColor: darken($LinkColor, 15%) !default;
+$LinkHoverDecoration: underline !default;
