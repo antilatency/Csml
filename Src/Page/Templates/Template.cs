@@ -23,8 +23,12 @@ namespace Csml {
             x.Add($"<meta property=\"og:title\" content=\"{material.Title}\">");
             x.Add($"<meta property=\"og:type\" content=\"article\">");
             x.Add($"<meta property=\"og:description\" content=\"{material.Description}\">");
-            x.Add($"<meta property=\"og:image\" content=\"{(material.TitleImage ?? CsmlPredefined.MissingImage).GetUri()}\">");
-            x.Add($"<meta property=\"og:url\" content=\"{material.GetUri(material.Language ?? Language.All[0])}\">");
+
+            if (material.TitleImage != null) {
+                x.Add($"<meta property=\"og:image\" content=\"{material.TitleImage.GetUri()}\">");
+            }
+            
+            x.Add($"<meta property=\"og:url\" content=\"{material.GetUri(context.Language)}\">");
 
             x.Add($"<meta property=\"twitter:card\" content=\"summary\">");
         }
