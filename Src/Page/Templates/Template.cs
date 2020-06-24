@@ -12,12 +12,21 @@ namespace Csml {
         }
         public T this[IElement element] { get => Add(element); }
 
-        public virtual void ModifyHead(HtmlNode x, Context context, IMaterial material) { 
+        public virtual void ModifyHead(HtmlNode x, Context context, IMaterial material) {
+            x.Add($"<title>{CsmlWorkspace.Current.PageTitlePrefix + material.Title}</title>");
+
             x.Add($"<link rel = \"stylesheet\" href=\"{CsmlWorkspace.Current.WwwCssUri}\">");
             x.Add($"<script src=\"{CsmlWorkspace.Current.WwwJsUri}\">");
             x.Add("<meta charset=\"utf-8\">");
             x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
-            x.Add($"<title>{CsmlWorkspace.Current.PageTitlePrefix + material.Title}</title>");
+
+            x.Add($"<meta property=\"og:title\" content=\"{material.Title}\">");
+            x.Add($"<meta property=\"og:type\" content=\"article\">");
+            x.Add($"<meta property=\"og:description\" content=\"{material.Description}\">");
+            x.Add($"<meta property=\"og:image\" content=\"{(material.TitleImage ?? CsmlPredefined.MissingImage).GetUri()}\">");
+            x.Add($"<meta property=\"og:url\" content=\"{material.GetUri(material.Language ?? Language.All[0])}\">");
+
+            x.Add($"<meta property=\"twitter:card\" content=\"summary\">");
         }
 
         public virtual void ModifyBody(HtmlNode x, Context context, IMaterial material) {

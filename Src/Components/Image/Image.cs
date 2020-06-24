@@ -31,7 +31,15 @@ namespace Csml {
             }
         }
 
-        private void GenerateResources(Context context) {
+        public Uri GetUri() { 
+            if (ImageCache == null) {
+                GenerateResources();
+            }
+
+            return ImageCache.GetFileUri(ImageCache.Mips.First().Value);
+        }
+
+        private void GenerateResources() {
             var extension = Path.GetExtension(SourcePath);
             var hash = Hash.CreateFromFile(SourcePath).ToString();
 
@@ -76,7 +84,7 @@ namespace Csml {
 
         public override IEnumerable<HtmlNode> Generate(Context context) {
             if (ImageCache == null) {
-                GenerateResources(context);
+                GenerateResources();
             }
 
             var biggestMip = ImageCache.Mips.First();
