@@ -46,7 +46,7 @@ namespace Csml {
             foreach (var n in matrix) {
                 var translations = n.Value;
 
-                CsmlWorkspace.Current.SiteMapMaterials.Add(translations.First().Value);
+                CsmlApplication.SiteMapMaterials.Add(translations.First().Value);
 
                 if (translations.Count != languages.Count) {
                     var replacementPage = translations[languages.First(x => translations.ContainsKey(x))];

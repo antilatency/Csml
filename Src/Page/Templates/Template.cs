@@ -13,10 +13,10 @@ namespace Csml {
         public T this[IElement element] { get => Add(element); }
 
         public virtual void ModifyHead(HtmlNode x, Context context, IMaterial material) {
-            x.Add($"<title>{CsmlWorkspace.Current.PageTitlePrefix + material.Title}</title>");
+            x.Add($"<title>{CsmlApplication.PageTitlePrefix + material.Title}</title>");
 
-            x.Add($"<link rel = \"stylesheet\" href=\"{CsmlWorkspace.Current.WwwCssUri}\">");
-            x.Add($"<script src=\"{CsmlWorkspace.Current.WwwJsUri}\">");
+            x.Add($"<link rel = \"stylesheet\" href=\"{CsmlApplication.WwwCssUri}\">");
+            x.Add($"<script src=\"{CsmlApplication.WwwJsUri}\">");
             x.Add("<meta charset=\"utf-8\">");
             x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
 
@@ -43,7 +43,7 @@ namespace Csml {
             Language pageLanguage = material.Language;
             if (pageLanguage == null) pageLanguage = Language.All[0];
 
-            var outputPath = Path.Combine(CsmlWorkspace.Current.WwwRootDirectory, material.GetPath(context.Language));
+            var outputPath = Path.Combine(CsmlApplication.WwwRootDirectory, material.GetPath(context.Language));
             context.CurrentMaterial = material;
             context.BeginPage();
             context.CurrentHtmlDocument.DocumentNode.Do(x => {
