@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HtmlAgilityPack;
 
 namespace Csml {
@@ -21,8 +22,9 @@ namespace Csml {
             x.Add("<meta name = \"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=yes\">");
 
             x.Add($"<meta property=\"og:title\" content=\"{material.Title}\">");
-            x.Add($"<meta property=\"og:type\" content=\"article\">");
-            x.Add($"<meta property=\"og:description\" content=\"{material.Description}\">");
+           // x.Add($"<meta property=\"og:type\" content=\"article\">");
+            var materialDescription = string.Join("", material.Description.Generate(context).Select(x => x.InnerText));
+            x.Add($"<meta property=\"og:description\" content=\"{materialDescription}\">");
 
             if (material.TitleImage != null) {
                 x.Add($"<meta property=\"og:image\" content=\"{material.TitleImage.GetUri()}\">");

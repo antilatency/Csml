@@ -16,27 +16,35 @@ namespace Csml {
         public bool IsAnimatedImage;
         public Dictionary<int, string> Mips;
     }
-    
+
     public class Image : Element<Image> {
-        
+
         public static readonly int MinImageWidth = 128;
-        public string SourcePath { get; private set; }        
+        public string SourcePath { get; private set; }
 
         protected ImageCache ImageCache;
 
-        public Image(string filePath):base() {
+        public Image(string filePath) : base() {
             SourcePath = ConvertPathToAbsolute(filePath);
             if (!File.Exists(SourcePath)) {
                 Log.Error.OnObject(this, $"File {filePath} not found");
             }
         }
 
-        public Uri GetUri() { 
+        public Uri GetUri() {
             if (ImageCache == null) {
                 GenerateResources();
             }
 
             return ImageCache.GetFileUri(ImageCache.Mips.First().Value);
+        }
+
+        public float[] GetRoi() { 
+            if (ImageCache == null) {
+                GenerateResources();
+            }
+
+            return ImageCache.Roi;
         }
 
         private void GenerateResources() {
