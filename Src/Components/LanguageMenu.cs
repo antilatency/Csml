@@ -12,7 +12,10 @@ namespace Csml {
             yield return base.Generate(context).Single().Do(x => {
                 foreach (var l in Language.All) {
                     context.Language = l;
-                    x.AppendChild(context.CurrentMaterial.Generate(context).Single().Do(x => x.InnerHtml = l.FullName));
+                    x.AppendChild(context.CurrentMaterial.Generate(context).Single().Do(x => {
+                        x.InnerHtml = l.FullName;
+                        x.SetAttributeValue("onclick", "this.href += window.location.hash;");
+                    })) ;
                 }
             });
         }
