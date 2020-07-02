@@ -68,7 +68,7 @@ namespace Csml {
                 loop = false;
             }
 
-            if (TitleImage != null) {
+            /*if (TitleImage != null) {
                 var roi = TitleImage.GetRoi();
 
                 if (roi != null && roi.Length > 0) {
@@ -77,7 +77,7 @@ namespace Csml {
                     }
                 } else {
                     Log.Warning.OnObject(this, $"ROI required for material TitleImage. Material title = {Title}");
-                }
+                }*/
             }
 
 
