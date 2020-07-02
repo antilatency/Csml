@@ -47,6 +47,33 @@ namespace Csml {
             return ImageCache.Roi;
         }
 
+        public bool IsRoiFitsIntoWideRect(float[] roi) {
+            if (roi != null && roi.Length > 0) {
+                if (ImageCache == null) {
+                    GenerateResources();
+                }
+
+                var imageWidth = (float)ImageCache.Mips.First().Key;
+                var imageHeight = imageWidth * ImageCache.Aspect;
+
+                var x0 = roi[0] / 100f;
+                var x1 = roi[1] / 100f;
+                var y0 = roi[2] / 100f;
+                var y1 = roi[3] / 100f;
+
+                var roiWidth = (x1 - x0) * imageWidth;
+                var roiHeight = (y1 - y0) * imageHeight;
+
+                var wideRectAspect = 9f / 16f;
+                var wideRectHeight = roiHeight;
+                var wideRectWidth = wideRectHeight / wideRectAspect;
+
+                return wideRectHeight <= imageHeight && wideRectWidth <= imageWidth && wideRectWidth >= roiWidth;
+            }
+
+            return false;
+        }
+
         private void GenerateResources() {
             var extension = Path.GetExtension(SourcePath);
             var hash = Hash.CreateFromFile(SourcePath).ToString();
