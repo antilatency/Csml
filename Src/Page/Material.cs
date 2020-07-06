@@ -78,7 +78,7 @@ namespace Csml {
                 } else {
                     Log.Warning.OnObject(this, $"ROI required for material TitleImage. Material title = {Title}");
                 }
-            }*/
+            }*/ 
 
 
             yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {

@@ -66,9 +66,16 @@ namespace Csml {
 
                 var wideRectAspect = 9f / 16f;
                 var wideRectHeight = roiHeight;
-                var wideRectWidth = wideRectHeight / wideRectAspect;
+                var wideRectWidth = roiWidth;
 
-                return wideRectHeight <= imageHeight && wideRectWidth <= imageWidth && wideRectWidth >= roiWidth;
+                if (roiWidth > roiHeight) {
+                    wideRectHeight = wideRectAspect * wideRectWidth;
+                } else {
+                    wideRectWidth = wideRectHeight / wideRectAspect;
+                }
+
+                return wideRectHeight <= imageHeight && wideRectWidth <= imageWidth && 
+                        wideRectWidth >= roiWidth && wideRectHeight >= roiHeight;
             }
 
             return false;
