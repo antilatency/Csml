@@ -36,10 +36,20 @@ namespace Csml {
 
             StringBuilder stringBuilder = new StringBuilder();
             foreach (var i in pathes) {
+                var code = Utils.ReadAllText(i);
 
-                var js = Utils.ReadAllText(i);
-                var u = NUglify.Uglify.Js(js, i);
-                stringBuilder.AppendLine(u.Code);
+                if (!DeveloperMode) {
+                    var uglifyResult = NUglify.Uglify.Js(code, i);
+
+                    if (uglifyResult.HasErrors) {
+                        Console.WriteLine("Javascript Uglify error: " + uglifyResult.ToString());
+                    } else {
+                        code = uglifyResult.Code;
+                    }
+                }
+
+
+                stringBuilder.AppendLine(code);
             }
 
             var result = stringBuilder.ToString();
