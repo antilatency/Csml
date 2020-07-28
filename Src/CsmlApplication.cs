@@ -64,6 +64,21 @@ namespace Csml {
             }
         }
 
+        public static void WatchJsCssWithoutBuild(string projectRootDirectory, string wwwRootDirectory, Uri wwwRootUri) {
+            ProjectRootDirectory = projectRootDirectory;
+            WwwRootDirectory = wwwRootDirectory;
+            WwwRootUri = wwwRootUri;
+            PageTitlePrefix = F5.Prefix;
+            IsDeveloperMode = true;
+            SiteMapMaterials = new List<IMaterial>();
+            CleanupMatcher = null;
+
+            SetupCache();
+            CreateFileProcessors();
+
+            Watch();
+        }
+
         private static void Build() {
             Log.Info.Here($"Csml builder: Enable Scope Properties Caching");
             ScopeHelper.EnableGetOnce();
