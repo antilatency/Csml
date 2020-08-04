@@ -6,6 +6,7 @@
         //@include transition( left 0.15s ease-in-out);
         top: 0;
         height: 100%;
+        width: 260px;
         //max-width: $max-menu-width;
         z-index: 1000;
         //opacity: 0.96;
@@ -16,6 +17,7 @@
             display: block;
             color: inherit;
             font-weight: 400;
+            text-decoration: none;
             padding: 16px 28px;
         }
 
