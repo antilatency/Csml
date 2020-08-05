@@ -3,6 +3,9 @@
 .TemplateLanding {    
     @extend .TemplateLeftSideMenu;
 
+    > .VideoPlayer {
+        max-height: 100%;
+    }
 
     > .Content {
 
@@ -11,10 +14,7 @@
         margin: 0 auto 0 auto;
         flex: 1 0 auto;
 
-        > .VideoPlayer {
-            max-height: 100%;
-        }
-
+    
         .Section > .Title > .Link {
             visibility: hidden;
         }
@@ -53,6 +53,7 @@
             //text-align: justify;
         }
 
+        
         *:not(:last-child)[style*="display:block"] {
             margin-bottom: $VerticalGap;
         }
