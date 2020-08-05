@@ -29,6 +29,17 @@ namespace Csml {
             return this as T;
         }
 
+        public virtual T Add(List<FormattableString> formattableString) {
+            formattableString.ForEach(x => {
+                if (WrapStringToParagraph)
+                    List.Add(new Paragraph(x));
+                else
+                    List.Add(new Text(x));
+            });
+
+            return this as T;
+        }
+
 
         /*public static object SimplifyFormattableString(FormattableString formattableString) {
             if (formattableString.Format == "{0}") return formattableString.GetArgument(0);
@@ -37,6 +48,7 @@ namespace Csml {
         }*/
 
         public T this[FormattableString element] { get => Add(element); }
+        public T this[List<FormattableString> element] { get => Add(element); }
         public T this[IElement element] { get => Add(element); }
 
         public T this[IEnumerable<IElement> element] { get => Add(new LazyCollection(element)); }
