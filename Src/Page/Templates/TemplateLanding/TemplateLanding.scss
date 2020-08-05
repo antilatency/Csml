@@ -1,6 +1,6 @@
 @import "../TemplateLeftSideMenu/TemplateLeftSideMenu.scss";
 
-.TemplateLanding {
+.TemplateLanding {    
     @extend .TemplateLeftSideMenu;
 
 
@@ -12,7 +12,7 @@
         flex: 1 0 auto;
 
         > .VideoPlayer {
-            max-height: calc(100vh - 128px);
+            max-height: 100%;
         }
 
         .Section > .Title > .Link {
@@ -20,9 +20,8 @@
         }
 
         .Section > .Title {
-            font-weight: 200;
             font-size: 2.5rem;
-            text-align: center;
+            text-align: left;
             color: #888;
             margin-bottom: 0.2rem;
         }
@@ -32,7 +31,7 @@
 
             .Title {
                 font-weight: 400;
-                font-size: 1.6rem;
+                font-size: 1.5rem;
                 color: #aaa;
             }
         }
@@ -48,7 +47,7 @@
         .Text {
             font-weight: 400;
             font-size: 1rem;
-            color: #777;
+            color: #455a64;
             line-height: 1.6;
             letter-spacing: 0.01em;
             //text-align: justify;
