@@ -7,11 +7,17 @@ namespace Csml {
     public static class ScopeHelper {
 
         public static readonly BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-        
+
+        public static readonly BindingFlags GetOncePropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+
+
         public static readonly IEnumerable<Type> AllStatic;
         public static readonly IEnumerable<Scope> All;
 
         static ScopeHelper() {
+
+            var b = typeof(Scope).IsSubclassOf(typeof(Scope));
+
             AllStatic = Assembly.GetExecutingAssembly().GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(Scope)))
                     .Where(x => !x.IsGenericType);
@@ -27,7 +33,7 @@ namespace Csml {
         }
 
         public static void EnableGetOnce() {
-            AllStatic.ForEach(x => EnableGetOnce(x));
+            AllStatic.Append(typeof(Scope)).ForEach(x => EnableGetOnce(x));
         }
 
         public static void EnableGetOnce(Type t) {
@@ -35,8 +41,7 @@ namespace Csml {
             if (nonStaticMembers.Count() > 0) {
                 Log.Error.Here($"Scope {t.Name} contains non static prooperty {nonStaticMembers.First().Name}");
             }
-
-            foreach (var p in t.GetProperties(PropertyBindingFlags)) {
+            foreach (var p in t.GetProperties(GetOncePropertyBindingFlags)) {
                 GetOnce.WrapPropertyGetter(p);
             }
         }

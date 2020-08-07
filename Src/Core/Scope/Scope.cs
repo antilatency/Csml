@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,15 +20,17 @@ namespace Csml {
         }
 
         public void Generate(Context context) {
-            var template = GetTemplate();
+            IPageTemplate template = GetTemplate();
             var materials = GetMaterials();
             var languages = Language.All;
 
             var matrix = new Dictionary<string, Dictionary<Language, IMaterial>>();
 
             foreach (var material in materials) {
-                var materialName = material.NameWithoutLanguage;
+                Console.WriteLine($"material {material.Title}");
 
+                var materialName = material.NameWithoutLanguage;
+                
                 if (!matrix.ContainsKey(materialName)) {
                     matrix.Add(materialName, new Dictionary<Language, IMaterial>());
                 }
