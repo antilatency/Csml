@@ -156,7 +156,6 @@ namespace Csml {
         }
 
         private unsafe static void SwapMethods<T>(MethodInfo a, MethodInfo b) where T : struct {
-
             RuntimeHelpers.PrepareMethod(a.MethodHandle);
             RuntimeHelpers.PrepareMethod(b.MethodHandle);
 
@@ -184,6 +183,7 @@ namespace Csml {
                 }
                 pFunctionPointerB++;
             }
+
 
 #if DEBUG
             int* pOffsetA = (int*)(((byte*)functionPointerA) + 1);

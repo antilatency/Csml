@@ -8,7 +8,7 @@ namespace Csml {
 
         public static readonly BindingFlags PropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
 
-        public static readonly BindingFlags GetOncePropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+        public static readonly BindingFlags GetOncePropertyBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
 
         public static readonly IEnumerable<Type> AllStatic;
