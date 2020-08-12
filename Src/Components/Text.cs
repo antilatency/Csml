@@ -1,9 +1,8 @@
 using System;
 using System.Linq;
-using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Text;
+using Htmlilka;
 
 namespace Csml {
     public sealed class Text: Text<Text> {
@@ -19,11 +18,10 @@ namespace Csml {
         //public Paragraph(string s) : base(s) { }
         public Paragraph(FormattableString formattableString) : base(formattableString) { }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode("<div>").Do(x=> {
-                x.Add(base.Generate(context));
-                x.AddClass("Text");
-            });
+        public override Node Generate(Context context) {
+            return new Tag("div")
+                .Add(base.Generate(context))
+                .AddClasses("Text");
         }
 
 
@@ -72,67 +70,59 @@ namespace Csml {
 
         public class MarkdownState {
             public bool Code;
-            public List<HtmlNode> Result = new List<HtmlNode>();
-            public HtmlNode currentElement;
-            public void Add(HtmlNode node) {
-                if (currentElement == null) {
+            public Tag Result = new Tag(null);
+            public Stack<Tag> currentElements = new Stack<Tag>();
+
+            public void Add(Node node) {
+                if (currentElements.Count == 0) {
                     Result.Add(node);
                 } else {
-                    currentElement.AppendChild(node);
+                    currentElements.Peek().Add(node);
                 }
             }
             
             public void AddText(string text) {
                 if (string.IsNullOrEmpty(text)) return;
-                var node = HtmlNode.CreateNode(HtmlDocument.HtmlEncode(text));
-
+                var node = new TextNode(text);
                 Add(node);
             }
             public void Br() {
-                var node = HtmlNode.CreateNode("<br>");
+                var node = new VoidTag("br");
                 Add(node);
             }
 
             public bool Tag(string name) {
-                var close = (currentElement != null) && (currentElement.Name == name);
+                var close = (currentElements.Count !=0) && (currentElements.Peek().Name == name);
 
                 if (close) {
                     Close();
                     return false;
                 }
-                var node = HtmlNode.CreateNode($"<{name}>");
-                if (currentElement == null) {
+                var node = new Tag(name);
+                Add(node);
+                /*if (currentElement == null) {
                     Result.Add(node);
                 } else {
-                    currentElement.AppendChild(node);
-                    
-                }
-                currentElement = node;
+                    currentElement.Add(node);                    
+                }*/
+                currentElements.Push(node);
                 return true;
             }
             private void Close() {
-                currentElement = currentElement.ParentNode;
-                if (currentElement.Name == "#document") currentElement = null;
+                currentElements.Pop();
+                //if (currentElement.Name == "#document") currentElement = null;
             }
         }
 
         public void Markdown(string text, MarkdownState markdownState) {
-            //StringBuilder stringBuilder = new StringBuilder();
             int start = 0;
             int length = 0;
-
-            //List<HtmlNode> result = new List<HtmlNode>();
 
             Action subText =()=>{
                 markdownState.AddText(text.Substring(start, length));
                 start += length;
                 length = 0;
             };
-
-            /*Func<string, bool> Is = x => {
-                if (markdownState.currentElement == null) return false;
-                return markdownState.currentElement.Name == x;
-            };*/
 
             text = text.Replace((char)1, '{').Replace((char)2, '}');
 
@@ -178,9 +168,21 @@ namespace Csml {
 
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        //private Dictionary<object, Node> generated = new Dictionary<object, Node>();
+
+        //public static int Max;
+
+        public override Node Generate(Context context) {
+
+            /*var uniqness = Tuple.Create(context.AForbidden, context.FormatString, context.Language);
+            Node backup;
+            if (generated.TryGetValue(uniqness, out backup)) {
+                return backup;
+            }
+
+            Max++;*/
+
             MarkdownState markdownState = new MarkdownState();
-            Func<string,string[]> lineSplit = x=> x.Replace("\r", "").Split('\n');
 
             var args = Elements.ToArray();
 
@@ -197,15 +199,6 @@ namespace Csml {
                 if (pose < endOfRegion) {
                     var text = Format.Substring(pose, endOfRegion - pose);
                     Markdown(text, markdownState);
-
-                    /*var lines = lineSplit(text);
-                    if (!string.IsNullOrEmpty(lines[0]))
-                        yield return HtmlNode.CreateNode(lines[0]);
-                    for (int l = 1; l < lines.Length; l++) {
-                        yield return HtmlNode.CreateNode("<br>");
-                        if (!string.IsNullOrEmpty(lines[l]))
-                            yield return HtmlNode.CreateNode(lines[l]);
-                    }*/
                 }
                 if (i != numMatches) {
                     if (!string.IsNullOrEmpty(matches[i].Groups[2].Value)) {
@@ -213,26 +206,14 @@ namespace Csml {
                     } else {
                         context.FormatString = null;
                     }
-
-                    foreach (var eg in args[i].Generate(context))
-                        markdownState.Add(eg);
+                    markdownState.Add(args[i].Generate(context));
                     pose = matches[i].Index + matches[i].Length;
                 }
             }
 
-            return markdownState.Result;
+            //generated[uniqness] = markdownState.Result;
 
-            /*if (pose < Format.Length) {
-                var text = Format.Substring(pose, Format.Length - pose);
-                var lines = lineSplit(text);
-                if (!string.IsNullOrEmpty(lines[0]))
-                    yield return HtmlNode.CreateNode(lines[0]);
-                for (int l = 1; l < lines.Length; l++) {
-                    yield return HtmlNode.CreateNode("<br>");
-                    if (!string.IsNullOrEmpty(lines[l]))
-                        yield return HtmlNode.CreateNode(lines[l]);
-                }
-            }*/
+            return markdownState.Result;
         }
 
     }

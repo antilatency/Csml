@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-
-using HtmlAgilityPack;
 using System.Linq;
+using Htmlilka;
 
 namespace Csml{
 
@@ -153,11 +152,9 @@ namespace Csml{
             return cache.GetFileUri(cache.FileName).ToString()+"|"+ StringUtils.HumanizeSize(cache.FileSize);
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode("<div>").Do(x => {
-                x.Add(new Behaviour("Downloadable",PrimaryName,OptionsTree).Generate(context));
-            
-            });
+        public override Node Generate(Context context) {
+            return new Tag("div")
+                .Add(new Behaviour("Downloadable", PrimaryName, OptionsTree).Generate(context));
         }
     }
 }

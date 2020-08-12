@@ -1,6 +1,5 @@
-using HtmlAgilityPack;
+using Htmlilka;
 using System;
-using System.Collections.Generic;
 
 namespace Csml {
     public class ExternalReference : Element<ExternalReference> {
@@ -32,29 +31,32 @@ namespace Csml {
             }
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
+            Tag result;
+            if (!context.AForbidden) {
+                result = new Tag("a");
+                result.Attribute("href", Href.ToString());
+            } else {
+                result = new Tag("span");
+            }
 
-            yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
-                x.AddClass("Text");
-                if (!context.AForbidden)
-                    x.SetAttributeValue("href", Href.ToString());
+            if (Image != null) {
+                result.Add(Image.Generate(context));
+            } else if (string.IsNullOrEmpty(Text)) {
+                result.AddText(Href.ToString());
+            } else {
+                result.AddText(Text);
+            }
 
-                if (Image != null) {
-                    x.Add(Image.Generate(context));
-                } else if (string.IsNullOrEmpty(Text)) {
-                    x.InnerHtml = Href.ToString();
-                } else {
-                    x.InnerHtml = Text;
+            if (!string.IsNullOrEmpty(Tooltip)) {
+                result.Attribute("title", Tooltip);
+            } else {
+                if (string.IsNullOrEmpty(Tooltip) & !string.IsNullOrEmpty(Text)) {
+                    result.Attribute("title", Href.ToString());
                 }
-                    
-                if (!string.IsNullOrEmpty(Tooltip)) {
-                    x.SetAttributeValue("title", Tooltip);
-                } else {
-                    if (string.IsNullOrEmpty(Tooltip) & !string.IsNullOrEmpty(Text)) {
-                        x.SetAttributeValue("title", Href.ToString());
-                    }
-                }
-            });
+            }
+
+            return result;
 
         }
     }

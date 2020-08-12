@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
-//using VideoLibrary;
+using Htmlilka;
 
 
 namespace Csml {
@@ -131,13 +128,13 @@ namespace Csml {
 
 
 
-            public override IEnumerable<HtmlNode> Generate(Context context) {
+            public override Node Generate(Context context) {
 
                 var cache = YoutubeVideo.Cache;
 
-                yield return HtmlNode.CreateNode("<div>").Do(x=> {
-                    x.AddClass("VideoPlayer");
-                    x.Add(new VideoPlayerBehaviour(
+                return new Tag("div")
+                    .AddClasses("VideoPlayer")
+                    .Add(new VideoPlayerBehaviour(
                         YoutubeVideo.Code,
                         YoutubeVideo.Aspect,
                         ShowControls,
@@ -146,24 +143,9 @@ namespace Csml {
                         Sound,
                         cache.Mips.Select(x=>new KeyValuePair<int,string>(x.Key, cache.GetFileUri(x.Value).ToString())).ToArray()
 
-                        ).Generate(context));
-                });
+                        ).Generate(context)
+                    );
 
-
-                /*string url =
-                    "https://www.youtube.com/embed/" + YoutubeVideo.Code + GetParametersString();
-
-
-                yield return HtmlNode.CreateNode("<iframe>").Do(x => {
-                    x.SetAttributeValue("src", url);
-                    x.SetAttributeValue("frameborder", "0");
-                    x.SetAttributeValue("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
-                    x.SetAttributeValue("allowfullscreen", "");
-                    x.AddClass("VideoPlayer");
-
-                    //x.Add(base.Generate(context));
-
-                }).Wrap("<div>").Do(x=>{ x.AddClass("VideoPlayerContainer"); });*/
             }
 
         }

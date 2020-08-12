@@ -1,46 +1,47 @@
 using System.IO;
 using System;
-using HtmlAgilityPack;
+using Htmlilka;
+using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Csml {
 
-    public struct Context {
-
+    public struct Context /*: IEquatable<Context>*/ {
         public bool AForbidden;
         public string FormatString;
-
         public Language Language { get; set; }
-        public HtmlDocument CurrentHtmlDocument { get; set; }
         public IMaterial CurrentMaterial { get; set; }
-        public HtmlNode Head { get; set; }
 
-        public void BeginPage() {
-            CurrentHtmlDocument = new HtmlDocument();
-            CurrentHtmlDocument.OptionUseIdAttribute = true;
-            CurrentHtmlDocument.DocumentNode.AppendChild(HtmlNode.CreateNode("<!DOCTYPE html>"));
-            var html = CurrentHtmlDocument.DocumentNode.AppendChild(CurrentHtmlDocument.CreateElement("html"));
-            Head = html.AppendChild(CurrentHtmlDocument.CreateElement("head"));
 
-            var body = html.AppendChild(CurrentHtmlDocument.CreateElement("body"));
+        /*public override int GetHashCode() {
+            return
+                AForbidden.GetHashCode()
+                ^ FormatString.GetHashCode()
+                ^ Language.GetHashCode();
         }
 
-        public void EndPage(string path) {
-            if (string.IsNullOrEmpty(path)) {
-                throw new ArgumentException("outputFilePath is empty");
-            }
-            Utils.CreateDirectory(Path.GetDirectoryName(path));
-            //var outputFileAbsolutePath = Path.Combine(OutputDirectory, outputFilePath);
-            CurrentHtmlDocument.Save(path);
-            CurrentHtmlDocument = null;
+        public bool Equals([AllowNull] Context other) {
+            throw new NotImplementedException();
         }
 
-
-        public static string GetContentRelativePath(string absolutePath, string basePath) {
-            if (!absolutePath.StartsWith(basePath)) {
-                throw new ArgumentException($"{absolutePath} is not subpath of {basePath}");
-            }
-            return Path.GetRelativePath(basePath, absolutePath);
+        public static bool operator == (Context a, Context b) {
+            return a.Equals(b);
         }
+
+        public static bool operator !=(Context a, Context b) {
+            return !(a == b);
+        }*/
+
+        /*public override bool Equals(object obj) {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            var b2 = (BOX)obj;
+            return (length == b2.length && breadth == b2.breadth && height == b2.height);
+        }*/
+
+        
+
     }
 
 }

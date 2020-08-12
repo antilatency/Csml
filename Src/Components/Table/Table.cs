@@ -1,7 +1,7 @@
+using Htmlilka;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HtmlAgilityPack;
 
 namespace Csml {
     public enum TextAlignment {
@@ -102,9 +102,6 @@ namespace Csml {
             UserDefinedNumColumns = numColumns;
         }
 
-        private HtmlNode GenerateTableNoHeaders(Context context) {
-            return HtmlNode.CreateNode("<table>");
-        }
 
         public Table SetRowHeaderWidth(float width) {
             RowHeaderWidth = width;
@@ -112,8 +109,7 @@ namespace Csml {
         }
 
 
-        private HtmlNode GenerateTable(Context context) {
-            //if (Headers == null) return GenerateTableNoHeaders(context);
+        private Node GenerateTable(Context context) {
 
             var rows = Headers.OfType<Row>();
             var columns = Headers.OfType<Column>();
@@ -164,72 +160,45 @@ namespace Csml {
                 matrix[x, y] = new TableHeader.Cell(elements[i], 1, 1);
             }
 
-            
 
-            return HtmlNode.CreateNode("<table>").Do(x => {
-                /*x.Add("<colgroup>").Do(x=> {
-                    float normalizer = numColumns;
-                    if (depthRows > 0) {
-                        normalizer += RowHeaderWidth;
-                        x.Add("<col>").Do(x=> {
-                            x.SetAttributeValue("span", depthRows.ToString());
-                            x.SetAttributeValue("style", $"width: {100*RowHeaderWidth/normalizer}%;");
-                        });                            
-                    }
-                    for (int i = 0; i < numColumns; i++) {
-                        x.Add("<col>").Do(x => {
-                            x.SetAttributeValue("span", 1.ToString());
-                            x.SetAttributeValue("style", $"width: {100 * 1 / normalizer}%;");
-                        });
-                    }
 
-                });*/
-
-                x.Add("<tbody>").Do(x => {
-                    for (int r = 0; r < matrix.GetLength(1); r++) {
-                            
-                        x.Add("<tr>").Do(x=> {
-
+            return new Tag("table")
+                .AddTag("tbody", a => { 
+                    for (int r = 0; r < matrix.GetLength(1); r++) {                            
+                        a.AddTag("tr",tr => {
                             if ((r == 0) & ((depthRows * depthColumns) > 0)) {
-                                x.Add("<td>").Do(x => {
-                                    x.SetAttributeValue("rowspan", depthColumns.ToString());
-                                    x.SetAttributeValue("colspan", depthRows.ToString());
+                                tr.AddTag("td",td => {
+                                    td.Attribute("rowspan", depthColumns.ToString());
+                                    td.Attribute("colspan", depthRows.ToString());
                                 });
                             }
 
                             for (int c = 0; c < matrix.GetLength(0); c++) {
                                 var cell = matrix[c, r];
                                 if (cell != null) {
-                                    HtmlNode node;
+                                    Tag node;
                                     if (cell.Element is TableHeader) {
-                                        node = x.Add("<th>");
-                                        //style="text-align:right"
-                                        node.SetAttributeValue("style", $"text-align:{(cell.Element as TableHeader).Alignment.ToString().ToLower()}");
-                                        node.InnerHtml = HtmlDocument.HtmlEncode((cell.Element as TableHeader).Name);
+                                        node = new Tag("th")
+                                            .Attribute("style", $"text-align:{(cell.Element as TableHeader).Alignment.ToString().ToLower()}")
+                                            .AddText((cell.Element as TableHeader).Name);
                                     } else {
-                                        node = x.Add("<td>");
-                                        node.SetAttributeValue("style", $"text-align:{alignments[c - depthRows].ToString().ToLower()}");
-                                        node.Add((cell.Element as IElement).Generate(context));
+                                        node = new Tag("td")
+                                            .Attribute("style", $"text-align:{alignments[c - depthRows].ToString().ToLower()}")
+                                            .Add((cell.Element as IElement).Generate(context));
                                     }
-                                    node.Do(x => {
-                                        if (cell.Width != 1) x.SetAttributeValue("colspan", cell.Width.ToString());
-                                        if (cell.Height != 1) x.SetAttributeValue("rowspan", cell.Height.ToString());
-                                    });
+                                    if (cell.Width != 1) node.Attribute("colspan", cell.Width.ToString());
+                                    if (cell.Height != 1) node.Attribute("rowspan", cell.Height.ToString());
+                                    tr.Add(node);
                                 }
                             }
                         });
                     }
                 });
-                
-
-            });
-
-            //return GenerateTableNoHeaders(context);
         }
 
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return GenerateTable(context); 
+        public override Node Generate(Context context) {
+            return GenerateTable(context); 
         }
     }
 

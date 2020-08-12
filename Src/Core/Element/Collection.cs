@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using HtmlAgilityPack;
-using System.Linq;
+using Htmlilka;
 
 namespace Csml {
 
@@ -66,8 +65,11 @@ namespace Csml {
     public class LazyCollection<T> : Element<T> where T : LazyCollection<T> {
         public IEnumerable<IElement> Elements { get; protected set; }
         
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            return Elements.SelectMany(x => x.Generate(context));
+        public override Node Generate(Context context) {
+            var result = new Tag(null);
+            foreach (var e in Elements)
+                result.Add(e.Generate(context));
+            return result;
         }
     }
 

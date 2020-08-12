@@ -2,9 +2,10 @@ using System.Reflection;
 using System.Diagnostics;
 using System;
 using System.IO;
-using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
+using Htmlilka;
+
 
 namespace Csml {
     public interface IInfo {
@@ -20,16 +21,16 @@ namespace Csml {
         public string NameWithoutLanguage { get; }
         public string PropertyPath { get; }
         public Language Language { get; }
-        public IEnumerable<HtmlNode> Generate(Context context);        
+        public Node Generate(Context context);        
     }
 
     public class Element : Element<Element> {
-        private Func<Context,HtmlNode> Generator { get; set; }
-        public Element(Func<Context, HtmlNode> generator) {
+        private Func<Context, Node> Generator { get; set; }
+        public Element(Func<Context, Node> generator) {
             Generator = generator;
         }
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return Generator(context);
+        public override Node Generate(Context context) {
+            return Generator(context);
         }
     }
 
@@ -77,7 +78,8 @@ namespace Csml {
         
         public Element() {
             StackTrace st = new StackTrace(true);
-            for (int i = 0; i < st.FrameCount; i++) {
+
+            for (int i = st.FrameCount-1; i >=0; i--) {
                 var f = st.GetFrame(i);
                 if (IsConstructorOfT(f.GetMethod())) {
                     var fprew = st.GetFrame(i+1);
@@ -90,8 +92,9 @@ namespace Csml {
             }
         }
 
-        public virtual IEnumerable<HtmlNode> Generate(Context context) {
-            yield break;
+        public virtual Node Generate(Context context) {
+            throw new Exception("Element<T>.Generate");
+            //return null;
         }
 
         //Utils

@@ -1,5 +1,4 @@
-﻿using HtmlAgilityPack;
-using System.Collections.Generic;
+﻿using Htmlilka;
 
 namespace Csml {
     public sealed class TemplateLanding : TemplateLanding<TemplateLanding> {
@@ -9,10 +8,10 @@ namespace Csml {
     public class TemplateLanding<T> : TemplateLeftSideMenu<T> where T : TemplateLanding<T> {
         public TemplateLanding(IElement leftSideMenu) : base(leftSideMenu, 1280, 0) { }
 
-        public override HtmlNode WriteMaterial(Context context, IMaterial material) {
-            return HtmlNode.CreateNode("<div>").Do(x => {
-                x.Add(material.Content.Generate(context));
-            });
+        public override Tag WriteMaterial(Context context, IMaterial material) {
+            return new Tag("div")
+                .Add(material.Content.Generate(context));
+            
         }
     }
 }

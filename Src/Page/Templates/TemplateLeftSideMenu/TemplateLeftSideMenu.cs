@@ -1,6 +1,4 @@
-
-
-using HtmlAgilityPack;
+using Htmlilka;
 
 namespace Csml {
     public class TemplateLeftSideMenuBehaviour : Behaviour {
@@ -17,14 +15,24 @@ namespace Csml {
             AnchorLineWidth = anchorLineWidth;
         }
 
-        public abstract HtmlNode WriteMaterial(Context context, IMaterial material);
+        public abstract Tag WriteMaterial(Context context, IMaterial material);
 
-        public override void ModifyBody(HtmlNode x, Context context, IMaterial material) {
+        public override void ModifyBody(Tag x, Context context, IMaterial material) {
             base.ModifyBody(x, context, material);
 
             x.Add(new TemplateLeftSideMenuBehaviour(ContentWidth, AnchorLineWidth).Generate(context));
 
-            x.AppendChild(LeftSideMenu.Generate(context).Single().Do(x => {
+            x.Add((LeftSideMenu.Generate(context) as Tag)
+                .AddClasses("LeftSideMenu")
+                .Attribute("id", "LeftSideMenu")
+                );
+
+            x.Add(WriteMaterial(context, material)
+                .AddClasses("Content")
+                .Attribute("id", "Content")
+                );
+
+            /*x.AppendChild(LeftSideMenu.Generate(context).Single().Do(x => {
                 x.Id = "LeftSideMenu";
                 x.AddClass("LeftSideMenu");
 
@@ -33,7 +41,7 @@ namespace Csml {
             x.AppendChild(WriteMaterial(context, material).Do(x => {
                 x.Id = "Content";
                 x.AddClass("Content");
-            }));
+            }));*/
 
         }
     }

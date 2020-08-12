@@ -1,6 +1,5 @@
-﻿using System;
-using HtmlAgilityPack;
-using System.Collections.Generic;
+﻿using Htmlilka;
+using System;
 
 namespace Csml {
     public class Deferred : Element<Deferred> {
@@ -8,7 +7,7 @@ namespace Csml {
         public Deferred(Func<IElement> getter) {
             Getter = getter;
         }
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
             return Getter().Generate(context);
         }
     }

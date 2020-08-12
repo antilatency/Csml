@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HtmlAgilityPack;
+using Htmlilka;
 using ImageMagick;
 using Newtonsoft.Json;
 
@@ -124,7 +124,7 @@ namespace Csml {
             }
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
             if (ImageCache == null) {
                 GenerateResources();
             }
@@ -132,24 +132,21 @@ namespace Csml {
             var biggestMip = ImageCache.Mips.First();
             var uri = ImageCache.GetFileUri(biggestMip.Value);
 
-
-            var result = HtmlNode.CreateNode("<img>").Do(x => {
-                x.SetAttributeValue("src", uri.ToString());
-                x.Add(base.Generate(context));
-            });
-
+            var result = new VoidTag("img")
+                .Attribute("src", uri.ToString());
 
             if (ImageCache.Roi != null) {
-                result = result.Wrap("<div>");
-                result.Add(new Behaviour("RoiImage", ImageCache.Aspect, ImageCache.Roi).Generate(context));
-                result.SetAttributeValue("style", "overflow: hidden;");
+                result = new Tag("div")
+                    .Attribute("style", "overflow: hidden;")
+                    .Add(result)
+                    .Add(new Behaviour("RoiImage", ImageCache.Aspect, ImageCache.Roi).Generate(context));
             } else if (!ImageCache.IsVectorImage) {
-                result.SetAttributeValue("style", $"max-width: {biggestMip.Key}px;");
+                result.Attribute("style", $"max-width: {biggestMip.Key}px;");
             }
 
-            result.AddClass("Image");
+            result.AddClasses("Image");
 
-            yield return result;
+            return result;
         }
     }
 

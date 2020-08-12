@@ -1,5 +1,4 @@
-﻿using HtmlAgilityPack;
-using System.Collections.Generic;
+﻿using Htmlilka;
 
 namespace Csml {
     public sealed class TemplateRegularMaterial : TemplateRegularMaterial<TemplateRegularMaterial> {
@@ -9,17 +8,36 @@ namespace Csml {
     public class TemplateRegularMaterial<T> : TemplateLeftSideMenu<T> where T: TemplateRegularMaterial<T> {
         public TemplateRegularMaterial(IElement leftSideMenu) : base(leftSideMenu,800,64) { }
 
-        public override HtmlNode WriteMaterial(Context context, IMaterial material) {
-            return HtmlNode.CreateNode("<div>").Do(x => {
-                x.Add("<div>", "Header").Do(x => {
-                    x.Add($"<h1>", "Title").AddTextWithWordBreaks(material.Title);
-                    if (material.TitleImage != null) {
-                        x.Add(material.TitleImage.Generate(context));
+        private void CheckTitleImageAspect(IMaterial material) {
+            var image = material.TitleImage;
+            if (image != null) {
+                var roi = image.GetRoi();
+                if (roi != null && roi.Length > 0) {
+                    if (!image.IsRoiFitsIntoWideRect(roi)) {
+                        Log.Warning.OnObject(material, $"Invalid ROI for material TitleImage. Material title = {material.Title}");
                     }
-                    x.Add(material.Description.Generate(context));
-                });
-                x.Add(material.Content.Generate(context));
-            });
+                } else {
+                    Log.Warning.OnObject(material, $"ROI required for material TitleImage. Material title = {material.Title}");
+                }
+            }
+        }
+
+        public override Tag WriteMaterial(Context context, IMaterial material) {
+            CheckTitleImageAspect(material);
+
+            return new Tag("div")
+                .AddDiv(a=> {
+                    a.AddClasses("Header");
+                    a.AddTag("h1", b => {
+                        b.AddClasses("Title");
+                        b.AddPureHtmlNode(material.Title.Replace(".", "<wbr/>."));
+                    });
+                    if (material.TitleImage != null) {
+                        a.Add(material.TitleImage.Generate(context));
+                    }
+                    a.Add(material.Description.Generate(context));
+                })
+                .Add(material.Content.Generate(context));
         }
     }
 }

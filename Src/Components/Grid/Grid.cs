@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using HtmlAgilityPack;
+using Htmlilka;
 
 namespace Csml {
     public class Grid :Collection<Grid> {
@@ -8,13 +7,10 @@ namespace Csml {
             Behaviour = new Behaviour("Grid", elementWidthPx, multipliers);
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode("<div>").Do(x=>{
-                x.AddClass("Grid");
-                x.Add(Behaviour.Generate(context));
-                x.Add(base.Generate(context));
-                
-            });
+        public override Node Generate(Context context) {
+            return new Tag("div").AddClasses("Grid")
+                .Add(Behaviour.Generate(context))
+                .Add(base.Generate(context));
         }
     }
 }

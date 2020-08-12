@@ -37,7 +37,7 @@ namespace Csml {
         }
 
         protected override System.Range? GetLineSpan() {
-            if (ParsedSource.Span.Start == 1)
+            if (ParsedSource.Span.Start == 0)
                 if (ParsedSource.Span.End == ParsedSource.SyntaxTree.Length)
                     return null;
 

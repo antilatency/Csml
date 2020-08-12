@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
-using HtmlAgilityPack;
+using System.Text;
+using Htmlilka;
 
 namespace Csml {
 
@@ -57,42 +57,37 @@ namespace Csml {
 
 
         bool loop = false;//TODO: delete 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
             //var translated = SelectTranslation(context);
 
             var planeDescription = "";
             if (!loop) {
                 loop = true;
-                var it = Description.Generate(context).Select(x => x.InnerText);
-                planeDescription = string.Join("", Description.Generate(context).Select(x => x.InnerText));
+                //var it = Description.Generate(context).Select(x => x.InnerText);
+                var descriptionNode = Description.Generate(context);
+                StringBuilder stringBuilder = new StringBuilder();
+                descriptionNode.WritePlaneText(stringBuilder);
+                planeDescription = stringBuilder.ToString() ;
                 loop = false;
             }
 
-            /*if (TitleImage != null) {
-                var roi = TitleImage.GetRoi();
+            
 
-                if (roi != null && roi.Length > 0) {
-                    if (!TitleImage.IsRoiFitsIntoWideRect(roi)) {
-                        Log.Warning.OnObject(this, $"Invalid ROI for material TitleImage. Material title = {Title}");
-                    }
-                } else {
-                    Log.Warning.OnObject(this, $"ROI required for material TitleImage. Material title = {Title}");
+            var result = new Tag(context.AForbidden ? "span" : "a")
+                    .AddClasses("Text")
+                    .AddText(Title);
+
+
+            if (!context.AForbidden) {
+                var href = GetUri(context.Language);
+                if (context.FormatString != null) {
+                    href += "#" + context.FormatString;
                 }
-            }*/ 
+                result.Attribute("href", href);
+                result.Attribute("title", planeDescription);
+            }
 
-
-            yield return HtmlNode.CreateNode(context.AForbidden ? "<span>" : "<a>").Do(x => {
-                x.AddClass("Text");
-                if (!context.AForbidden) {
-                    var href = GetUri(context.Language);
-                    if (context.FormatString != null) {
-                        href += "#" + context.FormatString;
-                    }
-                    x.SetAttributeValue("href", href);
-                    x.SetAttributeValue("title", planeDescription);
-                }
-                x.InnerHtml = Title;                
-            });
+            return result;
         }
     }
 }

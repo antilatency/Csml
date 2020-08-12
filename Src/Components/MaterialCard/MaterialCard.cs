@@ -1,6 +1,5 @@
+using Htmlilka;
 using System;
-using System.Collections.Generic;
-using HtmlAgilityPack;
 
 namespace Csml {
     public class MaterialCard: Element<MaterialCard> {
@@ -24,30 +23,32 @@ namespace Csml {
             MaterialGetter = (context) => languageSelector[context.Language];
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
             var material = MaterialGetter(context);
-            yield return HtmlNode.CreateNode(context.AForbidden?"<div>":"<a>").Do(x => {                
-                if (!context.AForbidden)
-                    x.SetAttributeValue("href", material.GetUri(context.Language));
-                x.AddClass("MaterialCard");
+            Tag result;
+            if (!context.AForbidden) {
+                result = new Tag("a");
+                result.Attribute("href", material.GetUri(context.Language));
+            } else {
+                result = new Tag("div");
+            }
+            context.AForbidden = true;
 
-                context.AForbidden = true;
-                
-                if (material.TitleImage != null) {
-                    x.Add(material.TitleImage.Generate(context));
-                } else {
-                    Log.Warning.OnObject(this, "TitleImage of material required");
-                    x.Add(CsmlPredefined.MissingImage.Generate(context));
-                }
+            result.AddClasses("MaterialCard");
+            if (material.TitleImage != null) {
+                result.Add(material.TitleImage.Generate(context));
+            } else {
+                Log.Warning.OnObject(this, "TitleImage of material required");
+                result.Add(CsmlPredefined.MissingImage.Generate(context));
+            }
 
-                
-                x.Add("<div>").Do(x=> {
-                    x.AddClass("Title");
-                    x.InnerHtml = material.Title;
-                });                
-                x.Add(material.Description.Generate(context));
+            result.AddDiv(x => {
+                x.AddClasses("Title");
+                x.AddText(material.Title);
             });
+            result.Add(material.Description.Generate(context));
 
+            return result;
         }
     }
 }

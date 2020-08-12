@@ -1,6 +1,4 @@
-using HtmlAgilityPack;
-using System.Collections.Generic;
-using System;
+using Htmlilka;
 
 namespace Csml {
     public sealed class Section : Section<Section> {
@@ -36,30 +34,27 @@ namespace Csml {
             UserDefinedIdentifier = identifier;
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
 
-            var section = HtmlNode.CreateNode("<div>");
-            section.AddClass("Section");
-
-            section.Do(x => {
-                x.Add($"<h2>", "Title").Do(x => {
-                    x.Add(Title);
+            return new Tag("div")
+                .AddClasses("Section")
+                .AddTag("h2", x => {
+                    x.AddClasses("Title");
+                    x.AddText(Title);
                     if (Id != "") {
-                        x.Id = Id;
+                        x.Attribute("id", Id);
                         if (!context.AForbidden) {
-                            x.Add("<a>", "Link").Do(x => {
-                                x.SetAttributeValue("href", "#" + Id);
-                                x.SetAttributeValue("title", "Heading anchor");
+                            x.AddTag("a", a => {
+                                a.AddClasses("Link");
+                                a.Attribute("href", "#" + Id);
+                                a.Attribute("title", "Heading anchor");
                             });
                         }
                     }
-                    
-                });
+                })
+                .Add(base.Generate(context))
+                ;
 
-                x.Add(base.Generate(context));                
-            });
-
-            yield return section;
         }
     }
 

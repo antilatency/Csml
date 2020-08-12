@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using HtmlAgilityPack;
+using Htmlilka;
 
 namespace Csml {
     public sealed class LanguageMenu : LanguageMenu<LanguageMenu> { }
@@ -8,16 +7,19 @@ namespace Csml {
         public LanguageMenu() : base("nav", "language-menu") { }
 
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return base.Generate(context).Single().Do(x => {
-                foreach (var l in Language.All) {
-                    context.Language = l;
-                    x.AppendChild(context.CurrentMaterial.Generate(context).Single().Do(x => {
-                        x.InnerHtml = l.FullName;
-                        x.SetAttributeValue("onclick", "this.href += window.location.hash;");
-                    })) ;
-                }
-            });
+        public override Node Generate(Context context) {
+            var result = base.Generate(context) as Tag;
+
+            foreach (var l in Language.All) {
+                context.Language = l;
+                var e = context.CurrentMaterial.Generate(context) as Tag;
+                e.ChildrenNotNull.Clear();
+                e.AddText(l.FullName);
+                e.Attribute("onclick", "this.href += window.location.hash;");
+                result.Add(e);
+            }
+
+            return result;
         }
 
 

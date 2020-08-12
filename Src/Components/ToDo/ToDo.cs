@@ -1,6 +1,6 @@
-using HtmlAgilityPack;
 using System.Collections.Generic;
 using System;
+using Htmlilka;
 
 namespace Csml {
 
@@ -14,17 +14,17 @@ namespace Csml {
             if (!suppressWarning) Log.ToDo.OnObject(this, text);
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
             if (!Enabled)
-                yield break;
+                return new Tag(null);
 
-            yield return HtmlNode.CreateNode("<span>").Do(x=> {
-                x.AddClass("ToDo");
-                if (ShowText) {
-                    x.Add(Text);
-                }
-                x.SetAttributeValue("title", Text);
-            });
+            var result = new Tag("span");
+            if (ShowText) {
+                result.AddText(Text);
+            }
+            result.AddClasses("ToDo");
+            result.Attribute("title", Text);
+            return result;
         }
     }
 }

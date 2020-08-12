@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Csml;
-using HtmlAgilityPack;
+using Htmlilka;
 using Newtonsoft.Json;
 
 namespace Csml {
@@ -32,17 +32,15 @@ namespace Csml {
             return string.Join(",", parameters.Select(x => JsonConvert.SerializeObject(x)));
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode("<script>").Do(x => {
-                var parameters = MakeParameterList(Parameters);
-                var code = $"Behaviour.Initialize(\"{ClassName}\"";
-                if (!string.IsNullOrWhiteSpace(parameters))
-                    code += "," + parameters;
-                code += ")";
-                x.InnerHtml = code;
-            });
-            //<script>Behaviour.Initialize("ToggleButton.Create",8,"string")</script>
-            //return base.Generate(context);
+        public override Node Generate(Context context) {
+            
+            var parameters = MakeParameterList(Parameters);
+            var code = $"Behaviour.Initialize(\"{ClassName}\"";
+            if (!string.IsNullOrWhiteSpace(parameters))
+                code += "," + parameters;
+            code += ")";
+
+            return new Tag("script").AddText(code);
         }
     }
 }

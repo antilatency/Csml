@@ -1,5 +1,5 @@
 using ColorCode;
-using HtmlAgilityPack;
+using Htmlilka;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,18 +100,20 @@ namespace Csml {
         protected abstract ProgrammingLanguage GetProgrammingLanguage();
 
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+        public override Node Generate(Context context) {
+            var result = new Tag(null);
+
             if ((Source is GitHub.File) & (!context.AForbidden)) {
                 var lineSpan = GetLineSpan();
-                yield return HtmlNode.CreateNode("<a>").Do(x => {
-                    x.AddClass("GitHubLink");
-                    x.SetAttributeValue("target", "_blank");
-                    var href = (Source as GitHub.File).HtmlUri;
+                result.AddTag("a", a => {
+                    a.AddClasses("GitHubLink");
+                    a.Attribute("target", "_blank");
                     
+                    var href = (Source as GitHub.File).HtmlUri;
                     if (lineSpan.HasValue) {
-                        x.SetAttributeValue("href", $"{href}#L{lineSpan.Value.Start.Value + 1}-L{lineSpan.Value.End.Value + 1}");
+                        a.Attribute("href", $"{href}#L{lineSpan.Value.Start.Value + 1}-L{lineSpan.Value.End.Value + 1}");
                     } else {
-                        x.SetAttributeValue("href", $"{href}");
+                        a.Attribute("href", $"{href}");
                     }
                 });
             }
@@ -121,12 +123,17 @@ namespace Csml {
             //https://github.com/WilliamABradley/ColorCode-Universal
 
             var formatter = new ColorCode.HtmlClassFormatter();
-
+            
             var html = formatter.GetHtmlString(code, LanguageToColorCode(GetProgrammingLanguage()));
-            yield return HtmlNode.CreateNode(html).Do(x => {
-                //x.Attributes.RemoveAll();
-                x.AddClass("code");
-            });
+            string prefix = "<div class=\"";
+            if (!html.StartsWith(prefix))
+                Log.Error.Here("Unexpected html");
+
+            html = prefix + "code " + html.Substring(prefix.Length);
+            
+            result.Add(new PureHtmlNode(html));
+
+            return result;
         }
 
         public static string SpacesOrTabsOnly(string x) {

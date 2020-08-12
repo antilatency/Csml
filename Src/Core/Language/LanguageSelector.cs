@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using HtmlAgilityPack;
+using Htmlilka;
 
 namespace Csml {
 
@@ -66,16 +66,22 @@ namespace Csml {
                 return default;
             }
         }
-        public override IEnumerable<HtmlNode> Generate(Context context) {
+
+        public static int Max;
+
+        public override Node Generate(Context context) {
+            Max++;
             var translated = this[context.Language];
             if (typeof(I) == typeof(IMaterial)) {
                 if (translated == null) {
-                    return new[]{
-                        CsmlPredefined.NoTarget.Generate(context).Single().Do(x => {
-                            x.AddClass("no-target");
-                            x.InnerHtml = Title;
-                        })
-                    };
+                    var node = CsmlPredefined.NoTarget.Generate(context);
+                    if (node is Tag tag) {
+                        tag.AddClasses("NoTarget");
+                        tag.Children = new List<Node>() { new TextNode(Title) };
+                    } else {
+                        Log.Error.Here("Material.Generate must return Tag.");
+                    }
+                    return node;
                 }
             }            
             return this[context.Language].Generate(context);

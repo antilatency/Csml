@@ -1,5 +1,5 @@
-﻿using HtmlAgilityPack;
-using System.Collections.Generic;
+﻿
+using Htmlilka;
 
 namespace Csml
 {
@@ -24,23 +24,22 @@ namespace Csml
         public string UserDefinedIdentifier { get; set; }
 
 
-        protected Spoiler(string title, string identifier)
-        {
+        protected Spoiler(string title, string identifier){
             Title = title;
             UserDefinedIdentifier = identifier;
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context)
-        {
-            var details = HtmlNode.CreateNode("<details>");
-            details.AddClass("Spoiler");
-            details.Do(x => {
-                x.Add($"<summary>", "SpoilerSummary").Do(x => {
-                    x.Add(Title);
-                });
-                x.Add(base.Generate(context));
+        public override Node Generate(Context context){
+            var details = new Tag("details");
+            details.AddClasses("Spoiler");
+
+            details.AddTag("summary", x => {
+                x.AddClasses("SpoilerSummary");
+                x.AddText(Title);                
             });
-            yield return details;
+            details.Add(base.Generate(context));
+
+            return details;
         }
     }
 }

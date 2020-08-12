@@ -1,4 +1,5 @@
-using HtmlAgilityPack;
+using Htmlilka;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,17 +10,16 @@ namespace Csml {
 
     public class Container<T> : Collection<T> where T : Container<T> {
         public string Tag { get; set; }
-        public List<string> Classes;
+        public string[] Classes;
         public Container(string tag, params string[] classes) {
             Tag = tag;
-            Classes = classes.ToList();
+            Classes = classes;
         }
 
-        public override IEnumerable<HtmlNode> Generate(Context context) {
-            yield return HtmlNode.CreateNode($"<{Tag}>").Do(x => {
-                foreach (var c in Classes) x.AddClass(c);
-                x.Add(base.Generate(context));
-            });
+        private Dictionary<object, Node> previouslyGenerated = new Dictionary<object, Node>();
+
+        public override Node Generate(Context context) {
+            return new Tag(Tag).AddClasses(Classes).Add(base.Generate(context));
         }
     }
 }
