@@ -19,7 +19,7 @@ namespace Csml {
                 x.AddText(CsmlApplication.PageTitlePrefix + material.Title);
             });
 
-            x.AddTag("link", x => {
+            x.AddVoidTag("link", x => {
                 x.Attribute("rel", "stylesheet");
                 x.Attribute("href", CsmlApplication.WwwCssUri.ToString());
             });
