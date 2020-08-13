@@ -135,8 +135,9 @@ namespace Csml {
 
 
             var page = new Tag(null)
-                .AddVoidTag("!DOCTYPE", a => a.Attribute("html"))
+                .AddVoidTag("!DOCTYPE", a => a.Attribute("html"))                
                 .AddTag("html", a => {
+                    a.Attribute("lang", pageLanguage.Name);
                     a.Add(head);
                     a.Add(body);
                 });
