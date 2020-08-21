@@ -35,7 +35,7 @@ namespace Csml {
             context.AForbidden = true;
 
             result.AddClasses("MaterialCard");
-            if (material.TitleImage != null) {
+            if (material.TitleImage != null) {                
                 result.Add(material.TitleImage.Generate(context));
             } else {
                 Log.Warning.OnObject(this, "TitleImage of material required");
@@ -44,7 +44,8 @@ namespace Csml {
 
             result.AddDiv(x => {
                 x.AddClasses("Title");
-                x.AddText(material.Title);
+                x.AddPureHtmlNode(material.Title.Replace(".", "<wbr/>."));
+                //x.AddText(material.Title);
             });
             result.Add(material.Description.Generate(context));
 

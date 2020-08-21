@@ -3,9 +3,9 @@
 .TemplateLanding {    
     @extend .TemplateLeftSideMenu;
 
-    > .VideoPlayer {
+    /*> .VideoPlayer {
         max-height: 100%;
-    }
+    }*/
 
     > .Content {
 
@@ -44,14 +44,14 @@
 
 
 
-        .Text {
+        /*.Text {
             font-weight: 400;
             font-size: 1rem;
             color: #455a64;
             line-height: 1.6;
             letter-spacing: 0.01em;
             //text-align: justify;
-        }
+        }*/
 
         
         *:not(:last-child)[style*="display:block"] {

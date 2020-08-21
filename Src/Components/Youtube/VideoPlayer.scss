@@ -1,26 +1,13 @@
 .VideoPlayer {
-    object-fit: cover;
     position: relative;
-
-
-    width: 100vw;
-    height: 80vh;
-    //padding-top: calc(9 / 16 * 100%);
-    //z-index: 1;
-    //pointer-events: none;
+    max-height: 80vh;
     overflow: hidden;
     background-color: black;
 
     .VideoPlayerInner {
-        position: absolute;        
-
-        //top: 50%;
-        //transform: translateY(-50%);
-
-        //top: 0;
-        //left: 0;
-        width: auto;        
-        height: auto;
-        //margin: auto;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
     }
 }

@@ -2,13 +2,17 @@
 
 .TemplateRegularMaterial {
     @extend .TemplateLeftSideMenu;
+
+    .Footer {
+        background-color: #f7f7f7;
+    }
     //@include transition( margin-left 0.15s ease-in-out);
     > .Content {
         //margin-top: 40px;
 
         $minWidth: 320px;
         min-width: $minWidth;
-        margin: 40px auto 0 auto;
+        margin: 0 auto 0 auto;
         flex: 1 0 auto;
         font-weight: 400;
         font-size: 1rem;
@@ -54,6 +58,7 @@
 
         .Header {
             margin-bottom: 4vh;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #ddd;
 
             .Title {
@@ -61,7 +66,7 @@
                 font-weight: 200;
                 font-size: 3.2rem;
                 color: #000;
-                margin-top: 2rem;
+                //margin-top: 2rem;
                 margin-bottom: 1rem;
                 /*@include small-screen {
                     font-size: 6.4vmax;
@@ -76,6 +81,10 @@
             margin-bottom: 0.2rem;
         }
 
+        .Section {
+            margin-bottom: 1rem;
+        }
+        
         .Section > .Section {
             margin-left: 20px;
 
@@ -91,11 +100,9 @@
             font-size: 1.4rem;
             color: #ccc;
         }
-
-
-        > *, .Section > * {
+        /*> *, .Section > * {
             margin-top: $VerticalGap;
-        }
+        }*/
         /*> *:not(:last-child), .section>*:not(:last-child) {
             margin-bottom: $VerticalGap;
         }

@@ -34,15 +34,15 @@ function TemplateLeftSideMenu(element, contentWidth, anchorLineWidth = 48) {
             let rightSpace = (width - menuWidth) - this.contentWidth - this.anchorLineWidth;
 
             this.content.style.paddingLeft = anchorLineWidth + "px"
-            this.element.style.marginLeft = menuWidth + "px";
-            this.element.style.marginRight = Math.min(0.5 * rightSpace, menuWidth) + "px"
+            this.element.style.paddingLeft = menuWidth + "px";
+            this.element.style.paddingRight = Math.min(0.5 * rightSpace, menuWidth) + "px"
 
         } else {
 
             // setProperty("visible", "hidden", priority);
 
-            this.element.style.marginLeft = 0;
-            this.element.style.marginRight = 0;
+            this.element.style.paddingLeft = 0;
+            this.element.style.paddingRight = 0;
 
             if (width < (this.contentWidth + this.anchorLineWidth)) {
                 this.content.style.paddingLeft = 0

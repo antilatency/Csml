@@ -22,6 +22,7 @@ html {
 }
 
 body {
+  
     margin: 0;
     font-family: $FontFamilyBase;
     font-size: $FontSizeBase;
@@ -30,6 +31,8 @@ body {
     color: $GrayDarkest;
     text-align: left;
     background-color: $White;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
 /*hr {
