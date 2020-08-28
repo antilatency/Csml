@@ -1,63 +1,54 @@
 
 .Footer {
-	position: static;
-	display: block;
-	margin: 32px 0 0 0;
-	background-color: white;
+    position: relative;
+    display: block;
+    background-color: white;
 
-	/*&:before {
-		position: absolute;
-		display: block;
-		background-color: #ddd;
-		content: "";
-		height: 1px;
-		width: 100%;
-		left: 0;
-		z-index: -1;
-	}*/
+    &:before {
+        position: absolute;
+        display: block;
+        background-color: inherit;
+        content: "";
+        height: 100%;
+        width: 100vw;
+        left: 0;
+        z-index: -1;
+    }
 }
 
 .FooterContainer {
-	box-sizing: border-box;
-	width: 100%;
-	margin: 0 auto;
-	padding: 32px 12px 12px 32px;
-	display: flex;
-	flex-flow: row wrap;
+    width: 100%;
+    padding-top: 32px;
+    //padding-left: 5vw;
+    padding-right: 32px;
+    text-align: right;
+    .Section {
 
-	.Grid {
-		display: flex;
-		flex: 2 1 auto;
-		flex-wrap: wrap;
-	}
+        .Title {
+            display: block;
+            font-size: .83em;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+    }
 
-	.Section {
+    a {
+        color: #848d95;
+        font-size: 14px;
+        padding: 4px 0;
+        line-height: 1.4em;
+        display: inline-block;
+        text-decoration: none;
 
-		.Title {
-			display: block;
-			font-size: .9rem;
-			margin: 0 0 12px 0;
-			font-weight: 500;
-		}
-	}
+        &:hover {
+            color: #bbc0c4;
+        }
+    }
 
-	a {
-		color: #455a64;
-		font-size: .9rem;
-		padding: 4px 0;
-		line-height: 1.4em;
-		display: inline-block;
-		text-decoration: none;
-
-		&:hover {
-			color: #8c96a0;
-		}
-	}
-
-	div.Text {
-		color: #8c96a0;
-		font-size: 14px;
-		box-sizing: border-box;
-		margin: auto;
-	}
+    > .Text {
+        color: #3d5154;
+        font-size: 14px;
+        display: table;
+        margin: 0 auto;
+    }
 }

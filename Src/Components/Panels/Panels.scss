@@ -9,7 +9,7 @@ $panelIconSize: 24px;
     padding-left: 42px;
     //padding-bottom: 0;
     font-size: inherit;
-    min-height: $panelIconSize;
+    min-height: $panelIconSize+2*$panelRadius;
 }
 .Panel::before {
     display: block;

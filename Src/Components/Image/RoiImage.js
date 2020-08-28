@@ -5,7 +5,6 @@ function RoiImage(element, aspect, roi) {
     this.previousContainerWidth = -1;
     this.image = this.element.getElementsByTagName("img")[0];
 
-
     this.OnWindowResize = function (){
             
         var width = this.element.offsetWidth;
