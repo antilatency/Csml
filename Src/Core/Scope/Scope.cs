@@ -16,7 +16,7 @@ namespace Csml {
         }
 
         public IPageTemplate GetTemplate() {
-            return GetType().GetProperty(nameof(Template), ScopeHelper.PropertyBindingFlags)?.GetValue(null, null) as IPageTemplate;
+            return GetType().GetProperty("Template", ScopeHelper.PropertyBindingFlags)?.GetValue(null, null) as IPageTemplate;
         }
 
         public void Generate(Context context) {
