@@ -16,7 +16,7 @@ $backgroundColor: #faf6fa;
 }
 
 @mixin code {
-    font-family: $FontFamilyMonospace;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     background-color: $backgroundColor;
     color: black;
 
