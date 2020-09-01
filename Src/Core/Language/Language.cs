@@ -22,9 +22,9 @@ namespace Csml {
             return null;
         }
 
-        public static List<Language> All => typeof(Language)
+        public static Language[] All;/* => typeof(Language)
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Where(x => x.FieldType == typeof(Language)).Select(x => (Language)x.GetValue(null)).ToList();
+                .Where(x => x.FieldType == typeof(Language)).Select(x => (Language)x.GetValue(null)).ToList();*/
 
 
         public override string ToString() {

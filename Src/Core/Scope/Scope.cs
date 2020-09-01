@@ -51,7 +51,7 @@ namespace Csml {
 
                 CsmlApplication.SiteMapMaterials.Add(translations.First().Value);
 
-                if (translations.Count != languages.Count) {
+                if (translations.Count != languages.Length) {
                     var replacementPage = translations[languages.First(x => translations.ContainsKey(x))];
                     foreach (var l in languages) {
                         if (!translations.ContainsKey(l))

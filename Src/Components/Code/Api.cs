@@ -1,5 +1,5 @@
 using Csml;
-public sealed partial class Api : Scope {
+public static class ApiStatic {
     public static IElement Keyword(string x) => new Modify(x.ToFormattableString()).AddClasses("keyword");
     public static IElement Interface => Keyword("interface");
     public static IElement Struct => Keyword("struct");
