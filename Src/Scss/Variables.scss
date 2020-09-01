@@ -7,6 +7,7 @@ $EnableShadows: true !default;
 // Colors
 
 
+/*
 $White: #ffffff !default;
 $GrayLightest: #f8f9fa !default;
 $GrayLighter: #e9ecef !default;
@@ -36,33 +37,22 @@ $WarningColor: $Yellow !default;
 $DangerColor: $Red !default;
 $LightColor: $GrayLightest !default;
 $DarkColor: $GrayDarker !default;
-
+*/
 
 // Layout
 
-$Spacer: 1rem !default;
+/*$Spacer: 1rem !default;
 
 $VerticalGap: 0.4rem !default;
 
-$Z_Index0: -1;
-$Z_Index1: 10;
-$Z_Index2: 20;
-$Z_Index3: 30;
-$Z_Index4: 40;
-$Z_Index5: 50;
-$Z_Index6: 60;
-$Z_Index7: 70;
-$Z_Index8: 80;
-$Z_Index9: 90;
-$Z_Index10: 100;
-
 $BorderWidth: 1px !default;
+    */
 
 
 // Typography
 
 //$FontFamilySansSerif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
-$FontFamilySansSerif: "Roboto" !default;
+/*$FontFamilySansSerif: "Roboto" !default;
 $FontFamilyMonospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $FontFamilyBase: $FontFamilySansSerif !default;
 
@@ -90,11 +80,12 @@ $H6FontSize: $FontSizeBase !default;
 
 $HeadingsFontWeight: 500 !default;
 $HeadingsLineHeight: 1.2 !default;
-
+    */
 
 // Links 
 
-$LinkColor: $PrimaryColor !default;
+/*$LinkColor: $PrimaryColor !default;
 $LinkDecoration: none !default;
 $LinkHoverColor: darken($LinkColor, 15%) !default;
 $LinkHoverDecoration: underline !default;
+    */

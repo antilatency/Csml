@@ -84,7 +84,7 @@
         .Section {
             margin-bottom: 1rem;
         }
-        
+
         .Section > .Section {
             margin-left: 20px;
 
@@ -101,14 +101,14 @@
             color: #ccc;
         }
         /*> *, .Section > * {
-            margin-top: $VerticalGap;
+            margin-top: 0.4rem;
         }*/
         /*> *:not(:last-child), .section>*:not(:last-child) {
-            margin-bottom: $VerticalGap;
+            margin-bottom: 0.4rem;
         }
         
         *:not(:last-child)[style*="display:flex"] {
-            margin-bottom: $VerticalGap;
+            margin-bottom: 0.4rem;
         }*/
         .Header div.Image {
             display: block;

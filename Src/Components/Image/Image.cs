@@ -31,6 +31,14 @@ namespace Csml {
             }
         }
 
+        public ImageCache GetCache() { 
+            if (ImageCache == null) {
+                GenerateResources();
+            }
+
+            return ImageCache;
+        }
+
         public Uri GetUri() {
             if (ImageCache == null) {
                 GenerateResources();

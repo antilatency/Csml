@@ -1,12 +1,10 @@
 @import "../TemplateLeftSideMenu/TemplateLeftSideMenu.scss";
 
-.TemplateLanding {    
+.TemplateLanding {
     @extend .TemplateLeftSideMenu;
-
     /*> .VideoPlayer {
         max-height: 100%;
     }*/
-
     > .Content {
 
         $minWidth: 320px;
@@ -14,15 +12,16 @@
         margin: 0 auto 0 auto;
         flex: 1 0 auto;
 
-    
+
         .Section > .Title > .Link {
             visibility: hidden;
         }
 
         .Section > .Title {
             font-size: 2.5rem;
+            font-weight: 700;
             text-align: left;
-            color: #888;
+            color: #081a20;
             margin-bottom: 0.2rem;
         }
 
@@ -32,18 +31,15 @@
             .Title {
                 font-weight: 400;
                 font-size: 1.5rem;
-                color: #aaa;
+                color: #081a20;
             }
         }
 
         .Section > .Section > .Section > .Title {
             font-weight: 500;
             font-size: 1.4rem;
-            color: #ccc;
+            color: #081a20;
         }
-
-
-
         /*.Text {
             font-weight: 400;
             font-size: 1rem;
@@ -52,10 +48,18 @@
             letter-spacing: 0.01em;
             //text-align: justify;
         }*/
+        a {
+            text-decoration: none;
+            font-style: normal;
+            color: #2d9698
+        }
 
-        
+        i {
+            font-variant: italic;
+        }
+
         *:not(:last-child)[style*="display:block"] {
-            margin-bottom: $VerticalGap;
+            margin-bottom: 0.4rem;
         }
 
         .Header > div.Image {

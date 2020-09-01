@@ -9,7 +9,11 @@ var Behaviour = {
         let parent = document.currentScript.parentElement;
         parent.removeChild(document.currentScript);
 
-        let x = new window[className](parent, ...parameters)
+        Behaviour.InitializeInternal(className, parent, ...parameters);
+    },
+
+    InitializeInternal: function (className, element, ...parameters) {
+        let x = new window[className](element, ...parameters)
         if (x.hasOwnProperty("OnWindowResize")) {
             window.addEventListener("resize", function () { x.OnWindowResize() });
         }
@@ -22,14 +26,14 @@ var Behaviour = {
                 if (document.readyState == "complete") x.OnResourcesLoaded()
             });
         }
-
-
     },
+
     /*Create: function(methodName, ...parameters){
         var result = document.createElement('script');        
         result.innerHTML = Behaviour.GetCode(methodName,...parameters)
         return result
     },*/
+
     Print: function(element, ...parameters){
         parameters.map(function(x){console.log(x)})
     },
