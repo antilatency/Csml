@@ -19,7 +19,8 @@ namespace Csml {
             return GetType().GetProperty("Template", ScopeHelper.PropertyBindingFlags)?.GetValue(null, null) as IPageTemplate;
         }
 
-        public void Generate(Context context) {
+        public Dictionary<string, Dictionary<Language, IMaterial>> GenerateMaterialMatrix(Context context)
+        {
             IPageTemplate template = GetTemplate();
             var materials = GetMaterials();
             var languages = Language.All;
@@ -30,7 +31,7 @@ namespace Csml {
                 Console.WriteLine($"material {material.Title}");
 
                 var materialName = material.NameWithoutLanguage;
-                
+
                 if (!matrix.ContainsKey(materialName)) {
                     matrix.Add(materialName, new Dictionary<Language, IMaterial>());
                 }
@@ -49,8 +50,6 @@ namespace Csml {
             foreach (var n in matrix) {
                 var translations = n.Value;
 
-                CsmlApplication.SiteMapMaterials.Add(translations.First().Value);
-
                 if (translations.Count != languages.Length) {
                     var replacementPage = translations[languages.First(x => translations.ContainsKey(x))];
                     foreach (var l in languages) {
@@ -58,6 +57,19 @@ namespace Csml {
                             translations.Add(l, replacementPage);
                     }
                 }
+            }
+
+            return matrix;
+        }
+
+        public void Generate(Context context) {
+            var materialMatrix = GenerateMaterialMatrix(context);
+            var template = GetTemplate();
+
+            foreach (var n in materialMatrix) {
+                var translations = n.Value;
+
+                CsmlApplication.SiteMapMaterials.Add(translations.First().Value);
 
                 foreach (var l in translations) {
                     context.Language = l.Key;

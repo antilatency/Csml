@@ -115,12 +115,15 @@ namespace Csml {
             File.WriteAllText(path, result);
         }
 
-
         public void Generate(Context context, IMaterial material) {
+            var outputPath = Path.Combine(CsmlApplication.WwwRootDirectory, material.GetPath(context.Language));
+            SaveHtml(outputPath, GenerateDom(context, material));
+        }
 
+        public Tag GenerateDom(Context context, IMaterial material) {
             Language pageLanguage = material.Language;
             if (pageLanguage == null) pageLanguage = Language.All[0];
-            var outputPath = Path.Combine(CsmlApplication.WwwRootDirectory, material.GetPath(context.Language));
+            
             context.CurrentMaterial = material;
 
             var head = new Tag("head");
@@ -133,16 +136,14 @@ namespace Csml {
                 body.Add(e.Generate(context));
             }
 
-
             var page = new Tag(null)
-                .AddVoidTag("!DOCTYPE", a => a.Attribute("html"))                
+                .AddVoidTag("!DOCTYPE", a => a.Attribute("html"))
                 .AddTag("html", a => {
                     a.Attribute("lang", pageLanguage.Name);
                     a.Add(head);
                     a.Add(body);
                 });
-
-            SaveHtml(outputPath,page);
+            return page;
         }
     }
 }
