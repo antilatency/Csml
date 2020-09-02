@@ -103,7 +103,7 @@ namespace Csml {
             Log.Info.Here($"Csml builder: Build Done!");
         }
 
-        private static void SetupCache() {
+        public static void SetupCache() {
             CacheConfig.PrivateCacheDirectory = Path.Combine(ProjectRootDirectory, ".cache");
 
             if (IsDeveloperMode) {
@@ -142,7 +142,7 @@ namespace Csml {
             }
         }
 
-        private static void CopyFonts() {
+        public static void CopyFonts() {
             var sourceDirectory = Path.Combine(ProjectRootDirectory, "Fonts");
             var destDirectory = Path.Combine(WwwRootDirectory, "Fonts");
             var files = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
@@ -164,7 +164,7 @@ namespace Csml {
             }
         }
 
-        private static void CreateFileProcessors() {
+        public static void CreateFileProcessors() {
             SassProcessor = new SassProcessor(IsDeveloperMode, ProjectRootDirectory, WwwRootDirectory, "Style.scss");
             JavascriptProcessor = new JavascriptProcessor(IsDeveloperMode, ProjectRootDirectory, WwwRootDirectory);
         }
