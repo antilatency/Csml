@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Csml {
 
@@ -8,42 +9,38 @@ namespace Csml {
     public partial class Scope {
 
         protected Scope() { }
-
-        private IEnumerable<IMaterial> GetMaterials() {
+        
+        private IEnumerable<System.Reflection.PropertyInfo> GetMaterialsAsTypes() {
             return GetType().GetProperties(ScopeHelper.PropertyBindingFlags)
-                .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial)))
-                .Select(x => x.GetValue(this) as IMaterial);
+                .Where(x => x.PropertyType.ImplementsInterface(typeof(IMaterial)));
         }
 
         public IPageTemplate GetTemplate() {
             return GetType().GetProperty("Template", ScopeHelper.PropertyBindingFlags)?.GetValue(null, null) as IPageTemplate;
         }
 
-        public Dictionary<string, Dictionary<Language, IMaterial>> GenerateMaterialMatrix(Context context)
-        {
-            IPageTemplate template = GetTemplate();
-            var materials = GetMaterials();
+        public Dictionary<string, Dictionary<Language, PropertyInfo>> GenerateMaterialTypesMatrix(Context context) {
+            var materials = GetMaterialsAsTypes();
             var languages = Language.All;
 
-            var matrix = new Dictionary<string, Dictionary<Language, IMaterial>>();
+            var matrix = new Dictionary<string, Dictionary<Language, PropertyInfo>>();
 
             foreach (var material in materials) {
-                Console.WriteLine($"material {material.Title}");
-
-                var materialName = material.NameWithoutLanguage;
+                //Console.WriteLine($"material {material.Title}");
+                var materialName = Element.GetNameWithoutLanguage(material);
 
                 if (!matrix.ContainsKey(materialName)) {
-                    matrix.Add(materialName, new Dictionary<Language, IMaterial>());
+                    matrix.Add(materialName, new Dictionary<Language, PropertyInfo>());
                 }
 
                 var translations = matrix[materialName];
 
-                if (material.Language == null) {
+                if (Element.GetLanguage(material) == null) {
                     foreach (var lang in languages) {
                         translations.Add(lang, material);
                     }
                 } else {
-                    translations.Add(material.Language, material);
+                    translations.Add(Element.GetLanguage(material), material);
                 }
             }
 
@@ -58,22 +55,21 @@ namespace Csml {
                     }
                 }
             }
-
             return matrix;
         }
 
         public void Generate(Context context) {
-            var materialMatrix = GenerateMaterialMatrix(context);
+            var materialMatrix = GenerateMaterialTypesMatrix(context);
             var template = GetTemplate();
 
             foreach (var n in materialMatrix) {
                 var translations = n.Value;
 
-                CsmlApplication.SiteMapMaterials.Add(translations.First().Value);
+                CsmlApplication.SiteMapMaterials.Add(translations.First().Value.GetValue(this) as IMaterial);
 
                 foreach (var l in translations) {
                     context.Language = l.Key;
-                    template.Generate(context, l.Value);
+                    template.Generate(context, l.Value.GetValue(this) as IMaterial);
                 }
             }
         }

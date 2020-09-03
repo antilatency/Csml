@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Csml;
@@ -14,43 +15,36 @@ namespace Csml.Server.Controllers {
     [ApiController]
     public class RootController : ControllerBase
     {
-        private static Dictionary<Scope, Dictionary<string, Dictionary<Language, IMaterial>>> ScopedMaterials;
+        private static Dictionary<Scope, Dictionary<string, Dictionary<Language, PropertyInfo>>> ScopedMaterials;
 
         private readonly ILogger<RootController> _logger;
         public RootController(ILogger<RootController> logger) {
             _logger = logger;
         }
 
-
-        private void InitMaterials()
-        {
+        private void InitMaterials() {
             if (ScopedMaterials == null) {
                 var context = new Context();
-                ScopedMaterials = new Dictionary<Scope, Dictionary<string, Dictionary<Language, IMaterial>>>();
+                ScopedMaterials = new Dictionary<Scope, Dictionary<string, Dictionary<Language, PropertyInfo>>>();
 
                 var s = ScopeHelper.All.ToArray();
                 foreach (var scope in s) {
-                    ScopedMaterials.Add(scope, scope.GenerateMaterialMatrix(context));
+                    ScopedMaterials.Add(scope, scope.GenerateMaterialTypesMatrix(context));
                 }
             }
         }
 
         private Htmlilka.Tag GetMaterial(string url) {
-            var languages = Language.All;
             foreach (var scopedMaterial in ScopedMaterials) {
                 var scope = scopedMaterial.Key;
                 var materialsMatrix = scopedMaterial.Value;
-
                 foreach (var materialsLanguageGroup in materialsMatrix) {
-                    foreach (IMaterial material in materialsLanguageGroup.Value.Values) {
-                        foreach (var language in languages) {
-                            if (material.GetUri(language) == url) {
-                                Context context = new Context();
-                                context.Language = language;
-                                return scope.GetTemplate().GenerateDom(context, material);
-                            }
+                    foreach (var v in materialsLanguageGroup.Value) {
+                        if (Material.GetUri(v.Key, v.Value) == url) {
+                            Context context = new Context();
+                            context.Language = v.Key;
+                            return scope.GetTemplate().GenerateDom(context, v.Value.GetValue(scope) as IMaterial);
                         }
-
                     }
                 }
             }

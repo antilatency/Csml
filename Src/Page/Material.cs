@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Htmlilka;
 
@@ -29,11 +30,15 @@ namespace Csml {
 
         public Paragraph Description;
 
-        public string GetPath(Language language) {
-            if (NameWithoutLanguage == "Material") {
-                return $"{PropertyPath}_{language}.html";
+        public static string GetPath(Language language, PropertyInfo materialProperty) {
+            if (GetNameWithoutLanguage(materialProperty) == "Material") {
+                return $"{GetPropertyPath(materialProperty)}_{language}.html";
             }
-            return Path.Combine(PropertyPath, $"{NameWithoutLanguage}_{language}.html");
+            return Path.Combine(GetPropertyPath(materialProperty), $"{GetNameWithoutLanguage(materialProperty)}_{language}.html");
+        }
+
+        public string GetPath(Language language) {
+            return GetPath(language, PropertyInfo);
         }
 
         public Material(string title, Image titleImage, FormattableString description) 
@@ -50,11 +55,14 @@ namespace Csml {
             return Title;
         }
 
-        public string GetUri(Language language) {
-            Uri uri = new Uri(CsmlApplication.WwwRootUri, GetPath(language));
+        public static string GetUri(Language language, PropertyInfo materialProperty) {
+            Uri uri = new Uri(CsmlApplication.WwwRootUri, GetPath(language, materialProperty));
             return uri.ToString();
         }
 
+        public string GetUri(Language language) {
+            return GetUri(language, PropertyInfo);
+        }
 
         bool loop = false;//TODO: delete 
         public override Node Generate(Context context) {

@@ -39,7 +39,12 @@ namespace Csml {
         public string CallerSourceFilePath { get; set; }
         public int CallerSourceLineNumber { get; set; }
 
-        public string PropertyPath => PropertyInfo.DeclaringType.FullName.Replace("+", ".").Replace(".", "/");
+        public static string GetPropertyPath(PropertyInfo property) {
+            return property.DeclaringType.FullName.Replace("+", ".").Replace(".", "/");
+        }
+
+        public string PropertyPath => GetPropertyPath(PropertyInfo);
+
         protected string PropertyName => PropertyInfo?.Name;
         protected PropertyInfo PropertyInfo;
 
@@ -47,29 +52,34 @@ namespace Csml {
             PropertyInfo = propertyInfo;            
         }
 
-        public string NameWithoutLanguage {
-            get {
-                
-                if (PropertyName == null) return null;
-                foreach (var l in Language.All) {
-                    var languageSuffix = "_" + l.Name;
-                    if (PropertyName.EndsWith(languageSuffix))
-                        return PropertyName.Substring(0, PropertyName.Length - languageSuffix.Length);
-                }
-                return PropertyName;
-            }
-        }
-
-        public Language Language {
-            get {
-                foreach (var l in Language.All) {
-                    var languageSuffix = "_" + l.Name;
-                    if (PropertyName.EndsWith(languageSuffix))
-                        return l;
-                }
+        public static string GetNameWithoutLanguage(PropertyInfo property) {
+            if (property == null) {
                 return null;
             }
+            foreach (var l in Language.All) {
+                var languageSuffix = "_" + l.Name;
+                if (property.Name.EndsWith(languageSuffix))
+                    return property.Name.Substring(0, property.Name.Length - languageSuffix.Length);
+            }
+            return property.Name;
         }
+
+        public string NameWithoutLanguage => GetNameWithoutLanguage(PropertyInfo);
+
+        public static Language GetLanguage(PropertyInfo property)
+        {
+            if (property == null) {
+                return null;
+            }
+            foreach (var l in Language.All) {
+                var languageSuffix = "_" + l.Name;
+                if (property.Name.EndsWith(languageSuffix))
+                    return l;
+            }
+            return null;
+        }
+
+        public Language Language => GetLanguage(PropertyInfo);
 
         private bool IsConstructorOfT(MethodBase method) {
             if (method.Name != ".ctor") return false;
