@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Antilatency.com.Server.Controllers {
+namespace Csml.Server.Controllers {
   
     [ApiController]
     public class RootController : ControllerBase
