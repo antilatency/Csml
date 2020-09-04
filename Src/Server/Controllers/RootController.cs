@@ -6,15 +6,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Csml;
+using Htmlilka;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Csml.Server.Controllers {
-  
+
     [ApiController]
-    public class RootController : ControllerBase
-    {
+    public class RootController : ControllerBase {
         private static Dictionary<Scope, Dictionary<string, Dictionary<Language, PropertyInfo>>> ScopedMaterials;
 
         private readonly ILogger<RootController> _logger;
@@ -34,7 +34,50 @@ namespace Csml.Server.Controllers {
             }
         }
 
-        private Htmlilka.Tag GetMaterial(string url) {
+        public static string GetPageRefreshScript(int refreshIntervalMs = 200) {
+            return
+                $"function WebServer_CheckNeedRefresh() {{" +
+                $"  let xhr = new XMLHttpRequest();" +
+                $"  xhr.open(\"GET\", \"/api/v1/refresh_required/{FilesWatcher.UpdateId}\");" +
+                $"  xhr.onload = function() {{" +
+                $"      if (xhr.status != 200) {{" +
+                $"          console.log(`Page refresh query error: ${{xhr.status}}: ${{xhr.statusText}}`);" +
+                $"      }} else {{" +
+                $"          if(xhr.response == \"true\"){{" +
+                $"              console.log(\"Refreshing page...\");" +
+                $"              location.reload(true);" +
+                $"          }}" +
+                $"      }}" +
+                $"  }};" +
+                $"  xhr.onerror = function() {{" +
+                $"      console.log(\"Page refresh query failed\");" +
+                $"  }};" +
+                $"  xhr.send();" +
+                $"}}" +
+                $"setInterval(WebServer_CheckNeedRefresh, {refreshIntervalMs});";
+        }
+
+        public static Tag FindFirstTag(Tag tag, string name) {
+            if (!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLowerInvariant() == name) {
+                return tag;
+            }
+            foreach (var node in tag.Children) {
+                if (node is Tag) {
+                    var result = FindFirstTag(node as Tag, name);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static void PatchPage(Tag page) {
+            var head = FindFirstTag(page, "head");
+            head.Add(new Tag("script").AddText(GetPageRefreshScript()));
+        }
+
+        private Htmlilka.Tag GetPage(string url) {
             foreach (var scopedMaterial in ScopedMaterials) {
                 var scope = scopedMaterial.Key;
                 var materialsMatrix = scopedMaterial.Value;
@@ -43,7 +86,9 @@ namespace Csml.Server.Controllers {
                         if (Material.GetUri(v.Key, v.Value) == url) {
                             Context context = new Context();
                             context.Language = v.Key;
-                            return scope.GetTemplate().GenerateDom(context, v.Value.GetValue(scope) as IMaterial);
+                            var dom = scope.GetTemplate().GenerateDom(context, v.Value.GetValue(scope) as IMaterial);
+                            PatchPage(dom);
+                            return dom;
                         }
                     }
                 }
@@ -51,19 +96,25 @@ namespace Csml.Server.Controllers {
             return null;
         }
 
+        [Route("/api/v1/refresh_required/{id:int}")]
+        [HttpGet]
+        public IActionResult GetRefreshRequired(int id) {
+            return Content(id == FilesWatcher.UpdateId ? "false" : "true");
+        }
+
         [Route("/{**catchAll}")]
         [HttpGet]
-        public IActionResult Get() {
+        public IActionResult GetContent() {
             InitMaterials();
 
             var requestPath = ControllerContext.HttpContext.Request.Path;
             string resourcePath = (requestPath == "/" ? @"/Root/Index_en.html" : requestPath.Value).Substring(1);
-            
+
             var mimeType = MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(resourcePath));
 
             //Procedural HTML page
             if (Path.GetExtension(resourcePath).ToLower() == ".html") {
-                var material = GetMaterial(CsmlApplication.WwwRootUri + resourcePath);
+                var material = GetPage(CsmlApplication.WwwRootUri + resourcePath);
                 StringBuilder stringBuilder = new StringBuilder();
                 material.WriteHtml(stringBuilder);
                 return Content(stringBuilder.ToString(), mimeType);
@@ -73,8 +124,11 @@ namespace Csml.Server.Controllers {
             resourcePath = Path.Combine(CsmlApplication.WwwRootDirectory, resourcePath);
 
             if (System.IO.File.Exists(resourcePath)) {
+                Response.Headers.Add("Cache-Control", "no-cache");
                 return PhysicalFile(resourcePath, mimeType);
             }
+
+            //Unknown
             Log.Warning.Here("FILE NOT FOUND: " + resourcePath);
             return NotFound();
         }
