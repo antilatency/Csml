@@ -22,8 +22,34 @@ namespace Csml {
 
 
     public class LanguageSelector<T,I> : Element<T>, ILanguageSelector<I> where I:IElement where T :LanguageSelector<T, I> {
+
         private Dictionary<Language, I> Translations;
-        
+
+        public bool HasTarget => Translations.Count > 0;
+
+        public I this[Language language] {
+            get {
+                if (Translations.ContainsKey(language)) {
+                    return Translations[language];
+                }
+                foreach (var l in Language.All) {
+                    if (Translations.ContainsKey(l)) {
+                        return Translations[l];
+                    }
+                }
+
+                return default;
+            }
+        }
+
+        public string Title {
+            get {
+                var n = PropertyName;
+                if (n == null) throw new Exception("TODO: Log.Error");
+                return n.Replace("_", " ").Trim(' ');                
+            }
+        }
+
         public LanguageSelector() {
             Translations = new Dictionary<Language, I>();
         }
@@ -32,7 +58,6 @@ namespace Csml {
             Translations = new Dictionary<Language, I>(translations);
         }        
         
-
         public override void AfterInitialization(PropertyInfo propertyInfo) {
             base.AfterInitialization(propertyInfo);
 
@@ -50,21 +75,8 @@ namespace Csml {
             
         }
 
-        public bool HasTarget => Translations.Count > 0;
-
-        public I this[Language language] {
-            get {
-                if (Translations.ContainsKey(language)) {
-                    return Translations[language];
-                }
-                foreach (var l in Language.All) {
-                    if (Translations.ContainsKey(l)) {
-                        return Translations[l];
-                    }
-                }
-
-                return default;
-            }
+        public bool HasTranslation(Language language) {
+            return Translations.ContainsKey(language);
         }
 
         public static int Max;
@@ -87,13 +99,6 @@ namespace Csml {
             return this[context.Language].Generate(context);
         }
 
-        public string Title {
-            get {
-                var n = PropertyName;
-                if (n == null) throw new Exception("TODO: Log.Error");
-                return n.Replace("_", " ").Trim(' ');                
-            }
-        }
         public override string ToString() {
             return Title;
         }

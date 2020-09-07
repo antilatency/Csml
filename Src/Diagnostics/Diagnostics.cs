@@ -17,21 +17,70 @@ namespace Csml {
             }
 
 
+            public static IEnumerable<LanguageSelector<IMaterial>> GetMaterialsFromScope(Type scope) {
+                return scope.GetProperties(ScopeHelper.PropertyBindingFlags)
+                        .Where(x => typeof(LanguageSelector<IMaterial>).IsAssignableFrom(x.PropertyType))
+                        .Select(x => x.GetValue(null) as LanguageSelector<IMaterial>);
+            }
+
             public static IEnumerable<IElement> GetAllPages() {
                 var scopeTypes = ScopeHelper.AllStatic;
 
                 foreach (var scope in scopeTypes) {
-                    var materials = scope.GetProperties(ScopeHelper.PropertyBindingFlags)
-                        .Where(x => typeof(LanguageSelector<IMaterial>).IsAssignableFrom(x.PropertyType))
-                        .Select(x => x.GetValue(null) as LanguageSelector<IMaterial>);
+                    var materials = GetMaterialsFromScope(scope);
 
                     if (materials.Count() > 0) {
-                        var materialsList = new UnorderedList();
-                        materials.ForEach(x => materialsList.Add(x));
-
-                        yield return new Paragraph($"{scope.FullName} materials: {materialsList}");
+                        yield return new Spoiler(scope.FullName)[new UnorderedList()[materials]];
                     }
  
+                }
+
+                yield break;
+            }
+
+            public static bool CheckTranslationsTopology(LanguageSelector<IMaterial> material) {
+                return true;
+            }
+
+            public static IEnumerable<IElement> GetPagesIssues() { 
+                var scopeTypes = ScopeHelper.AllStatic;
+                var emptyMaterials = new List<LanguageSelector<IMaterial>>();
+                var missingTranslations = new Dictionary<Language, List<LanguageSelector<IMaterial>>>();
+
+                foreach (var scope in scopeTypes) {
+                    var materials = GetMaterialsFromScope(scope);
+
+                    foreach (var material in materials) {
+                        if (!material.HasTarget) {
+                            emptyMaterials.Add(material);
+                        } else {
+                            foreach (var language in Language.All) {
+                                if (!material.HasTranslation(language)) {
+                                    List<LanguageSelector<IMaterial>> missing = null;
+
+                                    if (!missingTranslations.TryGetValue(language, out missing)) {
+                                        missing = new List<LanguageSelector<IMaterial>>();
+                                        missingTranslations[language] = missing;
+                                    }
+
+                                    missing.Add(material);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (emptyMaterials.Count > 0) {
+                    yield return new Spoiler("Empty materials")[new UnorderedList()[emptyMaterials]];
+                }
+
+                foreach (var kv in missingTranslations) {
+                    var language = kv.Key;
+                    var materials = kv.Value;
+
+                    if (materials != null && materials.Count > 0) {
+                        yield return new Spoiler($"Missing \"{language.Name}\" translation")[new UnorderedList()[materials]];
+                    }
                 }
 
                 yield break;
@@ -39,11 +88,15 @@ namespace Csml {
         }
 
         public static Material Diagnostics => new Material("Diagnostics", null, $"This page provide diagnostics information about website. This page is auto generated.")
-            [new Section("Full list of pages")
-                [new OrderedList()
-                    [GetAllPages()]
-                
+            [new Section("Issues")
+                [new UnorderedList()
+                    [GetPagesIssues()]
                 ]
+            ]
+            [new Section("Full list of pages")
+                [new UnorderedList()
+                    [GetAllPages()]
+                ]   
             ];
     }
 }
