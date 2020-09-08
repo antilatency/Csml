@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,109 +16,47 @@ namespace Csml.Server.Controllers {
 
     [ApiController]
     public class RootController : ControllerBase {
-        private static Dictionary<Scope, Dictionary<string, Dictionary<Language, PropertyInfo>>> ScopedMaterials;
-
         private readonly ILogger<RootController> _logger;
-        public RootController(ILogger<RootController> logger) {
+        private readonly ServerState _state;
+
+        public RootController(ILogger<RootController> logger, ServerState state) {
             _logger = logger;
+            _state = state;
         }
 
-        private void InitMaterials() {
-            if (ScopedMaterials == null) {
-                var context = new Context();
-                ScopedMaterials = new Dictionary<Scope, Dictionary<string, Dictionary<Language, PropertyInfo>>>();
+        public class RefreshRequest {
+            public string SassHash { get; set; }
+            public string JavaScriptHash { get; set; }
+            public string PageUrl { get; set; }
+            public string PageHash { get; set; }
+        }
 
-                var s = ScopeHelper.All.ToArray();
-                foreach (var scope in s) {
-                    ScopedMaterials.Add(scope, scope.GenerateMaterialTypesMatrix(context));
-                }
+        [Route("/api/v1/refresh_required")]
+        [HttpPost]
+        public IActionResult GetRefreshRequired([FromBody] RefreshRequest request) {
+            bool updateRequired = false;
+            if((request.SassHash != FilesWatcher.SassHash) || (request.JavaScriptHash != FilesWatcher.JavascriptHash)) {
+                //Log.Info.Here("Files updated!");
+                updateRequired = true;
+            } else  if (_state.GetPage(request.PageUrl).Hash != request.PageHash) {
+                //Log.Info.Here("Page content updated!");
+                updateRequired = true;
             }
-        }
-
-        public static string GetPageRefreshScript(int refreshIntervalMs = 200) {
-            return
-                $"function WebServer_CheckNeedRefresh() {{" +
-                $"  let xhr = new XMLHttpRequest();" +
-                $"  xhr.open(\"GET\", \"/api/v1/refresh_required/{FilesWatcher.UpdateId}\");" +
-                $"  xhr.onload = function() {{" +
-                $"      if (xhr.status != 200) {{" +
-                $"          console.log(`Page refresh query error: ${{xhr.status}}: ${{xhr.statusText}}`);" +
-                $"      }} else {{" +
-                $"          if(xhr.response == \"true\"){{" +
-                $"              console.log(\"Refreshing page...\");" +
-                $"              location.reload(true);" +
-                $"          }}" +
-                $"      }}" +
-                $"  }};" +
-                $"  xhr.onerror = function() {{" +
-                $"      console.log(\"Page refresh query failed\");" +
-                $"  }};" +
-                $"  xhr.send();" +
-                $"}}" +
-                $"setInterval(WebServer_CheckNeedRefresh, {refreshIntervalMs});";
-        }
-
-        public static Tag FindFirstTag(Tag tag, string name) {
-            if (!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLowerInvariant() == name) {
-                return tag;
-            }
-            foreach (var node in tag.Children) {
-                if (node is Tag) {
-                    var result = FindFirstTag(node as Tag, name);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private static void PatchPage(Tag page) {
-            var head = FindFirstTag(page, "head");
-            head.Add(new Tag("script").AddText(GetPageRefreshScript()));
-        }
-
-        private Htmlilka.Tag GetPage(string url) {
-            foreach (var scopedMaterial in ScopedMaterials) {
-                var scope = scopedMaterial.Key;
-                var materialsMatrix = scopedMaterial.Value;
-                foreach (var materialsLanguageGroup in materialsMatrix) {
-                    foreach (var v in materialsLanguageGroup.Value) {
-                        if (Material.GetUri(v.Key, v.Value) == url) {
-                            Context context = new Context();
-                            context.Language = v.Key;
-                            var dom = scope.GetTemplate().GenerateDom(context, v.Value.GetValue(scope) as IMaterial);
-                            PatchPage(dom);
-                            return dom;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        [Route("/api/v1/refresh_required/{id:int}")]
-        [HttpGet]
-        public IActionResult GetRefreshRequired(int id) {
-            return Content(id == FilesWatcher.UpdateId ? "false" : "true");
+          
+            return Content(updateRequired ? "true" : "false");
         }
 
         [Route("/{**catchAll}")]
         [HttpGet]
         public IActionResult GetContent() {
-            InitMaterials();
-
             var requestPath = ControllerContext.HttpContext.Request.Path;
             string resourcePath = (requestPath == "/" ? @"/Root/Index_en.html" : requestPath.Value).Substring(1);
-
             var mimeType = MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(resourcePath));
 
             //Procedural HTML page
             if (Path.GetExtension(resourcePath).ToLower() == ".html") {
-                var material = GetPage(CsmlApplication.WwwRootUri + resourcePath);
-                StringBuilder stringBuilder = new StringBuilder();
-                material.WriteHtml(stringBuilder);
-                return Content(stringBuilder.ToString(), mimeType);
+                var material = _state.GetPage(CsmlApplication.WwwRootUri + resourcePath);
+                return Content(material.Content, mimeType);
             }
 
             //File

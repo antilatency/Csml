@@ -5,8 +5,8 @@ using System.IO;
 namespace Csml {
     public abstract class FileProcessor {
 
-        protected string SourceRootDirectory;
-        protected string OutputRootDirectory;
+        public readonly string SourceRootDirectory;
+        public readonly string OutputRootDirectory;
         protected bool DeveloperMode;
         public string Error { get; protected set; }
         public bool Success => Error == null;
