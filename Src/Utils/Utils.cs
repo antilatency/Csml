@@ -38,7 +38,6 @@ namespace Csml {
             
         }
 
-
         public static void DeleteDirectory(string directory, int timeoutMs = 2000) {
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
@@ -51,7 +50,6 @@ namespace Csml {
                     Thread.Sleep(10);
                 }
             }
-                
         }
 
         public static void DeleteEmptySubdirectories(string directory) {
@@ -63,7 +61,6 @@ namespace Csml {
                 }
             }            
         }
-        
 
         public static Exception GetDeepestException(Exception e) {
             if (e.InnerException == null) {
