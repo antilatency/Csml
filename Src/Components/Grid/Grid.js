@@ -36,9 +36,9 @@ function Grid (element, elementWidthPx, numColumnsVariants) {
             this.previousNumColumns = newNumColumns;
         }
     }
-
-    this.OnDOMContentLoaded = function (event) {
-        this.OnWindowResize();
-    }
+    this.OnWindowResize();
+    /*this.OnDOMContentLoaded = function (event) {
+        
+    }*/
 
 }

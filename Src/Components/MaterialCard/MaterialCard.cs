@@ -3,6 +3,7 @@ using System;
 
 namespace Csml {
     public class MaterialCard: Element<MaterialCard> {
+
         Func<Context,IMaterial> MaterialGetter;
 
         /*public MaterialCard(IElement element) {
@@ -26,6 +27,8 @@ namespace Csml {
         public override Node Generate(Context context) {
             var material = MaterialGetter(context);
             Tag result;
+
+
             if (!context.AForbidden) {
                 result = new Tag("a");
                 result.Attribute("href", material.GetUri(context.Language));
@@ -33,8 +36,10 @@ namespace Csml {
                 result = new Tag("div");
             }
             context.AForbidden = true;
-
+            result.Add(new Behaviour(GetType().Name).Generate(context));
+            
             result.AddClasses("MaterialCard");
+
             if (material.TitleImage != null) {                
                 result.Add(material.TitleImage.Generate(context));
             } else {
@@ -48,6 +53,8 @@ namespace Csml {
                 //x.AddText(material.Title);
             });
             result.Add(material.Description.Generate(context));
+
+            
 
             return result;
         }
