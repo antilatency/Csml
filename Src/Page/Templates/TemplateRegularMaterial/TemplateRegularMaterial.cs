@@ -26,12 +26,15 @@ namespace Csml {
             CheckTitleImageAspect(material);
 
             return new Tag("div")
+                
                 .AddDiv(a=> {
                     a.AddClasses("Header");
-                    a.AddTag("h1", b => {
+                    a.Add(new Title(material.Title, ". ").Generate(context));
+
+                    /*a.AddTag("h1", b => {
                         b.AddClasses("Title");
                         b.AddPureHtmlNode(material.Title.Replace(".", "<wbr/>."));
-                    });
+                    });*/
                     if (material.TitleImage != null) {
                         a.Add(material.TitleImage.Generate(context));
                     }

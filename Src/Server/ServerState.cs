@@ -108,6 +108,7 @@ namespace Csml.Server {
                 }
 
                 var pageDom = GeneratePage(url);
+                if (pageDom == null) return null;
                 var pageHash = Hash.CreateFromString(PageToString(pageDom)).ToString();
 
                 PatchPage(pageDom, url, pageHash, _lastSassHash, _lastJavaScriptHash);

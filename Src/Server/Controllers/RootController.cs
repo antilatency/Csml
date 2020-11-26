@@ -38,11 +38,10 @@ namespace Csml.Server.Controllers {
             if((request.SassHash != FilesWatcher.SassHash) || (request.JavaScriptHash != FilesWatcher.JavascriptHash)) {
                 //Log.Info.Here("Files updated!");
                 updateRequired = true;
-            } else  if (_state.GetPage(request.PageUrl).Hash != request.PageHash) {
+            } else if(_state.GetPage(request.PageUrl)?.Hash != request.PageHash) {
                 //Log.Info.Here("Page content updated!");
                 updateRequired = true;
             }
-          
             return Content(updateRequired ? "true" : "false");
         }
 
@@ -54,22 +53,26 @@ namespace Csml.Server.Controllers {
             var mimeType = MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(resourcePath));
 
             //Procedural HTML page
-            if (Path.GetExtension(resourcePath).ToLower() == ".html") {
+            if(Path.GetExtension(resourcePath).ToLower() == ".html") {
                 var material = _state.GetPage(CsmlApplication.WwwRootUri + resourcePath);
-                return Content(material.Content, mimeType);
+                if(material != null) {
+                    return Content(material.Content, mimeType);
+
+                }
+
             }
 
             //File
             resourcePath = Path.Combine(CsmlApplication.WwwRootDirectory, resourcePath);
 
-            if (System.IO.File.Exists(resourcePath)) {
+            if(System.IO.File.Exists(resourcePath)) {
                 Response.Headers.Add("Cache-Control", "no-cache");
                 return PhysicalFile(resourcePath, mimeType);
             }
 
-            //Unknown
-            Log.Warning.Here("FILE NOT FOUND: " + resourcePath);
-            return NotFound();
+            Log.Warning.Here("NOT FOUND: " + resourcePath);
+            Response.StatusCode = 404;
+            return Content(null);
         }
     }
 }

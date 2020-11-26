@@ -1,41 +1,33 @@
 @import "../TemplateLeftSideMenu/TemplateLeftSideMenu.scss";
-
 .TemplateLanding {
     @extend .TemplateLeftSideMenu;
     /*> .VideoPlayer {
         max-height: 100%;
     }*/
-    > .Content {
-
+    >.Content {
         $minWidth: 320px;
         min-width: $minWidth;
         margin: 0 auto 0 auto;
         flex: 1 0 auto;
-
-
-        .Section > .Title > .Link {
+        .Section>.Title>.Link {
             visibility: hidden;
         }
-
-        .Section > .Title {
+        .Section>.Title {
             font-size: 2.5rem;
             font-weight: 700;
             text-align: left;
             color: #081a20;
             margin-bottom: 0.2rem;
         }
-
-        .Section > .Section {
+        .Section>.Section {
             margin-left: 20px;
-
             .Title {
                 font-weight: 400;
                 font-size: 1.5rem;
                 color: #081a20;
             }
         }
-
-        .Section > .Section > .Section > .Title {
+        .Section>.Section>.Section>.Title {
             font-weight: 500;
             font-size: 1.4rem;
             color: #081a20;
@@ -48,34 +40,29 @@
             letter-spacing: 0.01em;
             //text-align: justify;
         }*/
-        a {
-            text-decoration: none;
-            font-style: normal;
-            color: #2d9698
-        }
-
+        // a {
+        //     text-decoration: none;
+        //     font-style: normal;
+        //     color: #2d9698
+        // }
         i {
             font-variant: italic;
         }
-
         *:not(:last-child)[style*="display:block"] {
             margin-bottom: 0.4rem;
         }
-
-        .Header > div.Image {
+        .Header>div.Image {
             display: block;
             width: 100%;
             height: 50vh;
             margin-bottom: 2vh;
         }
-
-        .Section > div.Image {
+        .Section>div.Image {
             display: block;
             width: 100%;
             height: 30vh;
             margin-bottom: 1vh;
         }
-
         img.Image {
             display: block;
             margin-left: auto;
@@ -83,9 +70,10 @@
             height: auto;
             width: 100%;
         }
-
-        > .Header, > .Section {
-            > .Text, > .Title {
+        >.Header,
+        >.Section {
+            >.Text,
+            >.Title {
                 @media only screen and (max-width: 816px) {
                     padding-left: 8px;
                     padding-right: 8px;

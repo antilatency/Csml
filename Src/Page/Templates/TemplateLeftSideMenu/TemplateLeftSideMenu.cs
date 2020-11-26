@@ -1,9 +1,9 @@
 using Htmlilka;
 
 namespace Csml {
-    public class TemplateLeftSideMenuBehaviour : Behaviour {
+    /*public class TemplateLeftSideMenuBehaviour : Behaviour {
         public TemplateLeftSideMenuBehaviour(int contentWidth, int anchorLineWidth) : base("TemplateLeftSideMenu", contentWidth, anchorLineWidth) { }
-    };
+    };*/
 
     public abstract class TemplateLeftSideMenu<T> : Template<T> where T: TemplateLeftSideMenu<T> {
         private IElement LeftSideMenu;
@@ -20,7 +20,9 @@ namespace Csml {
         public override void ModifyBody(Tag x, Context context, IMaterial material) {
             base.ModifyBody(x, context, material);
 
-            x.Add(new TemplateLeftSideMenuBehaviour(ContentWidth, AnchorLineWidth).Generate(context));
+            x.Add(new Behaviour("TemplateLeftSideMenu", ContentWidth, AnchorLineWidth).Generate(context));
+
+            //x.Add(new TemplateLeftSideMenuBehaviour(ContentWidth, AnchorLineWidth).Generate(context));
 
             x.Add((LeftSideMenu.Generate(context) as Tag)
                 .AddClasses("LeftSideMenu")

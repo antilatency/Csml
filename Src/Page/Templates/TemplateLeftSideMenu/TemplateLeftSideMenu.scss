@@ -1,9 +1,8 @@
-
 .TemplateLeftSideMenu {
-    > .LeftSideMenu {
+    >.LeftSideMenu {
         position: fixed;
         left: 0;
-        //@include transition( left 0.15s ease-in-out);
+        //@include transition( left 1.5s ease-in-out);
         top: 0;
         height: 100%;
         width: 260px;
@@ -12,25 +11,20 @@
         //opacity: 0.96;
         background-color: white;
         border-right: 1px solid #ddd;
-
-        > * {
+        >* {
             display: block;
             color: inherit;
             font-weight: 400;
             text-decoration: none;
             padding: 16px 28px;
         }
-
-        > .HamburgerButton {
-            
+        >.HamburgerButton {
             //visibility: hidden;
             background-color: inherit;
             position: absolute;
             top: 0px;
-            padding: 8px;
+            padding: 0px;
             left: 100%;
-
-
             &:after {
                 position: relative;
                 color: inherit;
@@ -40,10 +34,10 @@
                 border-radius: 50%;
                 padding: 8px;
             }
-
             &.Checked:after {
-                
-                content: "\F0156";
+                visibility: hidden;
+                padding: auto;
+                //content: "\F0156";
             }
         }
     }
