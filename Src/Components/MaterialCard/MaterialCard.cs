@@ -33,7 +33,6 @@ namespace Csml {
                 result = new Tag("div");
             }
             context.AForbidden = true;
-
             result.AddClasses("MaterialCard");
             if(material.TitleImage != null) {
                 result.Add(material.TitleImage.Generate(context));

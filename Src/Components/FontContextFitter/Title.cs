@@ -12,29 +12,18 @@ namespace Csml {
         public int H { get; private set; }
 
         public Title(string text, string separationPattern = "", int h = 1) {
-            if(separationPattern != "") {
-                Text = Separator(text, separationPattern);
-            } else {
-                Text = text;
-            }
+            Text = separationPattern == "" ? text : Separator(text, separationPattern);
             H = h;
         }
 
         private string Separator(string text, string pattern) {
             var separator = pattern.Replace(" ", "");
-            if(pattern.IndexOf(" ") == 0) {
-                return text.Replace(separator, "<wbr/>" + separator);
-            }
-            return text.Replace(separator, separator + "<wbr/>");
+            return pattern.IndexOf(" ") == 0 ? text.Replace(separator, "<wbr/>" + separator) : text.Replace(separator, separator + "<wbr/>");
         }
 
         public override Node Generate(Context context) => new Tag("h" + H)
             .AddClasses("Title")
             .AddPureHtmlNode(Text)
-            //.AddTag("h1", x => {
-            //    x.AddClasses("Title");
-            //    x.AddText(Title);
-            //})
             .Add(new Behaviour("FontContextFitter").Generate(context));
     }
 }
