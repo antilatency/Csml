@@ -92,6 +92,7 @@ namespace Csml {
                     href += "#" + context.FormatString;
                 }
                 result.Attribute("href", href);
+                result.Add(new Behaviour("Material").Generate(context));
                 result.Attribute("title", planeDescription);
             }
 

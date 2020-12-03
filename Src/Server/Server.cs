@@ -15,6 +15,7 @@ namespace Csml.Server {
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls(Application.GetUrlFromEnviroment());
                 });
     }
 }

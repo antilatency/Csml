@@ -15,6 +15,7 @@ namespace Csml {
         public bool IsVectorImage;
         public bool IsAnimatedImage;
         public Dictionary<int, string> Mips;
+        public MagickColor TopLeftPixelColor;
     }
 
     public class Image : Element<Image> {
@@ -26,13 +27,13 @@ namespace Csml {
 
         public Image(string filePath) : base() {
             SourcePath = ConvertPathToAbsolute(filePath);
-            if (!File.Exists(SourcePath)) {
+            if(!File.Exists(SourcePath)) {
                 Log.Error.OnObject(this, $"File {filePath} not found");
             }
         }
 
-        public ImageCache GetCache() { 
-            if (ImageCache == null) {
+        public ImageCache GetCache() {
+            if(ImageCache == null) {
                 GenerateResources();
             }
 
@@ -40,24 +41,32 @@ namespace Csml {
         }
 
         public Uri GetUri() {
-            if (ImageCache == null) {
+            if(ImageCache == null) {
                 GenerateResources();
             }
 
             return ImageCache.GetFileUri(ImageCache.Mips.First().Value);
         }
 
-        public float[] GetRoi() { 
-            if (ImageCache == null) {
+        public float[] GetRoi() {
+            if(ImageCache == null) {
                 GenerateResources();
             }
 
             return ImageCache.Roi;
         }
 
+        public MagickColor GetTopLeftPixel() {
+            if(ImageCache == null) {
+                GenerateResources();
+            }
+
+            return ImageCache.TopLeftPixelColor;
+        }
+
         public bool IsRoiFitsIntoWideRect(float[] roi) {
-            if (roi != null && roi.Length > 0) {
-                if (ImageCache == null) {
+            if(roi != null && roi.Length > 0) {
+                if(ImageCache == null) {
                     GenerateResources();
                 }
 
@@ -76,13 +85,13 @@ namespace Csml {
                 var wideRectHeight = roiHeight;
                 var wideRectWidth = roiWidth;
 
-                if (roiWidth > roiHeight) {
+                if(roiWidth > roiHeight) {
                     wideRectHeight = wideRectAspect * wideRectWidth;
                 } else {
                     wideRectWidth = wideRectHeight / wideRectAspect;
                 }
 
-                return wideRectHeight <= imageHeight && wideRectWidth <= imageWidth && 
+                return wideRectHeight <= imageHeight && wideRectWidth <= imageWidth &&
                         wideRectWidth >= roiWidth && wideRectHeight >= roiHeight;
             }
 
@@ -98,11 +107,12 @@ namespace Csml {
             Func<int, string> outputFileName = x => hash + x + extension;
             Func<int, string> outputPath = x => Path.Combine(ImageCache.Directory, outputFileName(x));
 
-            if (ImageCache == null) {
+            if(ImageCache == null) {
                 ImageCache = ImageCache.Create(hash);
 
                 var image = new MagickImage(SourcePath);
 
+                ImageCache.TopLeftPixelColor = image.GetPixels()[0, 0].ToColor();
                 ImageCache.Aspect = image.Height / (float)image.Width;
                 ImageCache.Mips = new Dictionary<int, string>();
                 ImageCache.IsVectorImage = image.Format == MagickFormat.Svg;
@@ -113,10 +123,10 @@ namespace Csml {
                 File.Copy(SourcePath, outputPath(mipWidth));
                 ImageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
 
-                if (!(ImageCache.IsVectorImage || ImageCache.IsAnimatedImage)) { 
-                    while (MinImageWidth <= mipWidth / 2) {
+                if(!(ImageCache.IsVectorImage || ImageCache.IsAnimatedImage)) {
+                    while(MinImageWidth <= mipWidth / 2) {
                         image.Resize(image.Width / 2, image.Height / 2);
-                        image.Write(outputPath(image.Width));                    
+                        image.Write(outputPath(image.Width));
                         mipWidth = image.Width;
                         ImageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
                     }
@@ -124,7 +134,7 @@ namespace Csml {
 
                 var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
 
-                if (File.Exists(roiFilePath)) {
+                if(File.Exists(roiFilePath)) {
                     ImageCache.Roi = JsonConvert.DeserializeObject<float[]>(Utils.ReadAllText(roiFilePath));
                 }
 
@@ -133,7 +143,7 @@ namespace Csml {
         }
 
         public override Node Generate(Context context) {
-            if (ImageCache == null) {
+            if(ImageCache == null) {
                 GenerateResources();
             }
 
@@ -143,12 +153,12 @@ namespace Csml {
             var result = new VoidTag("img")
                 .Attribute("src", uri.ToString());
 
-            if (ImageCache.Roi != null) {
+            if(ImageCache.Roi != null) {
                 result = new Tag("div")
                     .Attribute("style", "overflow: hidden;")
                     .Add(result)
                     .Add(new Behaviour("RoiImage", ImageCache.Aspect, ImageCache.Roi).Generate(context));
-            } else if (!ImageCache.IsVectorImage) {
+            } else if(!ImageCache.IsVectorImage) {
                 result.Attribute("style", $"max-width: {biggestMip.Key}px;");
             }
 

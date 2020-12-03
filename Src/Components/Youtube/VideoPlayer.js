@@ -1,10 +1,12 @@
 var youTubeIFrameApiIsReady = false;
 var youTubeIFrameApiWaitList = [];
 var youTubeIFrameID = 0;
+
 function getUniqueYouTubeIFrameID() {
     youTubeIFrameID++;
     return "youTubeIFrameID" + youTubeIFrameID;
 }
+
 function callWhenYouTubeIFrameApiReady(callback) {
     if (youTubeIFrameApiIsReady) {
         callback()
@@ -12,6 +14,7 @@ function callWhenYouTubeIFrameApiReady(callback) {
         youTubeIFrameApiWaitList.push(callback);
     }
 }
+
 function onYouTubeIframeAPIReady() {
     youTubeIFrameApiWaitList.forEach(element => element());
 }
@@ -28,19 +31,19 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
     this.previousContainerWidth = -1;
 
     //this.element.style.paddingTop = 100 / this.aspect + "%";
-    var ResizeContainer = function () {
-        element.style.height = (element.offsetWidth / aspect)+"px";
-    }    
+    var ResizeContainer = function() {
+        element.style.height = (element.offsetWidth / aspect) + "px";
+    }
     window.addEventListener("resize", ResizeContainer);
 
-    this.onYoutubePlayerReady = function (event) {
+    this.onYoutubePlayerReady = function(event) {
         /*if (this.autoPlay) {
             console.log("onYoutubePlayerReady:playVideo");
             this.player.playVideo();
         }*/
     }
 
-    this.onYoutubePlayerStateChange = function (event) {
+    this.onYoutubePlayerStateChange = function(event) {
         /*if (event.data == YT.PlayerState.PLAYING) {
             //this.player.unMute()
         }*/
@@ -54,11 +57,11 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
     }
 
-    this.CreateYoutubeIFrame = function () {
-        
+    this.CreateYoutubeIFrame = function() {
+
         var _this = this;
-        callWhenYouTubeIFrameApiReady(function () {
-            
+        callWhenYouTubeIFrameApiReady(function() {
+
             var iframe = document.createElement("div");
             iframe.className = "VideoPlayerInner"
 
@@ -72,35 +75,35 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
             _this.element.appendChild(iframe);
             var controls = _this.showControls ? 1 : 0;
             _this.player = new YT.Player(iframe.id, {
-                
+
                 height: '100%',
                 width: '100%',
                 videoId: _this.code,
                 host: "http://www.youtube-nocookie.com",
                 playerVars: {
                     "rel": 0,
-                    "autoplay": _this.autoPlay?1:0,
-                    "controls" : _this.showControls ? 1 : 0,
-                    "mute": _this.autoPlay ? 1 : (_this.sound?0:1)
-                },                
+                    "autoplay": _this.autoPlay ? 1 : 0,
+                    "controls": _this.showControls ? 1 : 0,
+                    "mute": _this.autoPlay ? 1 : (_this.sound ? 0 : 1)
+                },
                 events: {
-                    'onReady': function (event) { console.log("onReady " + _this.code); _this.onYoutubePlayerReady(event) },
-                    'onStateChange': function (event) { _this.onYoutubePlayerStateChange(event) }
+                    'onReady': function(event) {
+                        console.log("onReady " + _this.code);
+                        _this.onYoutubePlayerReady(event)
+                    },
+                    'onStateChange': function(event) { _this.onYoutubePlayerStateChange(event) }
                 }
             });
 
 
         })
 
-        
-        
     }
 
-    this.CreateVideoTag = function () {
+    this.CreateVideoTag = function() {
 
         var video = document.createElement("video");
         video.className = "VideoPlayerInner";
-        
         video.controls = this.showControls;
         video.autoplay = this.autoPlay;
         video.muted = this.autoPlay || (!this.sound);
@@ -109,27 +112,21 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
         var previousContainerWidth = element.offsetWidth * window.devicePixelRatio;
 
-        var SelectClosestMip = function (elementWidth) {
-
-            console.log("SelectClosestMip "+element.offsetWidth + " x " + window.devicePixelRatio + " = " + elementWidth);
+        var SelectClosestMip = function(elementWidth) {
 
             for (var i = 0; i < mips.length; i++) {
                 var width = mips[i].Key * aspect;
                 if (width > 0.95 * elementWidth) return mips[i];
             }
-            return mips[mips.length-1];
+            return mips[mips.length - 1];
         }
-        var closestMip = SelectClosestMip(element.offsetWidth * window.devicePixelRatio);
-
+        let closestMip = SelectClosestMip(element.offsetWidth * window.devicePixelRatio);
         video.src = closestMip.Value;
 
 
-        var onResize = function () {
-            
+        var onResize = function() {
 
             var width = element.offsetWidth * window.devicePixelRatio;
-
-            
 
             if (previousContainerWidth == width) {
                 return;
@@ -150,8 +147,7 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
     }
 
-    this.CreateYouTubeIFrameApiScript = function () {
-        
+    this.CreateYouTubeIFrameApiScript = function() {
         const id = "YouTubeIFrameApiScript";
         var apiElement = document.getElementById(id);
 
@@ -174,7 +170,7 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
         if (window.YouTubeIFrameApiStatus === "loading") {
 
             var prewOnLoad = apiElement.onload;
-            apiElement.onload = function () {
+            apiElement.onload = function() {
                 apiElement.onload = null;
                 apiElement.onerror = null;
 
@@ -187,16 +183,16 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
             };
 
             var prewOnError = apiElement.onerror;
-            apiElement.onerror = function () {
+            apiElement.onerror = function() {
                 apiElement.onload = null;
                 apiElement.onerror = null;
 
                 if (window.YouTubeIFrameApiStatus === "loading") {
                     window.YouTubeIFrameApiStatus = "failed"
-                }                
+                }
                 prewOnError && prewOnError();
                 //console.log("youtube failed " + performance.now())
-                _this.CreateVideoTag();                
+                _this.CreateVideoTag();
             };
 
         } else {
@@ -210,9 +206,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
     }
 
     console.log(element.offsetWidth);
-    
-    
-    
 
     //var document.getElementById()
     //var tag = document.createElement('script');
@@ -226,9 +219,8 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
         this.previousContainerWidth = width;
     }*/
 
-    
 
-    this.OnDOMContentLoaded = function (event) {
+    this.OnDOMContentLoaded = function(event) {
         ResizeContainer();
 
         if (!showControls || autoPlay) {

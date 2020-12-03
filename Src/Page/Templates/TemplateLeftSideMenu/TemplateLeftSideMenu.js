@@ -53,7 +53,6 @@
 
 
     this.HamburgerButtonToggle = function() {
-        console.log(this);
         this.buttonChecked = !this.buttonChecked;
         this.button.classList.toggle("Checked", this.buttonChecked);
         this.Align();
@@ -65,7 +64,6 @@
         else this.leftSideMenu.appendChild(this.button);
         this.button.classList.toggle("Checked", show);
         this.Align();
-        console.log(this.buttonChecked);
     }
 
 
@@ -87,9 +85,7 @@
 
 
     this.contextHit = function(event, x) {
-        console.log(event, x);
         if (Math.abs(x) > this.leftSideMenu.offsetWidth && this.buttonChecked == true) {
-            console.log("contextHit");
             event.preventDefault();
             this.ShowLeftMenu(false);
         }
@@ -126,11 +122,10 @@
         let startX,
             startY,
             dXThreshold = 15,
-            dYThreshold = 15,
+            dYThreshold = 5,
             verticalScrolled;
 
         window.addEventListener("click", function(event) {
-            console.log("click");
             _this.contextHit(event, event.pageX);
         }, { passive: false });
 
@@ -147,7 +142,6 @@
                 return;
             }
             if (leftMenuOpening) {
-                console.log("left " + _this.leftSideMenu.style.left, "offsetWidth " + _this.leftSideMenu.offsetWidth / 2);
                 if (dx > _this.leftSideMenu.offsetWidth * 0.5) {
                     _this.moveForward(_this.leftSideMenu.style.left);
                     _this.ShowLeftMenu(true);
@@ -185,14 +179,14 @@
             }
             if (Math.abs(dx) > Math.abs(dy)) {
                 event.preventDefault();
+                //return;
             }
-            if (dx > dXThreshold) {
-
+            let opened = (leftMenuOpened || _this.buttonChecked);
+            if (dx > dXThreshold && !opened) {
                 leftMenuOpening = true;
                 _this.leftSideMenu.style.left = (dx < _this.leftSideMenu.offsetWidth ? -_this.leftSideMenu.offsetWidth + dx : 0) + "px";
                 return false;
-            } else if (dx < -dXThreshold && (leftMenuOpened || _this.buttonChecked)) {
-                console.log(leftMenuOpening, leftMenuOpened);
+            } else if (dx < -dXThreshold && opened) {
                 leftMenuClosing = true;
                 _this.leftSideMenu.style.left = (-dx < _this.leftSideMenu.offsetWidth ? dx : -_this.leftSideMenu.offsetWidth) + "px";
                 return false;
