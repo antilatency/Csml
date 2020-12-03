@@ -5,7 +5,7 @@ namespace Csml {
     public sealed class LanguageMenu : LanguageMenu<LanguageMenu> { }
 
     public class LanguageMenu<T> : Container<T> where T : LanguageMenu<T> {
-        public LanguageMenu() : base("nav", "language-menu") { }
+        public LanguageMenu() : base("nav", "LanguageMenu") { }
 
 
         public override Node Generate(Context context) {

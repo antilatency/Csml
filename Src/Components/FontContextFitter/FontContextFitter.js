@@ -31,7 +31,7 @@
             var w = element.offsetWidth;
             var scrollWidth = element.scrollWidth;
             var scrollHeight = element.scrollHeight;
-            console.log("scrollHeight: " + scrollHeight + " offsetHeight " + h + " scrollWidth " + scrollWidth + " offsetWidth " + w + " fontSize " + element.style.fontSize);
+            //console.log("scrollHeight: " + scrollHeight + " offsetHeight " + h + " scrollWidth " + scrollWidth + " offsetWidth " + w + " fontSize " + element.style.fontSize);
             if ((scrollHeight == h) && (scrollWidth == w)) break;
 
         }

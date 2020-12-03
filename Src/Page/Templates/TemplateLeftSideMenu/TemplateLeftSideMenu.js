@@ -125,14 +125,24 @@
             dYThreshold = 5,
             verticalScrolled;
 
+        let menuItems = element.querySelector(".LeftSideMenu").getElementsByClassName("Text");
+        let path = window.location.pathname;
+        for (let i = 0; i < menuItems.length; i++) {
+            if (menuItems[i].href.split('/').reverse()[0] == path.split('/').reverse()[0]) {
+                menuItems[i].style.backgroundColor = "#333333";
+                break;
+            }
+        }
+
         window.addEventListener("click", function(event) {
             _this.contextHit(event, event.pageX);
+            leftMenuOpening = leftMenuOpened = leftMenuClosing = false;
         }, { passive: false });
 
         window.addEventListener("touchstart", function(event) {
             if (event.touches.length > 1) return;
             let touch = event.touches[0];
-            verticalScrolled = false;
+            verticalScrolled = leftMenuOpening = leftMenuOpened = leftMenuClosing = false;
             startX = touch.pageX;
             startY = touch.pageY;
         }, { passive: false });
@@ -163,6 +173,10 @@
 
         }, { passive: false });
 
+        window.addEventListener("scroll", function(event) {
+            event.preventDefault();
+            //alert("scroll");
+        })
 
 
         window.addEventListener("touchmove", function(event) {
@@ -170,16 +184,15 @@
             if (event.touches.length > 1) {
                 return;
             }
+            if (Math.abs(dx) > Math.abs(dy)) {
+                event.preventDefault();
+            }
             xPos = touch.pageX;
             yPos = touch.pageY;
             dx = xPos - startX;
             dy = yPos - startY;
             if ((xPos == null && yPos == null) || verticalScrolled) {
                 return false;
-            }
-            if (Math.abs(dx) > Math.abs(dy)) {
-                event.preventDefault();
-                //return;
             }
             let opened = (leftMenuOpened || _this.buttonChecked);
             if (dx > dXThreshold && !opened) {
@@ -194,6 +207,14 @@
             let absDY = Math.abs(dy);
             if (absDY > dYThreshold && !leftMenuOpening) {
                 verticalScrolled = true;
+
+                if (dy < -dYThreshold) {
+                    console.log("hide");
+                    _this.button.classList.toggle("Hide", true);
+                } else if (dy > dYThreshold) {
+                    console.log("show");
+                    _this.button.classList.toggle("Hide", false);
+                }
                 return false;
             }
 

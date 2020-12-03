@@ -5,6 +5,7 @@
         //@include transition( left 1.5s ease-in-out);
         top: 0;
         height: 100%;
+        //overflow: hidden;
         width: 260px;
         //max-width: $max-menu-width;
         z-index: 1000;
@@ -20,6 +21,8 @@
         }
         >.HamburgerButton {
             //visibility: hidden;
+            transform: translateY(0px);
+            @include Transition( transform 300ms ease-in-out);
             background-color: inherit;
             position: absolute;
             top: 0px;
@@ -38,6 +41,10 @@
                 visibility: hidden;
                 padding: auto;
                 //content: "\F0156";
+            }
+            &.Hide {
+                transform: translateY(-100%);
+                @include Transition( transform 300ms ease-in-out);
             }
         }
     }
