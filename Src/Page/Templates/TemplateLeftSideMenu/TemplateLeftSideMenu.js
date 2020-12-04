@@ -181,11 +181,14 @@
 
         window.addEventListener("touchmove", function(event) {
             var touch = event.touches[0];
+            let verticalMove = false;
             if (event.touches.length > 1) {
                 return;
+
             }
             if (Math.abs(dx) > Math.abs(dy)) {
                 event.preventDefault();
+                verticalMove = true;
             }
             xPos = touch.pageX;
             yPos = touch.pageY;
@@ -197,15 +200,17 @@
             let opened = (leftMenuOpened || _this.buttonChecked);
             if (dx > dXThreshold && !opened) {
                 leftMenuOpening = true;
+                event.preventDefault();
                 _this.leftSideMenu.style.left = (dx < _this.leftSideMenu.offsetWidth ? -_this.leftSideMenu.offsetWidth + dx : 0) + "px";
                 return false;
             } else if (dx < -dXThreshold && opened) {
                 leftMenuClosing = true;
+                event.preventDefault();
                 _this.leftSideMenu.style.left = (-dx < _this.leftSideMenu.offsetWidth ? dx : -_this.leftSideMenu.offsetWidth) + "px";
                 return false;
             }
             let absDY = Math.abs(dy);
-            if (absDY > dYThreshold && !leftMenuOpening) {
+            if (absDY > dYThreshold && !verticalMove) {
                 verticalScrolled = true;
 
                 if (dy < -dYThreshold) {

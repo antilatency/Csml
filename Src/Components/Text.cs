@@ -45,8 +45,8 @@ namespace Csml {
             var filteredArguments = new List<IElement>();
             int filteredArgumentID = -1;
             for (int i = 0; i < arguments.Length; i++) {
-                if (arguments[i] is IElement) {
-                    Add(arguments[i] as IElement);
+                if (arguments[i] is IElement element) {
+                    Add(element);
                     filteredArgumentID++;
                     if (i != filteredArgumentID) {                                                 //fix i
                         Format = Format.Replace("{" + i + "}", "{" + filteredArgumentID + "}");

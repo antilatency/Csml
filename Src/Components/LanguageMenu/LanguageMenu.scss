@@ -11,7 +11,7 @@
     border-radius: 8rem;
     margin: 1rem 1rem;
     &.Hide {
-        transform: translateY(-120%);
+        transform: translateY(-140%);
         @include Transition( transform 300ms ease-in-out);
     }
 }

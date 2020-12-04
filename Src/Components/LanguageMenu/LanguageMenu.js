@@ -17,7 +17,10 @@
     let startX,
         startY,
         parent = element.parentElement,
-        dYThreshold = 5;
+        verticalScroll = false,
+        horizontalScroll = false,
+        dYThreshold = 5,
+        dXThreshold = 15;
     window.addEventListener("touchstart", function(event) {
         if (event.touches.length > 1) return;
         let touch = event.touches[0];
@@ -36,8 +39,13 @@
         dx = touch.pageX - startX;
         dy = touch.pageY - startY;
         let absDY = Math.abs(dy);
-        if (absDY > dYThreshold) {
-
+        let absDX = Math.abs(dx);
+        if (absDX > dXThreshold) {
+            horizontalScroll = true;
+            //return;
+        }
+        if (absDY > dYThreshold && !horizontalScroll) {
+            verticalScroll = true;
             if (dy < -dYThreshold) {
                 console.log("hide");
                 parent.classList.toggle("Hide", true);
@@ -48,4 +56,6 @@
             return false;
         }
     }, { passive: false });
+
+    window.addEventListener("touchend", () => verticalScroll = horizontalScroll = false, { passive: false });
 }

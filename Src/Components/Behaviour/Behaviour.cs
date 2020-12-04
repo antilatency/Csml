@@ -40,7 +40,7 @@ namespace Csml {
                 code += "," + parameters;
             code += ")";
 
-            return new Tag("script").AddText(code);
+            return new Tag("script").AddCode(code);
         }
     }
 }
