@@ -1,32 +1,27 @@
 function MaterialCard(element) {
-    this.OnWindowResize = function() {
-        if (this.mobileCheck()) {
-            element.className = "MaterialCardMobile"
-        }
-    }
-    this.OnResourcesLoaded = function() {
-        if (this.mobileCheck()) {
-            element.className = "MaterialCardMobile"
-        }
-    }
-
-    // this.ColorSetter = function() {
-
-    //     let image = element.getElementsByClassName("Image")[0].getElementsByTagName('img')[0];
-    //     let canvas = document.createElement('canvas');
-    //     canvas.width = image.width;
-    //     canvas.height = image.height;
-    //     canvas.getContext('2d').drawImage(image, 0, 0, image.width, image.height);
-    //     let pixel = canvas.getContext('2d').getImageData(0, 0, 1, 1).data;
-    //     let colorString = " ";
-    //     for (i = 0; i < pixel.length; i++) {
-    //         if (i != pixel.length - 1) colorString += pixel[i] + ", ";
-    //         else colorString += 0.7;
+    // this.OnWindowResize = function() {
+    //     if (this.mobileCheck()) {
+    //         element.className = "MaterialCardMobile"
     //     }
-    //     colorString = "rgba(" + colorString.trimEnd().trimStart() + ")";
-    //     element.style.backgroundColor = colorString;   
     // }
 
+    let $slider = element.querySelector('.MaterialCardSlider');
+    let $sliderTitle = $slider.querySelector('.Title');
+    let $sliderText = $slider.querySelector('.Text');
+    //$slider.style.maxHeight = element.offsetHeight - $sliderTitle.offsetHeight + 'px';
+
+
+    let $image = element.querySelector('.Image>img');
+
+    this.OnResourcesLoaded = function() {
+        if (this.mobileCheck()) {
+            element.classList.add("Mobile"); // = "MaterialCardMobile"
+        }
+    }
+
+
+
+    window.addEventListener('load', e => this.truncateSlider());
 
     //taken from http://detectmobilebrowsers.com/
     this.mobileCheck = function() {
@@ -37,4 +32,36 @@ function MaterialCard(element) {
         })(navigator.userAgent || navigator.vendor || window.opera);
         return check;
     }
+
+    if (!this.mobileCheck()) {
+        element.addEventListener('mouseover', e => element.classList.add('MouseOver'));
+        element.addEventListener('mouseleave', e => element.classList.remove('MouseOver'));
+    }
+
+
+    this.truncateSlider = () => {
+        let sliderMaxHeight = element.offsetHeight - $sliderTitle.clientHeight;
+        if ($slider.offsetHeight <= sliderMaxHeight)
+            return;
+
+        this.truncateToHeight($slider, $sliderText, sliderMaxHeight);
+        $slider.style.height = sliderMaxHeight + 'px';
+    }
+
+    this.truncateToHeight = ($elem, $textElem, height) => {
+        let words = $sliderText.innerHTML.split(" ");
+        let innerText = words[0];
+        let resultText = innerText;
+        $textElem.innerText = innerText + '…';
+        for (let i = 1; $elem.offsetHeight < height && i < words.length; i++) {
+            resultText = innerText;
+            innerText += ' ' + words[i];
+            $textElem.innerHTML = innerText + '…';
+        }
+        $textElem.innerHTML = this.clearEnd(resultText) + '…';
+    }
+
+
+    element.style.visibility = "visible";
+    this.clearEnd = str => str.replace(/[.,:"'&^\(\)\/\\]$/g, '');
 }

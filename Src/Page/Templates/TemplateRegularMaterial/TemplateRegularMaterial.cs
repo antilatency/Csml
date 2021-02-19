@@ -1,19 +1,21 @@
 ﻿using Htmlilka;
+using static Csml.YoutubeVideo;
+using System.Collections.Generic;
 
 namespace Csml {
     public sealed class TemplateRegularMaterial : TemplateRegularMaterial<TemplateRegularMaterial> {
-        public TemplateRegularMaterial(IElement leftSideMenu) : base(leftSideMenu) { }
+        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, rightSideElements) { }
     }
 
-    public class TemplateRegularMaterial<T> : TemplateLeftSideMenu<T> where T: TemplateRegularMaterial<T> {
-        public TemplateRegularMaterial(IElement leftSideMenu) : base(leftSideMenu,800,64) { }
+    public class TemplateRegularMaterial<T> : TemplateLeftSideMenu<T> where T : TemplateRegularMaterial<T> {
+        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, 260, rightSideElements, 60, 800, 64) { }
 
         private void CheckTitleImageAspect(IMaterial material) {
             var image = material.TitleImage;
-            if (image != null) {
+            if(image != null) {
                 var roi = image.GetRoi();
-                if (roi != null && roi.Length > 0) {
-                    if (!image.IsRoiFitsIntoWideRect(roi)) {
+                if(roi != null && roi.Length > 0) {
+                    if(!image.IsRoiFitsIntoWideRect(roi)) {
                         Log.Warning.OnObject(material, $"Invalid ROI for material TitleImage. Material title = {material.Title}");
                     }
                 } else {
@@ -26,17 +28,15 @@ namespace Csml {
             CheckTitleImageAspect(material);
 
             return new Tag("div")
-                
-                .AddDiv(a=> {
+                .AddDiv(a => {
                     a.AddClasses("Header");
                     a.Add(new Title(material.Title, ". ").Generate(context));
-
-                    /*a.AddTag("h1", b => {
-                        b.AddClasses("Title");
-                        b.AddPureHtmlNode(material.Title.Replace(".", "<wbr/>."));
-                    });*/
-                    if (material.TitleImage != null) {
-                        a.Add(material.TitleImage.Generate(context));
+                    if(material.TitleImage != null) {
+                        //if(material.TitleImage is Player player) {
+                        //    a.Add(player.GetImage().Generate(context));
+                        //} else {
+                            a.Add(material.TitleImage.Generate(context));
+                        //}
                     }
                     a.Add(material.Description.Generate(context));
                 })

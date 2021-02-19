@@ -19,7 +19,7 @@ function onYouTubeIframeAPIReady() {
     youTubeIFrameApiWaitList.forEach(element => element());
 }
 
-function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound, mips) {
+function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound, mips, poster) {
     this.element = element;
     this.code = code;
     this.aspect = aspect;
@@ -29,6 +29,7 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
     this.sound = sound;
     this.mips = mips;
     this.previousContainerWidth = -1;
+    this.poster = poster;
 
     //this.element.style.paddingTop = 100 / this.aspect + "%";
     var ResizeContainer = function() {
@@ -61,10 +62,8 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
         var _this = this;
         callWhenYouTubeIFrameApiReady(function() {
-
             var iframe = document.createElement("div");
-            iframe.className = "VideoPlayerInner"
-
+            iframe.className = "VideoPlayerInner";
             if (!_this.showControls) {
                 iframe.style.top = "-100%";
                 iframe.style.height = "300%";
@@ -84,11 +83,10 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
                     "rel": 0,
                     "autoplay": _this.autoPlay ? 1 : 0,
                     "controls": _this.showControls ? 1 : 0,
-                    "mute": _this.autoPlay ? 1 : (_this.sound ? 0 : 1)
+                    "mute": _this.autoPlay ? 1 : (_this.sound ? 0 : 1),
                 },
                 events: {
                     'onReady': function(event) {
-                        console.log("onReady " + _this.code);
                         _this.onYoutubePlayerReady(event)
                     },
                     'onStateChange': function(event) { _this.onYoutubePlayerStateChange(event) }
@@ -100,10 +98,11 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
 
     }
 
-    this.CreateVideoTag = function() {
+    this.CreateVideoTag = function(withPoster) {
 
         var video = document.createElement("video");
         video.className = "VideoPlayerInner";
+        video.poster = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         video.controls = this.showControls;
         video.autoplay = this.autoPlay;
         video.muted = this.autoPlay || (!this.sound);
@@ -138,7 +137,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
                 closestMip = newClosestMip;
                 var time = video.currentTime;
                 video.src = closestMip.Value;
-                console.log("element.offsetWidth=" + width + " => " + video.src);
                 video.currentTime = time;
             }
         }
@@ -167,6 +165,10 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
         }
 
         var _this = this;
+        if (poster) {
+            _this.CreateVideoTag(poster);
+            return;
+        }
         if (window.YouTubeIFrameApiStatus === "loading") {
 
             var prewOnLoad = apiElement.onload;
@@ -191,7 +193,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
                     window.YouTubeIFrameApiStatus = "failed"
                 }
                 prewOnError && prewOnError();
-                //console.log("youtube failed " + performance.now())
                 _this.CreateVideoTag();
             };
 
@@ -204,21 +205,6 @@ function VideoPlayer(element, code, aspect, showControls, autoPlay, loop, sound,
             }
         }
     }
-
-    console.log(element.offsetWidth);
-
-    //var document.getElementById()
-    //var tag = document.createElement('script');
-
-
-    /*this.OnWindowResize = function () {
-        var width = this.element.offsetWidth;
-        if (this.previousContainerWidth == width) {
-            return;
-        }
-        this.previousContainerWidth = width;
-    }*/
-
 
     this.OnDOMContentLoaded = function(event) {
         ResizeContainer();

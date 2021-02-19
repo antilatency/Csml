@@ -34,9 +34,14 @@ namespace Csml {
                 observableFiles = CaptureModificationTimes(pathes);
             }
 
+
             StringBuilder stringBuilder = new StringBuilder();
             foreach (var i in pathes) {
                 var code = Utils.ReadAllText(i);
+
+                var thisFilePath = Path.GetRelativePath(SourceRootDirectory, i).Replace('\\', '/');
+                code = code.Replace("☺thisFilePath",thisFilePath);
+
 
                 if (!DeveloperMode) {
                     var uglifyResult = NUglify.Uglify.Js(code, i);

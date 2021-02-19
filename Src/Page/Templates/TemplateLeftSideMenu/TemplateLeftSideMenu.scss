@@ -1,51 +1,30 @@
+$menuColor: #3b424d;
+%sideContainer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    background-color: #3b424d;
+    &.Forward {
+        z-index: 1100;
+    }
+    >div {
+        border-bottom: 2px solid #1B1E23;
+    }
+    >div:last-child {
+        border-bottom: none;
+    }
+}
+
 .TemplateLeftSideMenu {
-    >.LeftSideMenu {
-        position: fixed;
+    .LeftSideContainer {
+        @extend %sideContainer;
         left: 0;
-        //@include transition( left 1.5s ease-in-out);
-        top: 0;
-        height: 100%;
-        //overflow: hidden;
-        width: 260px;
-        //max-width: $max-menu-width;
-        z-index: 1000;
-        //opacity: 0.96;
-        background-color: white;
-        border-right: 1px solid #ddd;
-        >* {
-            display: block;
-            color: inherit;
-            font-weight: 400;
-            text-decoration: none;
-            padding: 16px 28px;
-        }
-        >.HamburgerButton {
-            //visibility: hidden;
-            transform: translateY(0px);
-            @include Transition( transform 300ms ease-in-out);
-            background-color: inherit;
-            position: absolute;
-            top: 0px;
-            padding: 0px;
-            left: 100%;
-            &:after {
-                position: relative;
-                color: inherit;
-                font-family: "Material Design Icons";
-                font-size: 2em;
-                content: "\F035C";
-                border-radius: 50%;
-                padding: 8px;
-            }
-            &.Checked:after {
-                visibility: hidden;
-                padding: auto;
-                //content: "\F0156";
-            }
-            &.Hide {
-                transform: translateY(-100%);
-                @include Transition( transform 300ms ease-in-out);
-            }
-        }
+    }
+    .RightSideContainer {
+        @extend %sideContainer;
+        right: 0;
     }
 }

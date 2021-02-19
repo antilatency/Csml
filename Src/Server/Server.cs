@@ -7,15 +7,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace Csml.Server {
     public class Server {
-        public static void Run(params string[] args) {
-            CreateHostBuilder(args).Build().Run();
+        public static void Run(string url, params string[] args) {
+            CreateHostBuilder(url, args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => {
-                    webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls(Application.GetUrlFromEnviroment());
-                });
+        public static IHostBuilder CreateHostBuilder(string url, string[] args) {
+            return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { 
+                webBuilder.UseStartup<Startup>();
+                if(!string.IsNullOrEmpty(url)) {
+                    webBuilder.UseUrls(url);
+                }                
+            });
+        }
     }
 }

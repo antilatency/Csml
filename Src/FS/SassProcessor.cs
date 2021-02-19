@@ -96,7 +96,7 @@ namespace Csml {
                 File.WriteAllText(outputFilePath, result.CompiledContent);
                 File.WriteAllText(sourceMapFilePath, result.SourceMap);
 
-            } catch (SassСompilationException e) {
+            } catch (SassCompilationException e) {
                 if (e.File != null)
                     if (!observableFiles.ContainsKey(e.File)) {
                         observableFiles.Add(e.File, File.GetLastWriteTime(e.File));

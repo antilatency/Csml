@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Csml {
 
     public struct Context /*: IEquatable<Context>*/ {
+
+        public float EstimatedWidth;
         public bool AForbidden;
         public string FormatString;
         public Language Language { get; set; }

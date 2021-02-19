@@ -1,15 +1,18 @@
+using Htmlilka;
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Htmlilka;
-
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 namespace Csml {
     public class VideoPlayerBehaviour : Behaviour {
-        public VideoPlayerBehaviour(string code, float aspect, bool showControls,bool autoPlay, bool loop, bool sound, KeyValuePair<int,string>[] mips)
-            : base("VideoPlayer", code, aspect, showControls, autoPlay, loop, sound, mips) { }
+        public VideoPlayerBehaviour(string code, float aspect, bool showControls, bool autoPlay, bool loop, bool sound, KeyValuePair<int, string>[] mips, bool poster)
+            : base("VideoPlayer", code, aspect, showControls, autoPlay, loop, sound, mips, poster) { }
     };
 
     [CacheConfig("Videos", true)]
@@ -23,76 +26,106 @@ namespace Csml {
         readonly string Code;
         readonly float Aspect;
         readonly Task<YoutubeVideoCache> CacheAsync;
+        public Image Image;
+        private readonly bool isPosterDefinedByUser;
+
         public YoutubeVideoCache Cache => CacheAsync.Result;
 
-        public YoutubeVideo(string code, float aspect = 16f/9f) {
+        public YoutubeVideo(string code, Image image = null, float aspect = 16f / 9f) {
             Code = code;
             Aspect = aspect;
             CacheAsync = GetCacheAsync();
+            Image = image;
+            isPosterDefinedByUser = Image != null;
         }
 
         public Player GetPlayer() {
-            return new Player(this);
+            return new Player(this, Image);
         }
 
-        private async Task DownloadVideoAsync(VideoLibrary.YouTubeVideo video, YoutubeVideoCache cache) {
-            var contents = await video.GetBytesAsync();
-            
+        public string GetImagePath() {
+            var imagePath = Path.Combine(Cache.Directory, $"{Code}.jpg");
+            if(File.Exists(imagePath)) { return imagePath; }
+            using var client = new WebClient();
+            client.DownloadFile(new Uri($"http://i3.ytimg.com/vi/{Code}/maxresdefault.jpg"), imagePath);
+            return imagePath;
+        }
+
+        private async Task DownloadVideoAsync(YoutubeClient youTube, MuxedStreamInfo streamInfo, YoutubeVideoCache cache) {
             Utils.CreateDirectory(cache.Directory);
-            var path = Path.Combine(cache.Directory, $"{cache.Hash}_{video.Resolution}{video.FileExtension}");
-            File.WriteAllBytes(path, contents);
+            var path = Path.Combine(cache.Directory, FileNameFormatter(cache, streamInfo));
+            if(File.Exists(path)) { return; }
+            Console.WriteLine($"{Code}: start download {path}");
+            await youTube.Videos.Streams.DownloadAsync(streamInfo, path);
             Console.WriteLine($"{Code}: download {path} done.");
         }
 
-
-
-
+        IEnumerable<Task> videoDownloaders;
         private async Task<YoutubeVideoCache> GetCacheAsync() {
             var result = YoutubeVideoCache.Load(Code);
-            if (result != null) return result;
+            if(result != null) return result;
+            try {
+                Console.WriteLine($"{Code}:Begin");
+                var youTube = new YoutubeClient();
+                var streamManifest = await youTube.Videos.Streams.GetManifestAsync(Code);
+                var streamInfo = streamManifest.GetMuxed();
+                Console.WriteLine($"{Code}:Got videos list");
+                result = new YoutubeVideoCache { Hash = Code };
 
-            Console.WriteLine($"{Code}:Begin");
+                var videosToDownload = streamInfo;
 
-            var youTube = VideoLibrary.YouTube.Default;
-            var videos = await youTube.GetAllVideosAsync("https://www.youtube.com/watch?v=" + Code);
+                videoDownloaders = videosToDownload
+                    .Select(x => DownloadVideoAsync(youTube, x, result));
 
-            Console.WriteLine($"{Code}:Got videos list");
+                await Task.WhenAll(videoDownloaders);
 
 
-            result = new YoutubeVideoCache {Hash = Code};
 
-            var videosToDownload = videos
-                .Where(x => x.Resolution > 0 && x.AudioBitrate > 0);
-
-            var videoDownloaders = videosToDownload
-                .Select(x => {
-                    return DownloadVideoAsync(x, result);
-                });
-
-            await Task.WhenAll(videoDownloaders);
-
-            result.Mips = new Dictionary<int, string>(
-                videosToDownload.Select(
-                    x => new KeyValuePair<int, string>(x.Resolution, $"{result.Hash}_{x.Resolution}{x.FileExtension}")
-                    ).OrderBy(x=>x.Key)
-                );
-
-            result.Save();
-
+                result.Mips = new Dictionary<int, string>(videosToDownload
+                    .Select(x => new KeyValuePair<int, string>(x.Resolution.Height, FileNameFormatter(result, x)))
+                    .OrderBy(x => x.Key));
+                result.Save();
+            } catch(Exception ex) {
+                Log.Error.Here(ex.Message);
+                Environment.Exit(1);
+            }
             return result;
         }
 
-        public class Player : Element<Player> {
+        private static string FileNameFormatter(YoutubeVideoCache cache, MuxedStreamInfo streamInfo) =>
+            $"{cache.Hash}_{streamInfo.Resolution.Height}.{streamInfo.Container}";
+
+        public class Player : Element<Player>, IImage {
             readonly YoutubeVideo YoutubeVideo;
+            private Image _image;
+            public ImageCache GetImageCache() => _image.GetImageCache();
 
             public bool ShowControls { get; set; } = true;
             public bool AutoPlay { get; set; } = false;
             public bool Loop { get; set; } = false;
             public bool Sound { get; set; } = true;
 
-            public Player(YoutubeVideo youtubeVideo) {
+
+            private string _imageSource;
+            public Player(YoutubeVideo youtubeVideo, Image image) {
+                _image = image;
                 YoutubeVideo = youtubeVideo;
-                //SetParameter("rel", 0);
+            }
+
+            //public Player SetCustomImageSource(string filePath) {
+
+            //    if(!File.Exists(_imageSource)) {
+            //        Log.Error.OnObject(this, $"File {filePath} not found");
+            //        _imageSource = null;
+            //    }                
+            //    return this;
+            //}
+
+            private string GetImageSource() {
+                if(string.IsNullOrEmpty(_imageSource)) {
+                    _imageSource = YoutubeVideo.GetImagePath();
+                }
+                return _imageSource;
             }
 
             public Player Configure(Action<Player> action) {
@@ -107,32 +140,12 @@ namespace Csml {
                 return this;
             }
 
-            /*private Player SetParameter(string name, object value) {
-                if (Parameters == null) Parameters = new Dictionary<string, string>();
-                Parameters[name] = value.ToString();
-                return this;
-            }
-
-            private string GetParametersString() {
-                if (Parameters == null) return "";
-                var result = "?"+string.Join("&", Parameters.Select(x => $"{x.Key}={x.Value}"));
-                return result;
-            }*/
-
-            //private int autoplay = 0;
-            /*public Player AutoplayEnable => SetParameter("autoplay", 1);
-            public Player ControlsDisable => SetParameter("controls", 0);
-            public Player Mute => SetParameter("mute", 1);
-            public Player Loop =>  SetParameter("loop", 1).SetParameter("playlist", YoutubeVideo.Code);
-            public Player ShowInfoDisable => SetParameter("showinfo", 0);*/
-
-
-
             public override Node Generate(Context context) {
-
                 var cache = YoutubeVideo.Cache;
-
-                return new Tag("div")
+                var hasPoster = YoutubeVideo.isPosterDefinedByUser;
+                if(hasPoster) {
+                    var image = GetImage().Generate(context);
+                    return new Tag("div").Add(GetImage().Generate(context))
                     .AddClasses("VideoPlayer")
                     .Add(new VideoPlayerBehaviour(
                         YoutubeVideo.Code,
@@ -141,13 +154,55 @@ namespace Csml {
                         AutoPlay,
                         Loop,
                         Sound,
-                        cache.Mips.Select(x=>new KeyValuePair<int,string>(x.Key, cache.GetFileUri(x.Value).ToString())).ToArray()
-
+                        cache.Mips.Select(x => new KeyValuePair<int, string>(x.Key, cache.GetFileUri(x.Value).ToString())).ToArray(),
+                        YoutubeVideo.isPosterDefinedByUser
+                        ).Generate(context)
+                    );
+                } 
+                return new Tag("div")
+                    //.If(YoutubeVideo.isPosterDefinedByUser,
+                    //    x => x.Add(GetImage().Generate(context))
+                    //)
+                    .AddClasses("VideoPlayer")
+                    .Add(new VideoPlayerBehaviour(
+                        YoutubeVideo.Code,
+                        YoutubeVideo.Aspect,
+                        ShowControls,
+                        AutoPlay,
+                        Loop,
+                        Sound,
+                        cache.Mips.Select(x => new KeyValuePair<int, string>(x.Key, cache.GetFileUri(x.Value).ToString())).ToArray(),
+                        YoutubeVideo.isPosterDefinedByUser
                         ).Generate(context)
                     );
 
+
             }
 
+            public float[] GetRoi() {
+                _image ??= new Image(GetImageSource());
+                return _image.GetImageCache().Roi;
+            }
+
+            public bool IsRoiFitsIntoWideRect(float[] roi) {
+                _image ??= new Image(GetImageSource());
+                return _image.IsRoiFitsIntoWideRect(roi);
+            }
+
+            public MagickColor GetTopLeftPixel() {
+                _image ??= new Image(GetImageSource());
+                return _image.GetTopLeftPixel();
+            }
+
+            public Uri GetImageUri() {
+                _image ??= new Image(GetImageSource());
+                return _image.GetImageUri();
+            }
+
+            public Image GetImage() {
+                _image ??= new Image(GetImageSource());
+                return _image;
+            }
         }
     }
 }

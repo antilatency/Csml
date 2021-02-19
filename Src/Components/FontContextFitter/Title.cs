@@ -11,7 +11,9 @@ namespace Csml {
         public string Text { get; set; }
         public int H { get; private set; }
 
+        private const int _titleLength = 20;
         public Title(string text, string separationPattern = "", int h = 1) {
+            //if(text.Length > _titleLength) { Log.Warning.Here($"Title lenght > {_titleLength}: {text}"); }
             Text = separationPattern == "" ? text : Separator(text, separationPattern);
             H = h;
         }

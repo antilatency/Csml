@@ -1,30 +1,32 @@
 @mixin GridElement ($numColumns, $gap) {
-    & > * {
+    &>* {
         width: calc((100% - (#{$numColumns} - 1) * #{$gap}) / #{$numColumns});
         //padding-top: calc((100% / #{$numColumns} - #{$gap}) * 1 + 5rem);
         //height: 0;
     }
-
-    & > :nth-child(#{$numColumns}n) {
+    &> :nth-child(#{$numColumns}n) {
         margin-right: -1px; //Edge bug
     }
 }
 
+// .Grid {
+//     $gap: 12px;
+//     width: 100%;
+//     display: block;
+//     @for $i from 1 through 12 {
+//         &.columns#{$i} {
+//             @include GridElement($i, $gap)
+//         }
+//     }
+//     &>* {
+//         margin-right: $gap;
+//         margin-bottom: $gap;
+//         display: inline-block;
+//         vertical-align: top;
+//     }
+// }
 .Grid {
-    $gap: 12px;
-    width: 100%;
-    display: block;
-
-    @for $i from 1 through 12 {
-        &.columns#{$i} {
-            @include GridElement($i,$gap)
-        }
-    }
-
-    & > * {
-        margin-right: $gap;
-        margin-bottom: $gap;
-        display: inline-block;
-        vertical-align: top;
-    }
+    display: grid;
+    grid-column-gap: 8px;
+    grid-row-gap: 8px;
 }

@@ -18,7 +18,7 @@ namespace Csml {
         public MagickColor TopLeftPixelColor;
     }
 
-    public class Image : Element<Image> {
+    public class Image : Element<Image>, IImage {
 
         public static readonly int MinImageWidth = 128;
         public string SourcePath { get; private set; }
@@ -32,17 +32,17 @@ namespace Csml {
             }
         }
 
-        public ImageCache GetCache() {
+        public ImageCache GetImageCache() {
             if(ImageCache == null) {
-                GenerateResources();
+                GenerateResources(SourcePath, ref ImageCache);;
             }
 
             return ImageCache;
         }
 
-        public Uri GetUri() {
+        public Uri GetImageUri() {
             if(ImageCache == null) {
-                GenerateResources();
+                GenerateResources(SourcePath, ref ImageCache);
             }
 
             return ImageCache.GetFileUri(ImageCache.Mips.First().Value);
@@ -50,7 +50,7 @@ namespace Csml {
 
         public float[] GetRoi() {
             if(ImageCache == null) {
-                GenerateResources();
+                GenerateResources(SourcePath, ref ImageCache);
             }
 
             return ImageCache.Roi;
@@ -58,7 +58,7 @@ namespace Csml {
 
         public MagickColor GetTopLeftPixel() {
             if(ImageCache == null) {
-                GenerateResources();
+                GenerateResources(SourcePath, ref ImageCache);
             }
 
             return ImageCache.TopLeftPixelColor;
@@ -67,7 +67,7 @@ namespace Csml {
         public bool IsRoiFitsIntoWideRect(float[] roi) {
             if(roi != null && roi.Length > 0) {
                 if(ImageCache == null) {
-                    GenerateResources();
+                    GenerateResources(SourcePath, ref ImageCache);
                 }
 
                 var imageWidth = (float)ImageCache.Mips.First().Key;
@@ -98,53 +98,55 @@ namespace Csml {
             return false;
         }
 
-        private void GenerateResources() {
-            var extension = Path.GetExtension(SourcePath);
-            var hash = Hash.CreateFromFile(SourcePath).ToString();
+        public static void GenerateResources(string sourcePath, ref ImageCache imageCache) {
+            var extension = Path.GetExtension(sourcePath);
+            var hash = Hash.CreateFromFile(sourcePath).ToString();
+            imageCache = ImageCache.Load(hash);
+            if(imageCache != null) { return; }
+            imageCache = ImageCache.Create(hash);
+            var direcotry = imageCache.Directory;
+            string outputFileName(int x) => hash + x + extension;
+            string outputPath(int x) => Path.Combine(direcotry, outputFileName(x));
+            var image = new MagickImage(sourcePath);
 
-            ImageCache = ImageCache.Load(hash);
+            imageCache.TopLeftPixelColor = image.GetPixels()[0, 0].ToColor();
+            imageCache.Aspect = image.Height / (float)image.Width;
+            imageCache.Mips = new Dictionary<int, string>();
+            imageCache.IsVectorImage = image.Format == MagickFormat.Svg;
+            imageCache.IsAnimatedImage = image.Format == MagickFormat.Gif;
 
-            Func<int, string> outputFileName = x => hash + x + extension;
-            Func<int, string> outputPath = x => Path.Combine(ImageCache.Directory, outputFileName(x));
+            var mipWidth = image.Width;
+            if(File.Exists(outputPath(mipWidth))) { File.Delete(outputPath(mipWidth)); }
+            File.Copy(sourcePath, outputPath(mipWidth));
+            imageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
 
-            if(ImageCache == null) {
-                ImageCache = ImageCache.Create(hash);
-
-                var image = new MagickImage(SourcePath);
-
-                ImageCache.TopLeftPixelColor = image.GetPixels()[0, 0].ToColor();
-                ImageCache.Aspect = image.Height / (float)image.Width;
-                ImageCache.Mips = new Dictionary<int, string>();
-                ImageCache.IsVectorImage = image.Format == MagickFormat.Svg;
-                ImageCache.IsAnimatedImage = image.Format == MagickFormat.Gif;
-
-                var mipWidth = image.Width;
-
-                File.Copy(SourcePath, outputPath(mipWidth));
-                ImageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
-
-                if(!(ImageCache.IsVectorImage || ImageCache.IsAnimatedImage)) {
-                    while(MinImageWidth <= mipWidth / 2) {
-                        image.Resize(image.Width / 2, image.Height / 2);
-                        image.Write(outputPath(image.Width));
-                        mipWidth = image.Width;
-                        ImageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
-                    }
+            if(!(imageCache.IsVectorImage || imageCache.IsAnimatedImage)) {
+                while(MinImageWidth <= mipWidth / 2) {
+                    image.Resize(image.Width / 2, image.Height / 2);
+                    image.Write(outputPath(image.Width));
+                    PngUtils.NormalizeChunks(outputPath(image.Width)); //to prevent commit after every conversion;
+                    mipWidth = image.Width;
+                    imageCache.Mips.Add(mipWidth, outputFileName(mipWidth));
                 }
-
-                var roiFilePath = Path.ChangeExtension(SourcePath, ".roi");
-
-                if(File.Exists(roiFilePath)) {
-                    ImageCache.Roi = JsonConvert.DeserializeObject<float[]>(Utils.ReadAllText(roiFilePath));
-                }
-
-                ImageCache.Save();
             }
+
+            var roiFilePath = Path.ChangeExtension(sourcePath, ".roi");
+
+            if(File.Exists(roiFilePath)) {
+                imageCache.Roi = JsonConvert.DeserializeObject<float[]>(Utils.ReadAllText(roiFilePath));
+            }
+
+            imageCache.Save();
+        }
+
+        private string BackgroundColor() {
+            var pixel = GetTopLeftPixel();
+            return $"rgba({pixel.R}, {pixel.G}, {pixel.B}, {pixel.A})";
         }
 
         public override Node Generate(Context context) {
             if(ImageCache == null) {
-                GenerateResources();
+                GenerateResources(SourcePath, ref ImageCache);
             }
 
             var biggestMip = ImageCache.Mips.First();
@@ -155,8 +157,10 @@ namespace Csml {
 
             if(ImageCache.Roi != null) {
                 result = new Tag("div")
-                    .Attribute("style", "overflow: hidden;")
+                    .Attribute("style", $"overflow: hidden; background-color: {BackgroundColor()};")
+                    //.Attribute("style", $"background-color: {BackgroundColor()};")
                     .Add(result)
+                    //.Attribute("style", $"background-color: {BackgroundColor()};")
                     .Add(new Behaviour("RoiImage", ImageCache.Aspect, ImageCache.Roi).Generate(context));
             } else if(!ImageCache.IsVectorImage) {
                 result.Attribute("style", $"max-width: {biggestMip.Key}px;");
@@ -165,6 +169,10 @@ namespace Csml {
             result.AddClasses("Image");
 
             return result;
+        }
+
+        public Image GetImage() {
+            return this;
         }
     }
 

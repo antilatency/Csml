@@ -26,7 +26,7 @@ namespace Csml {
             }
         }
 
-        public Image TitleImage { get; set; }
+        public IImage TitleImage { get; set; }
 
         public Paragraph Description;
 
@@ -41,11 +41,11 @@ namespace Csml {
             return GetPath(language, PropertyInfo);
         }
 
-        public Material(string title, Image titleImage, FormattableString description) 
+        public Material(string title, IImage titleImage, FormattableString description) 
             : this(title, titleImage, new Paragraph(description))
         { }
 
-        public Material(string title, Image titleImage, Paragraph description)  {
+        public Material(string title, IImage titleImage, Paragraph description)  {
             UserDefinedTitle = title;
             TitleImage = titleImage;
             Description = description;
@@ -73,7 +73,7 @@ namespace Csml {
                 loop = true;
                 //var it = Description.Generate(context).Select(x => x.InnerText);
                 var descriptionNode = Description.Generate(context);
-                StringBuilder stringBuilder = new StringBuilder();
+                var stringBuilder = new StringBuilder();
                 descriptionNode.WritePlaneText(stringBuilder);
                 planeDescription = stringBuilder.ToString() ;
                 loop = false;

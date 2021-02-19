@@ -63,10 +63,10 @@ namespace Csml {
         public LogType logType;
 
         protected static ConsoleColor PrintTypeToColor(LogType printType) {
-            if (printType == LogType.todo) return ConsoleColor.Green;
-            if (printType == LogType.info) return ConsoleColor.Gray;
-            if (printType == LogType.warning) return ConsoleColor.Yellow;
-            if (printType == LogType.error) return ConsoleColor.Red;
+            if(printType == LogType.todo) return ConsoleColor.Green;
+            if(printType == LogType.info) return ConsoleColor.Gray;
+            if(printType == LogType.warning) return ConsoleColor.Yellow;
+            if(printType == LogType.error) return ConsoleColor.Red;
             return ConsoleColor.White;
         }
 
@@ -79,16 +79,16 @@ namespace Csml {
             Console.ForegroundColor = PrintTypeToColor(type);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             string codeString = "";
-            if (type != LogType.info) codeString = prefix + ErrorCodeToNumber(code) + ": ";
+            if(type != LogType.info) codeString = prefix + ErrorCodeToNumber(code) + ": ";
 
             string fullMessage = $"{sourceFilePath}({sourceLineNumber}): {type} {codeString }{message}";
-
+            //System.IO.File.AppendAllLines(@"D:\svn\Antilatency.com\Log.txt", new[] { fullMessage.Replace(@"D:\svn\", "") });
             Console.WriteLine(fullMessage);
             Console.ForegroundColor = color;
 
-            if (type == LogType.error) {
+            if(type == LogType.error) {
                 //Console.ReadLine();
-                throw new Exception(fullMessage);
+                //throw new Exception(fullMessage);
             }
         }
 
@@ -108,12 +108,11 @@ namespace Csml {
         public void OnObject(
             object obj,
             string message, ErrorCode code = ErrorCode.Unassigned) {
-            if (obj is IInfo) {
-                IInfo callerInfo = obj as IInfo;
+            if(obj is IInfo callerInfo) {
                 Print(callerInfo.CallerSourceFilePath, callerInfo.CallerSourceLineNumber, logType, message, code);
             } else {
                 Print("Unknown", 0, logType, message, code);
-            }            
+            }
         }
 
         public void On(string path, int line, string message, ErrorCode code = ErrorCode.Unassigned) {
@@ -131,15 +130,11 @@ namespace Csml {
         public void OnException(Exception e) {
             Regex regex = new Regex("at (.*) in (.*):line (\\d*)");
             var match = regex.Match(e.StackTrace);
-            if (match != null) {
-                Print(match.Groups[2].Value, int.Parse(match.Groups[3].Value), logType, e.Message, 0);                
+            if(match != null) {
+                Print(match.Groups[2].Value, int.Parse(match.Groups[3].Value), logType, e.Message, 0);
             } else {
                 Print("Unknown", 0, logType, e.Message, 0);
             }
-
         }
-
-
-
     }
 }

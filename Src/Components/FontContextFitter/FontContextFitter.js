@@ -35,7 +35,6 @@
             if ((scrollHeight == h) && (scrollWidth == w)) break;
 
         }
-        console.log("DONE!");
     }
 
     this.BinarySearch = (list, val) => {

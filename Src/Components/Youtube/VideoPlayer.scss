@@ -3,6 +3,16 @@
     max-height: 80vh;
     overflow: hidden;
     background-color: black;
+    margin-bottom: 1.5vh;
+    margin-top: 1.5vh;
+    z-index: 2;
+    >img {
+        width: 100%;
+        height: auto;
+        position: relative;
+        overflow: hidden;
+        z-index: -1;
+    }
     .VideoPlayerInner {
         position: absolute;
         top: 50%;

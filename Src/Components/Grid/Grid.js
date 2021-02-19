@@ -1,28 +1,24 @@
-
-
-
-function Grid (element, elementWidthPx, numColumnsVariants) {
+function Grid(element, elementWidthPx, numColumnsVariants) {
     this.element = element;
     this.elementWidthPx = elementWidthPx;
     this.numColumnsVariants = numColumnsVariants;
-    this.numColumnsVariants.sort(function (a, b) {
-        return a-b
+    this.numColumnsVariants.sort(function(a, b) {
+        return a - b
     })
     this.previousContainerWidth = -1;
     this.previousClass = "";
     this.previousNumColumns = 0;
 
-    this.OnWindowResize = function () {
-
+    this.OnWindowResize = function() {
         var width = this.element.offsetWidth;
         if (this.previousContainerWidth == width) {
             return;
         }
-        this.previousContainerWidth = width;           
+        this.previousContainerWidth = width;
 
         var numColumnsID = 0;
         var dif = Math.abs(width / numColumnsVariants[0] - this.elementWidthPx);
-        for (let i = 1; i < numColumnsVariants.length; i++) {                
+        for (let i = 1; i < numColumnsVariants.length; i++) {
             var newDif = Math.abs(width / numColumnsVariants[i] - this.elementWidthPx);
             if (newDif < dif) {
                 dif = newDif;
@@ -37,7 +33,7 @@ function Grid (element, elementWidthPx, numColumnsVariants) {
         }
     }
 
-    this.OnDOMContentLoaded = function (event) {
+    this.OnDOMContentLoaded = function(event) {
         this.OnWindowResize();
     }
 

@@ -42,13 +42,6 @@ namespace Csml {
                 x.Attribute("content", material.Title);
             });
 
-            // x.Add($"<meta property=\"og:type\" content=\"article\">");
-
-            x.AddMeta(x => {
-                x.Attribute("property", "og:title");
-                x.Attribute("content", material.Title);
-            });
-
             var materialDescription = material.Description.Generate(context).GetPlaneText();
             x.AddMeta(x => {
                 x.Attribute("property", "og:description");
@@ -58,7 +51,7 @@ namespace Csml {
             if (material.TitleImage != null) {
                 x.AddMeta(x => {
                     x.Attribute("property", "og:image");
-                    x.Attribute("content", material.TitleImage.GetUri().ToString());
+                    x.Attribute("content", material.TitleImage.GetImageUri().ToString());
                 });
             }
 

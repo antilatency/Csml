@@ -17,6 +17,8 @@ namespace Csml {
 
         public static bool IsDeveloperMode { get; internal set; }
 
+        public static bool GenerateDebugPages { get; private set; } = true;
+
         public static SassProcessor SassProcessor { get; internal set; }
 
         public static JavascriptProcessor JavascriptProcessor { get; internal set; }
@@ -30,15 +32,14 @@ namespace Csml {
 
         private CsmlApplication() { }
 
-        public static void ReleaseBuild(string projectRootDirectory, string wwwRootDirectory, Uri wwwRootUri) {
+        public static void ReleaseBuild(string projectRootDirectory, string wwwRootDirectory, Uri wwwRootUri, bool withDebugContent = false) {
+            ToDo.Enabled = GenerateDebugPages = withDebugContent;
             ProjectRootDirectory = projectRootDirectory;
             WwwRootDirectory = wwwRootDirectory;
             WwwRootUri = wwwRootUri;
             PageTitlePrefix = string.Empty;
-            IsDeveloperMode = false;
             SiteMapMaterials = new List<IMaterial>();
             CleanupMatcher = GetCleanupMatcherForReleaseBuild(wwwRootDirectory);
-
             Build();
         }
 
@@ -170,28 +171,25 @@ namespace Csml {
         }
 
         private static void CreateSiteMap(IEnumerable<IMaterial> materials) {
-            if (materials != null) {
-                var languages = Language.All;
+            if(materials == null) { return; }
+            var languages = Language.All;
+            var map = new StringBuilder()
+                    .AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+                    .AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
 
-                var map = new StringBuilder()
-                        .AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-                        .AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
+            foreach(var material in materials) {
+                foreach(var l in languages) {
+                    map.AppendLine("\t<url>");
+                    map.AppendLine($"\t<loc>{material.GetUri(l)}</loc>");
 
-                foreach (var material in materials) {
-                    foreach (var l in languages) {
-                        map.AppendLine("\t<url>");
-                        map.AppendLine($"\t<loc>{material.GetUri(l)}</loc>");
-
-                        foreach (var l2 in languages) {
-                            map.AppendLine($"\t\t<xhtml:link rel=\"alternate\" hreflang=\"{l2.Name}\" href=\"{material.GetUri(l2)}\"/>");
-                        }
-                        map.AppendLine("\t</url>");
+                    foreach(var l2 in languages) {
+                        map.AppendLine($"\t\t<xhtml:link rel=\"alternate\" hreflang=\"{l2.Name}\" href=\"{material.GetUri(l2)}\"/>");
                     }
+                    map.AppendLine("\t</url>");
                 }
-                map.AppendLine("</urlset>");
-
-                File.WriteAllText(Path.Combine(WwwRootDirectory, "SiteMap.xml"), map.ToString());
             }
+            map.AppendLine("</urlset>");
+            File.WriteAllText(Path.Combine(WwwRootDirectory, "SiteMap.xml"), map.ToString());
         }
 
         private static Matcher GetCleanupMatcherForReleaseBuild(string directory) { 

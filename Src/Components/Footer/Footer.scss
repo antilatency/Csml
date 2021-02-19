@@ -1,9 +1,7 @@
-
 .Footer {
     position: relative;
     display: block;
-    background-color: white;
-
+    background-color: #f2f4f6;
     &:before {
         position: absolute;
         display: block;
@@ -13,42 +11,39 @@
         width: 100vw;
         left: 0;
         z-index: -1;
+        margin-left: -6vw;
     }
 }
 
 .FooterContainer {
-    width: 100%;
+    //width: 100%;
     padding-top: 32px;
-    //padding-left: 5vw;
-    padding-right: 32px;
-    text-align: right;
+    margin-left: 9vw;
+    //padding-right: 32px;
+    text-align: left;
     .Section {
-
         .Title {
             display: block;
-            font-size: .83em;
+            font-size: 16px;
             margin-bottom: 12px;
             font-weight: bold;
         }
     }
-
     a {
         color: #848d95;
-        font-size: 14px;
+        font-size: 16px;
         padding: 4px 0;
         line-height: 1.4em;
         display: inline-block;
         text-decoration: none;
-
         &:hover {
             color: #bbc0c4;
         }
     }
-
-    > .Text {
+    >.Text {
         color: #3d5154;
-        font-size: 14px;
+        font-size: 16px;
         display: table;
-        margin: 0 auto;
+        // margin: 0 auto;
     }
 }

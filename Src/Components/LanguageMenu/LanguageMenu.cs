@@ -18,10 +18,11 @@ namespace Csml {
                 var e = context.CurrentMaterial.Generate(context) as Tag;
                 e.ChildrenNotNull.Clear();
                 e.AddText(textInfo.ToUpper(l.Name));
-                e.Add(new Behaviour("LanguageMenu").Generate(context));
+                e.Attribute("title", "");
                 //e.Attribute("onclick", "this.href += window.location.hash;");
                 result.Add(e);
             }
+            result.Add(new Behaviour("LanguageMenu").Generate(context));
             return result;
         }
 

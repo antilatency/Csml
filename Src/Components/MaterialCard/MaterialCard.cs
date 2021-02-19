@@ -31,15 +31,11 @@ namespace Csml {
             return "null";
         }
 
+        private string textColor(IImage image) {
+            var pixel = image.GetTopLeftPixel();
+            return (pixel.R + pixel.G + pixel.B) / 3 > 255 / 2 ? "black" : "white";
+        }
         public override Node Generate(Context context) {
-            static string backgroundColor(Image image) {
-                var pixel = image.GetTopLeftPixel();
-                return $"rgba({pixel.R}, {pixel.G}, {pixel.B}, 0.5)";
-            }
-            static string textColor(Image image) {
-                var pixel = image.GetTopLeftPixel();
-                return (pixel.R + pixel.G + pixel.B) / 3 > 255 / 2 ? "black" : "white";
-            }
             var material = MaterialGetter(context);
             Tag result;
             if (!context.AForbidden) {
@@ -50,24 +46,23 @@ namespace Csml {
             }
             context.AForbidden = true;
             result.AddClasses("MaterialCard");
-            if (material.TitleImage != null) {
+            if(material.TitleImage != null) {
                 result.Add(material.TitleImage.Generate(context));
-                result.Attribute("style", $"background-color: {backgroundColor(material.TitleImage)}; " +
-                    $"color:{textColor(material.TitleImage)};");
             } else {
                 Log.Warning.OnObject(this, "TitleImage of material required");
                 result.Add(CsmlPredefined.MissingImage.Generate(context));
-                result.Attribute("style", $"background-color: {backgroundColor(CsmlPredefined.MissingImage)}; " +
-                    $"color: {textColor(CsmlPredefined.MissingImage)};");
             }
-            var riseUpContent = new Tag("div") {
-                new Title(material.Title, " .").Generate(context),
-                material.Description.Generate(context)
-            };
-            riseUpContent.AddClasses("RiseUpContent");
-            result.Add(riseUpContent);
+            result.Add(getSlideContent(material, context));
             result.Add(new Behaviour("MaterialCard").Generate(context));
 
+            return result;
+        }
+
+        private Tag getSlideContent(IMaterial material, Context context) {
+            Tag result = new Tag("div");
+            result.AddClasses("MaterialCardSlider");
+            result.Add(new Title(material.Title, " .", 4).Generate(context));
+            result.Add(material.Description.Generate(context));
             return result;
         }
     }
