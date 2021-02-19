@@ -5,8 +5,12 @@ using System.Reflection;
 
 namespace Csml {
 
+    public class BaseScope {
+        protected static IPageTemplate Template => new Template();
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
-    public partial class Scope {
+    public partial class Scope: BaseScope {
 
         protected Scope() { }
         

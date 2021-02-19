@@ -5,6 +5,7 @@ using System.Text;
 using Htmlilka;
 
 namespace Csml {
+    public class Template : Template<Template> { }
 
     public class Template<T> : IPageTemplate where T: Template<T> {
         readonly List<IElement> AdditionalBodyElements = new List<IElement>();
