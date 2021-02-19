@@ -1,0 +1,121 @@
+$margin-top: 10px;
+$margin-top__pinned: 40px;
+$tongueH__pinned: 160px;
+$tongueSize: 40px;
+$tongueW__pinned: 8px;
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.SideComponent {
+    z-index: 0;
+    flex-shrink: 0;
+    .Glass {
+        visibility: hidden;
+    }
+    .SideContent {
+        background-color: #3b424d;
+        transform: none;
+        height: 100%;
+    }
+    .Tongue {
+        display: none;
+        background-color: black;
+        width: $tongueSize;
+        height: $tongueSize;
+        border-radius: 50%;
+        transition: width .1s, height .1s, border-radius .1s, margin-top .1s, margin-left .1s, height .1s;
+        &.Pinned {
+            width: 2 * $tongueW__pinned;
+            border-radius: $tongueW__pinned;
+            height: $tongueH__pinned;
+            overflow: hidden;
+        }
+    }
+    &.Forward {
+        z-index: 100;
+    }
+    &.Modal {
+        .Glass {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(133, 133, 133, .8);
+            top: 0;
+            visibility: visible;
+        }
+    }
+}
+
+.Minimal>.SideComponent {
+    height: $tongueSize;
+    margin-top: $margin-top;
+    position: relative;
+    >.Glass {
+        top: -$margin-top;
+    }
+    .SideContent {
+        top: -$margin-top;
+        position: absolute;
+    }
+    .Tongue {
+        @extend %flexCenter;
+        position: absolute;
+        top: 0;
+    }
+    &.Active:not(.Pinned) {
+        position: absolute;
+    }
+    &.Pinned {
+        height: $tongueH__pinned;
+        margin-top: $margin-top__pinned;
+        >.Glass {
+            top: -$margin-top__pinned;
+        }
+        .SideContent {
+            min-height: $tongueH__pinned;
+            top: -$margin-top__pinned;
+            overflow-y: scroll;
+        }
+    }
+}
+
+.LeftSideContainer.Minimal {
+    .SideComponent {
+        >.Glass {
+            left: 0;
+        }
+        .SideContent {
+            left: 0;
+            transform: translateX(-100%);
+        }
+        .Tongue {
+            margin-left: $margin-top;
+            left: 0;
+            &.Pinned {
+                margin-left: -8px;
+            }
+        }
+    }
+}
+
+.RightSideContainer.Minimal {
+    .SideComponent {
+        >.Glass {
+            right: 0;
+        }
+        .SideContent {
+            right: 0;
+            transform: translateX(100%);
+        }
+        .Tongue {
+            margin-right: $margin-top;
+            right: 0;
+            &.Pinned {
+                margin-right: -8px;
+            }
+        }
+    }
+}

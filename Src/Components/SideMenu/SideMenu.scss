@@ -1,0 +1,46 @@
+@import "../SideComponent/SideComponent.scss";
+.SideMenuWrapper {
+    @extend .SideComponent;
+    .SideMenu {
+        background-color: white;
+        border-right: 1px solid #ddd;
+        width: 260px;
+        >* {
+            display: block;
+            color: inherit;
+            font-weight: 400;
+            text-decoration: none;
+            padding: 16px 28px;
+        }
+        >.Separator {
+            padding: 0;
+            height: 0;
+            width: 100%;
+            border-bottom: 2px solid #414853;
+        }
+    }
+    .TongueMenu {
+        &::after {
+            content: "\F035C";
+            color: white;
+            font-family: "Material Design Icons";
+            font-size: 32px;
+            transition: font-size .05s .05s, color .05s .05s;
+        }
+        &.Pinned {
+            &::after {
+                font-size: 8px;
+                color: transparent;
+                transition: color .05s, font-size .05s;
+            }
+        }
+    }
+}
+
+.Minimal {
+    .SideMenuWrapper {
+        .SideMenu {
+            height: 100vh;
+        }
+    }
+}

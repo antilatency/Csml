@@ -1,0 +1,87 @@
+@import "../SideComponent/SideComponent.scss";
+$item-size: 40px;
+$item-margin: $item-size / 2;
+%textStyle {
+    @extend %flexCenter;
+    width: 100%;
+    height: $item-size;
+    width: $item-size;
+    color: white;
+    font-size: 1rem;
+}
+
+%icon {
+    content: "\F05CA";
+    font-family: "Material Design Icons";
+    font-size: 28px;
+}
+
+.LanguageSideMenuWrapper {
+    @extend .SideComponent;
+    .Tongue {
+        &::after {
+            @extend %icon;
+            color: white;
+        }
+        &.Pinned {
+            &::after {
+                font-size: 8px;
+                color: transparent;
+                transition: color .05s, font-size .05s;
+            }
+        }
+    }
+    .LanguageSideMenu {
+        width: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        &>.Before {
+            &::before {
+                @extend %textStyle;
+                @extend %icon;
+                order: 0;
+            }
+        }
+        a.Text {
+            @extend %textStyle;
+            order: 1;
+            text-decoration: none;
+            &.Selected {
+                order: 1;
+                color: black;
+            }
+        }
+    }
+}
+
+.Minimal>.LanguageSideMenuWrapper {
+    &.Unpinned {
+        .LanguageSideMenu {
+            height: 100vh;
+        }
+    }
+    &.Pinned {
+        .LanguageSideMenu {
+            height: auto;
+            padding: 0;
+            padding-top: $item-size + $margin-top;
+            justify-content: space-evenly;
+            &>.Before {
+                position: absolute;
+                top: $margin-top;
+            }
+            top: 0;
+        }
+    }
+}
+
+.RightSideContainer.Minimal>.LanguageSideMenuWrapper {
+    &.Unpinned {
+        .LanguageSideMenu {
+            //margin-right: $margin-top;
+        }
+    }
+}
