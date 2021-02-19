@@ -5,7 +5,25 @@ using System.Text;
 using Htmlilka;
 
 namespace Csml {
-    public class Template : Template<Template> { }
+    public class BlankTemplate : Template<BlankTemplate> {
+        public static Tag WriteMaterial(Context context, IMaterial material) {
+            return new Tag("div")
+                .AddDiv(a => {
+                    a.AddClasses("Header");
+                    if(material.TitleImage != null) {
+                        a.Add(material.TitleImage.Generate(context));
+                    }
+                    a.Add(material.Description.Generate(context));
+                })
+                .Add(material.Content.Generate(context));
+        }
+        public override void ModifyBody(Tag x, Context context, IMaterial material) {
+            x.AddClasses(GetType().Name).Add(WriteMaterial(context, material).AddClasses("Content"));
+
+        }
+
+
+    }
 
     public class Template<T> : IPageTemplate where T: Template<T> {
         readonly List<IElement> AdditionalBodyElements = new List<IElement>();

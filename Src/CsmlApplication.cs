@@ -146,7 +146,10 @@ namespace Csml {
         public static void CopyFonts() {
             var sourceDirectory = Path.Combine(ProjectRootDirectory, "Fonts");
             var destDirectory = Path.Combine(WwwRootDirectory, "Fonts");
-            var files = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
+            var files = Directory.Exists(sourceDirectory) 
+                ? Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories) 
+                : Array.Empty<string>();
+            
 
             var extensions = new List<string>() { ".ttf", ".woff", ".woff2", ".svg", ".eot" };
             var fonts = files.Where(x => extensions.Contains(Path.GetExtension(x)));

@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Csml {
 
     public class BaseScope {
-        protected static IPageTemplate Template => new Template();
+        protected static IPageTemplate Template => new BlankTemplate();
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
