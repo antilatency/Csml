@@ -7,6 +7,11 @@ using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Csml {
     public class CsmlApplication {
+
+        public static string RootPath { 
+            get => Server.Controllers.RootController.RootPath; 
+            set => Server.Controllers.RootController.RootPath = value; 
+        }
         public static string ProjectRootDirectory { get; internal set; }
 
         public static string WwwRootDirectory { get; internal set; }

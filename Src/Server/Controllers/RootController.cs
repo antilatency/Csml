@@ -19,6 +19,7 @@ namespace Csml.Server.Controllers {
         private readonly ILogger<RootController> _logger;
         private readonly ServerState _state;
 
+        public static string RootPath = @"/Root/Index_en.html";
         public RootController(ILogger<RootController> logger, ServerState state) {
             _logger = logger;
             _state = state;
@@ -49,7 +50,7 @@ namespace Csml.Server.Controllers {
         [HttpGet]
         public IActionResult GetContent() {
             var requestPath = ControllerContext.HttpContext.Request.Path;
-            string resourcePath = (requestPath == "/" ? @"/Root/Index_en.html" : requestPath.Value).Substring(1);
+            string resourcePath = (requestPath == "/" ? RootPath : requestPath.Value).Substring(1);
             var mimeType = MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(resourcePath));
 
             //Procedural HTML page
