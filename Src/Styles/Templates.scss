@@ -1,0 +1,24 @@
+@import "../Page/Templates/TemplateRegularMaterial/TemplateRegularMaterial.scss";
+@import "../Page/Templates/TemplateLanding/TemplateLanding.scss";
+.TemplateRegularMaterial,
+.TemplateLanding {
+    .Content {
+        box-sizing: border-box;
+        min-height: 100%;
+        padding-bottom: 90px;
+    }
+    height: 100%;
+    &.Shadowed {
+        overflow: hidden;
+        &:before {
+            overflow: auto;
+            position: fixed;
+            left: 0%;
+            height: 100%;
+            width: 100%;
+            z-index: 20;
+            background-color: rgba(133, 133, 133, 0.8);
+            content: "";
+        }
+    }
+}
