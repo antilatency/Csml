@@ -153,25 +153,16 @@ $selctionMarkerColor:#D4D8DF;
             margin-bottom: 0.4rem;
         }*/
         .Header div.Image {
-            display: block;
-            width: 100%;
             height: 50vh;
             margin-bottom: 2vh;
         }
-        .Section div.Image {
-            display: block;
-            width: 100%;
+        .Section div.Image {            
             height: 30vh;
             margin-bottom: 1vh;
         }
         img.Image {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
             margin-bottom: 1.5vh;
             margin-top: 1.5vh;
-            height: auto;
-            width: 100%;
         }
         >.Header,
         >.Section {

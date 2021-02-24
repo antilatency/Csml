@@ -6,7 +6,7 @@ namespace Csml {
         public TemplateLanding(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, rightSideElements) { }
     }
 
-    public class TemplateLanding<T> : TemplateLeftSideMenu<T> where T : TemplateLanding<T> {
+    public class TemplateLanding<T> : TemplateSideMenu<T> where T : TemplateLanding<T> {
         public TemplateLanding(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, 260, rightSideElements, 60, 1280, 64) { }
 
         public override Tag WriteMaterial(Context context, IMaterial material) {

@@ -1,0 +1,31 @@
+$menuColor: #3b424d;
+%sideContainer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    background-color: #3b424d;
+    &.Forward {
+        z-index: 1100;
+    }
+    >div {
+        border-bottom: 2px solid #1B1E23;
+    }
+    >div:last-child {
+        border-bottom: none;
+    }
+}
+
+.TemplateSideMenu {
+    .LeftSideContainer {
+        @extend %sideContainer;
+        left: 0;
+    }
+
+    .RightSideContainer {
+        @extend %sideContainer;
+        right: 0;
+    }
+}

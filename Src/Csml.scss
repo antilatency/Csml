@@ -1,6 +1,12 @@
+$EnableShadows: true !default;
+
 @import "Styles/Mixins";
-@import "Styles/Components";
+@import "Components/Components";
 @import "Styles/Templates";
+
+
+
+
 *,
 *::before,
 *::after {

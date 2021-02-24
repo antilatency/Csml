@@ -1,4 +1,4 @@
-﻿/*class TemplateState {
+﻿class TemplateState {
 
     blockedBy = null;
 
@@ -158,11 +158,11 @@
     }
 }
 
-function TemplateLeftSideMenuInit(element, lWidth, rWidth, contentWidth, anchorLineWidth = 48) {
+function TemplateSideMenuInit(element, lWidth, rWidth, contentWidth, anchorLineWidth = 48) {
     window.TemplateState = new TemplateState(element, lWidth, rWidth, contentWidth, anchorLineWidth);
 }
 
-function TemplateLeftSideMenuAlign(element) {
+function TemplateSideMenuAlign(element) {
     let state = window.TemplateState;
     state.leftContainer = element.querySelector('.LeftSideContainer');
     state.rightContainer = element.querySelector('.RightSideContainer');
@@ -182,4 +182,4 @@ function mobileCheck() {
             check = true;
     })(navigator.userAgent || navigator.vendor || window.opera);
     return check;
-}*/
+}

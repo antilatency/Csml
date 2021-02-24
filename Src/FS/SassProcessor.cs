@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Csml {
     public class SassProcessor : FileProcessor, IFileManager {
-        public string OutputFileName { get; private set; }
+        public string OutputFileName { get; private set; } = "style.css";
         readonly string InitialFilePath;
 
         public SassProcessor(bool developerMode, string sourceRootDirectory, string outputRootDirectory, string initialFilePath) :
@@ -55,7 +55,7 @@ namespace Csml {
                 }
 
             }
-            var relativeDirectory = Path.GetRelativePath(SourceRootDirectory, Path.GetDirectoryName(path));
+            var relativeDirectory = Path.GetRelativePath(SourceRootDirectory.Replace('\\', '/'), Path.GetDirectoryName(path));
             relativeDirectory = relativeDirectory.Replace('\\', '/');
             var currentDirectoryVariable = $"$current-directory: \"{relativeDirectory}\";\n";
             return currentDirectoryVariable + content;
@@ -81,7 +81,7 @@ namespace Csml {
                     observableFiles = CaptureModificationTimes(result.IncludedFilePaths);
                 }
 
-                OutputFileName = "style.css";
+                //OutputFileName = "style.css";
                 var outputMapFileName = "style.css.map";
                 if (!DeveloperMode) {
                     var hash = Hash.CreateFromString(result.CompiledContent).ToString();

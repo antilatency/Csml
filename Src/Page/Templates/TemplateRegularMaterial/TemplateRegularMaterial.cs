@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 namespace Csml {
     public sealed class TemplateRegularMaterial : TemplateRegularMaterial<TemplateRegularMaterial> {
-        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, rightSideElements) { }
+        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) 
+            : base(headerLogo, leftSideElements, rightSideElements) { }
     }
 
-    public class TemplateRegularMaterial<T> : TemplateLeftSideMenu<T> where T : TemplateRegularMaterial<T> {
-        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) : base(headerLogo, leftSideElements, 260, rightSideElements, 60, 800, 64) { }
+    public class TemplateRegularMaterial<T> : TemplateSideMenu<T> where T : TemplateRegularMaterial<T> {
+        public TemplateRegularMaterial(IElement headerLogo, IEnumerable<IElement> leftSideElements, IEnumerable<IElement> rightSideElements) 
+            : base(headerLogo, leftSideElements, 260, rightSideElements, 60, 800, 64) { }
 
         private void CheckTitleImageAspect(IMaterial material) {
             var image = material.TitleImage;
@@ -32,11 +34,7 @@ namespace Csml {
                     a.AddClasses("Header");
                     a.Add(new Title(material.Title, ". ").Generate(context));
                     if(material.TitleImage != null) {
-                        //if(material.TitleImage is Player player) {
-                        //    a.Add(player.GetImage().Generate(context));
-                        //} else {
-                            a.Add(material.TitleImage.Generate(context));
-                        //}
+                        a.Add(material.TitleImage.Generate(context));
                     }
                     a.Add(material.Description.Generate(context));
                 })

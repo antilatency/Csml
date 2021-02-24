@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -108,9 +109,20 @@ namespace Csml {
             x.Add($"<meta property=\"twitter:card\" content=\"summary\">");*/
         }
 
+        public static IEnumerable<Type> GetParentTypes(Type type) {
+            if(type == null) {
+                yield break;
+            }
+            var currentBaseType = type.BaseType;
+            while(currentBaseType != null) {
+                yield return currentBaseType;
+                currentBaseType = currentBaseType.BaseType;
+            }
+        }
+
         public virtual void ModifyBody(Tag x, Context context, IMaterial material) {
-            x.AddClasses(GetType().Name);
-            
+            var names = GetParentTypes(GetType()).Where(x => x.Name != "Object").Select(x => x.Name.Replace("`1", ""));
+            x.AddClasses(names.Reverse().ToArray());
         }
 
 

@@ -6,7 +6,7 @@ namespace Csml {
         public TemplateLeftSideMenuBehaviour(int contentWidth, int anchorLineWidth) : base("TemplateLeftSideMenu", contentWidth, anchorLineWidth) { }
     };*/
 
-    public abstract class TemplateLeftSideMenu<T> : Template<T> where T: TemplateLeftSideMenu<T> {
+    public abstract class TemplateSideMenu<T> : Template<T> where T: TemplateSideMenu<T> {
         private readonly IEnumerable<IElement> LeftSideElements;
         private readonly IEnumerable<IElement> RightSideElements;
         private readonly int LeftWidth;
@@ -14,7 +14,7 @@ namespace Csml {
         private readonly int ContentWidth;
         private readonly int AnchorLineWidth;
         private readonly IElement HeaderLogo;
-        public TemplateLeftSideMenu(IElement headerLogo, IEnumerable<IElement> leftSideElements, int leftWidth, IEnumerable<IElement> rightSideElems, int rightWidth, int contentWidth, int anchorLineWidth) {
+        public TemplateSideMenu(IElement headerLogo, IEnumerable<IElement> leftSideElements, int leftWidth, IEnumerable<IElement> rightSideElems, int rightWidth, int contentWidth, int anchorLineWidth) {
             this.HeaderLogo = headerLogo;
             this.LeftSideElements = leftSideElements;
             this.RightSideElements = rightSideElems;
@@ -33,7 +33,7 @@ namespace Csml {
 
 
 
-            body.Add(new Behaviour("TemplateLeftSideMenuInit", LeftWidth, RightWidth, ContentWidth, AnchorLineWidth).Generate(context));
+            body.Add(new Behaviour("TemplateSideMenuInit", LeftWidth, RightWidth, ContentWidth, AnchorLineWidth).Generate(context));
 
             AddContainer(body, context, "LeftSideContainer", LeftSideElements);
             AddContainer(body, context, "RightSideContainer", RightSideElements);
@@ -43,7 +43,7 @@ namespace Csml {
                 .AddClasses("Content anchorsOutside")
                 );
 
-            body.Add(new Behaviour("TemplateLeftSideMenuAlign").Generate(context));
+            body.Add(new Behaviour("TemplateSideMenuAlign").Generate(context));
         }
 
         private void AddContainer(Tag body, Context context, string className, IEnumerable<IElement> elements){

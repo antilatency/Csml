@@ -33,6 +33,7 @@ function RoiImage(element, aspect, roi) {
         const parentHeight = parent.offsetHeight;
         minHeight = Math.min(minHeight, parentHeight);
         maxHeight = Math.min(maxHeight, parentHeight);
+        console.log(parentHeight);
         height = Math.max(height, minHeight);
         height = Math.min(height, maxHeight);
         var containerAspect = height / width;
