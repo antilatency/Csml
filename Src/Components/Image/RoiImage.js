@@ -5,8 +5,8 @@ function RoiImage(element, aspect, roi) {
     this.previousContainerWidth = -1;
     this.previousContainerHeight = -1;
     this.image = this.element.getElementsByTagName("img")[0];
-    const parent = this.element.parentElement;
-
+    const parent = this.element.parentElement.className == "Section" || this.element.parentElement.className == "Header" ?
+        null : this.element.parentElement;
 
     this.OnWindowResize = function() {
         //console.log(window.getComputedStyle(parent, null).getPropertyValue("height").replace("px", ""));
@@ -30,10 +30,13 @@ function RoiImage(element, aspect, roi) {
         let widthAspect = width * aspect;
         let minHeight = widthAspect * h;
         let maxHeight = widthAspect / w;
-        const parentHeight = parent.offsetHeight;
-        minHeight = Math.min(minHeight, parentHeight);
-        maxHeight = Math.min(maxHeight, parentHeight);
-        console.log(parentHeight);
+        if (parent) {
+            const parentHeight = parent.offsetHeight;
+            minHeight = Math.max(minHeight, parentHeight);
+            maxHeight = Math.min(maxHeight, parentHeight);
+            console.log(parent.className, minHeight, parentHeight);
+        }
+
         height = Math.max(height, minHeight);
         height = Math.min(height, maxHeight);
         var containerAspect = height / width;
